@@ -1,0 +1,85 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{FF172F14-CECE-4F7A-8B40-002D64B894E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{F2B314FA-A880-4BD0-A446-E48323B9C22E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{60133284-96C5-4113-8DF1-1BDDF2AF01BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{6F124834-E622-4CD8-B4C5-A6C73F611F14}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{3FBE66FB-9936-4FA1-A08B-C8E144FCEE22}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{6570FCB1-2DA0-4D36-B126-429030EEFA86}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messages", "Messages", "{EB7CEF1C-7C74-4F33-8BBF-3F4874880145}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{B07A3618-298A-42A3-B9C6-6D2181D125EE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messages", "Messages", "{5397EB2E-9060-4664-9CC0-DCBFB5939152}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Messages.Abastractions", "src\Infrastructure\Messages\ExtenFlow.Messages.Abastractions\ExtenFlow.Messages.Abastractions.csproj", "{B5F399E7-65F3-407A-9E65-DA8102D54513}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Security.Roles.Abstractions", "src\Infrastructure\Security\ExtenFlow.Security.Roles.Abstractions\ExtenFlow.Security.Roles.Abstractions.csproj", "{DFE71C7E-25C2-4408-854C-2C03F50F6141}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Security.Users.Abstractions", "src\Infrastructure\Security\ExtenFlow.Security.Users.Abstractions\ExtenFlow.Security.Users.Abstractions.csproj", "{0E6BB909-2050-4DAF-AD5D-4CC985E9E356}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Security.Roles", "src\Infrastructure\Security\ExtenFlow.Security.Roles\ExtenFlow.Security.Roles.csproj", "{A225BD71-B6FA-4FA2-8912-BADDC9B42974}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Security.Users", "src\Infrastructure\Security\ExtenFlow.Security.Users\ExtenFlow.Security.Users.csproj", "{16367441-07FD-4C75-8D3F-ED1D736592E8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Messages.AbstractionsTests", "test\Infrastructure\Messages\ExtenFlow.Messages.AbstractionsTests\ExtenFlow.Messages.AbstractionsTests.csproj", "{F8BF743F-11DF-44CB-B4A3-EFCE602BF873}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B5F399E7-65F3-407A-9E65-DA8102D54513}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5F399E7-65F3-407A-9E65-DA8102D54513}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5F399E7-65F3-407A-9E65-DA8102D54513}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5F399E7-65F3-407A-9E65-DA8102D54513}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFE71C7E-25C2-4408-854C-2C03F50F6141}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFE71C7E-25C2-4408-854C-2C03F50F6141}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFE71C7E-25C2-4408-854C-2C03F50F6141}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFE71C7E-25C2-4408-854C-2C03F50F6141}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E6BB909-2050-4DAF-AD5D-4CC985E9E356}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E6BB909-2050-4DAF-AD5D-4CC985E9E356}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E6BB909-2050-4DAF-AD5D-4CC985E9E356}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E6BB909-2050-4DAF-AD5D-4CC985E9E356}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A225BD71-B6FA-4FA2-8912-BADDC9B42974}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A225BD71-B6FA-4FA2-8912-BADDC9B42974}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A225BD71-B6FA-4FA2-8912-BADDC9B42974}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A225BD71-B6FA-4FA2-8912-BADDC9B42974}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16367441-07FD-4C75-8D3F-ED1D736592E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16367441-07FD-4C75-8D3F-ED1D736592E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16367441-07FD-4C75-8D3F-ED1D736592E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16367441-07FD-4C75-8D3F-ED1D736592E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8BF743F-11DF-44CB-B4A3-EFCE602BF873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8BF743F-11DF-44CB-B4A3-EFCE602BF873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8BF743F-11DF-44CB-B4A3-EFCE602BF873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8BF743F-11DF-44CB-B4A3-EFCE602BF873}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6570FCB1-2DA0-4D36-B126-429030EEFA86} = {6F124834-E622-4CD8-B4C5-A6C73F611F14}
+		{EB7CEF1C-7C74-4F33-8BBF-3F4874880145} = {6F124834-E622-4CD8-B4C5-A6C73F611F14}
+		{B07A3618-298A-42A3-B9C6-6D2181D125EE} = {F2B314FA-A880-4BD0-A446-E48323B9C22E}
+		{5397EB2E-9060-4664-9CC0-DCBFB5939152} = {B07A3618-298A-42A3-B9C6-6D2181D125EE}
+		{B5F399E7-65F3-407A-9E65-DA8102D54513} = {EB7CEF1C-7C74-4F33-8BBF-3F4874880145}
+		{DFE71C7E-25C2-4408-854C-2C03F50F6141} = {6570FCB1-2DA0-4D36-B126-429030EEFA86}
+		{0E6BB909-2050-4DAF-AD5D-4CC985E9E356} = {6570FCB1-2DA0-4D36-B126-429030EEFA86}
+		{A225BD71-B6FA-4FA2-8912-BADDC9B42974} = {6570FCB1-2DA0-4D36-B126-429030EEFA86}
+		{16367441-07FD-4C75-8D3F-ED1D736592E8} = {6570FCB1-2DA0-4D36-B126-429030EEFA86}
+		{F8BF743F-11DF-44CB-B4A3-EFCE602BF873} = {5397EB2E-9060-4664-9CC0-DCBFB5939152}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B174E5CA-DE64-416A-B7A6-338036C49BF5}
+	EndGlobalSection
+EndGlobal
