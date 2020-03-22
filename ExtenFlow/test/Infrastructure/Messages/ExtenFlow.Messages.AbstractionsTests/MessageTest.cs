@@ -1,5 +1,4 @@
 using System;
-using System.Text.Json;
 
 using FluentAssertions;
 
@@ -18,21 +17,13 @@ namespace ExtenFlow.Messages.AbstractionsTests
         {
         }
 
-        public TestMessage(string userId) : base(userId)
-        {
-        }
-
-        public TestMessage(string userId, Guid correlationId) : base(userId, correlationId)
-        {
-        }
-
         [JsonConstructor]
-        public TestMessage(string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(userId, correlationId, messageId, dateTime)
+        public TestMessage(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
         {
         }
     }
 
-    public class MessageBaseTest<T> where T : IMessage
+    public abstract class MessageBaseTest<T> where T : IMessage
     {
         protected T CheckMessageNewtonSoftSerialization(T message)
         {
@@ -52,31 +43,48 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         protected T CheckMessageStateAreEqual(T expected, T result)
         {
-            CheckMessageStateValues(result, expected.MessageId, expected.CorrelationId, expected.UserId, expected.DateTime);
+            CheckMessageStateValues(result, expected.AggregateType, expected.AggregateId, expected.UserId, expected.MessageId, expected.CorrelationId, expected.DateTime);
             return result;
         }
 
-        protected T CheckMessageStateValues(T message, Guid messageId, Guid correlationId, string userId, DateTimeOffset dateTime)
+        protected virtual T CheckMessageStateValues(T message, string aggregateType, string userId, string aggregateId, Guid messageId, Guid correlationId, DateTimeOffset dateTime)
         {
             message.MessageId.Should().Be(messageId);
             message.UserId.Should().Be(userId);
             message.CorrelationId.Should().Be(correlationId);
             message.DateTime.Should().Be(dateTime);
+            message.AggregateId.Should().Be(aggregateId);
+            message.AggregateType.Should().Be(aggregateType);
             return message;
         }
-    }
 
-    public class MessageTest : MessageBaseTest<TestMessage>
-    {
+        protected abstract T Create(string aggregateType, string aggregateId, string userId, Guid messageId, Guid correlationId, DateTimeOffset dateTime);
+
+        protected abstract T Create();
+
+        [Theory]
+        [InlineData("agType", "agId", "UsrId")]
+        [InlineData("agType", "", "UsrId")]
+        [InlineData("agType", "      ", "UsrId")]
+        [InlineData("agType", null, "UsrId")]
+        public void CheckMessageState(string aggregateType, string aggregateId, string userId)
+        {
+            var messageId = Guid.NewGuid();
+            var correlationId = Guid.NewGuid();
+            DateTimeOffset dateTime = DateTimeOffset.Now;
+            T message = Create(aggregateType, aggregateId, userId, messageId, correlationId, dateTime);
+            CheckMessageStateValues(message, aggregateType, aggregateId, userId, messageId, correlationId, dateTime);
+        }
+
         [Fact]
         public void EmptyMessageIdShouldThrowException()
-            => Invoking(() => new TestMessage("tpo", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
+            => Invoking(() => Create("agType", "AgId", "tpo", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
         [Fact]
         public void EmptyCorrelationIdShouldThrowException()
-             => Invoking(() => new TestMessage("tpo", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
+             => Invoking(() => Create("agType", "AgId", "tpo", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
                  .Should()
                  .Throw<ArgumentNullException>();
 
@@ -85,49 +93,25 @@ namespace ExtenFlow.Messages.AbstractionsTests
         [InlineData("")]
         [InlineData("                      ")]
         public void UndefinedUserIdShouldThrowException(string userId)
-             => Invoking(() => new TestMessage(userId, Guid.NewGuid()))
+             => Invoking(() => Create("agType", "AgId", userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now))
                  .Should()
                  .Throw<ArgumentNullException>();
 
-        [Theory]
-        [InlineData("testUser")]
-        [InlineData("a")]
-        [InlineData("ekjAfkd/§?klazlkzaklzalkzakl")]
-        public void CheckMessageUserIdState(string userId)
-        {
-            var message = new TestMessage(userId);
-            message.UserId.Should().Be(userId);
-            message = new TestMessage(userId, Guid.NewGuid());
-            message.UserId.Should().Be(userId);
-            message = new TestMessage(userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);
-            message.UserId.Should().Be(userId);
-        }
-
-        [Fact]
-        public void CheckCorrelationIdState()
-        {
-            const string userId = "titi";
-            var correlationId = Guid.NewGuid();
-            var message = new TestMessage(userId, correlationId);
-            message.CorrelationId.Should().Be(correlationId);
-            message = new TestMessage(userId, correlationId, Guid.NewGuid(), DateTimeOffset.Now);
-            message.CorrelationId.Should().Be(correlationId);
-        }
-
         [Fact]
         public void CheckNewtonSoftJsonSerializeAndDesiarializeMessage()
-        {
-            var message = new TestMessage("Tu To Ti", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);
-
-            CheckMessageNewtonSoftSerialization(message);
-        }
+            => CheckMessageNewtonSoftSerialization(Create());
 
         [Fact]
-        public void CheckMessageDateTimeState()
-        {
-            var dateTime = DateTimeOffset.Now;
-            var message = new TestMessage("toto", Guid.NewGuid(), Guid.NewGuid(), dateTime);
-            message.DateTime.Should().Be(dateTime);
-        }
+        public void CheckJsonSerializeAndDesiarializeMessage()
+            => CheckMessageJsonSerialization(Create());
+    }
+
+    public class MessageTest : MessageBaseTest<TestMessage>
+    {
+        protected override TestMessage Create(string aggregateType, string aggregateId, string userId, Guid messageId, Guid correlationId, DateTimeOffset dateTime)
+            => new TestMessage(aggregateType, aggregateId, userId, messageId, correlationId, dateTime);
+
+        protected override TestMessage Create()
+            => new TestMessage("Agtype", "aggreID", "My user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);
     }
 }

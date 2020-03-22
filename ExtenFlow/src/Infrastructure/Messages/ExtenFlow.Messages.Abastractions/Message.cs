@@ -1,34 +1,32 @@
 ﻿using System;
 
-using Newtonsoft.Json;
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+#pragma warning disable CS0612 // Type or member is obsolete
 
 namespace ExtenFlow.Messages
 {
     public abstract class Message : IMessage
     {
-        [Obsolete("Can only be used by serializers", true)]
+        [Obsolete("Can only be used by serializers")]
         protected Message()
         {
             UserId = string.Empty;
             CorrelationId = Guid.Empty;
             DateTime = DateTimeOffset.Now;
             MessageId = Guid.Empty;
+            AggregateType = string.Empty;
+            AggregateId = null;
         }
 
-        protected Message(string userId, Guid correlationId) : this(userId, correlationId, Guid.NewGuid(), DateTimeOffset.Now)
-        {
-        }
-
-        protected Message(string userId) : this(userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
-        {
-        }
-
-        [JsonConstructor]
-        protected Message(string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+        protected Message(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
         {
             if (string.IsNullOrWhiteSpace(userId))
             {
                 throw new ArgumentNullException(nameof(userId));
+            }
+            if (string.IsNullOrWhiteSpace(aggregateType))
+            {
+                throw new ArgumentNullException(nameof(aggregateType));
             }
             if (correlationId == null || correlationId == Guid.Empty)
             {
@@ -42,11 +40,15 @@ namespace ExtenFlow.Messages
             CorrelationId = correlationId;
             DateTime = dateTime;
             MessageId = messageId;
+            AggregateId = aggregateId;
+            AggregateType = aggregateType;
         }
 
-        public Guid MessageId { get; }
-        public Guid CorrelationId { get; }
-        public DateTimeOffset DateTime { get; }
-        public string UserId { get; }
+        public Guid MessageId { get; [Obsolete]set; }
+        public Guid CorrelationId { get; [Obsolete]set; }
+        public DateTimeOffset DateTime { get; [Obsolete]set; }
+        public string UserId { get; [Obsolete]set; }
+        public string AggregateType { get; [Obsolete]set; }
+        public string? AggregateId { get; [Obsolete]set; }
     }
 }

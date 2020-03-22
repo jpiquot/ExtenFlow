@@ -5,6 +5,9 @@ using ExtenFlow.Messages;
 
 using Newtonsoft.Json;
 
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+#pragma warning disable CS0612 // Type or member is obsolete
+
 namespace ExtenFlow.Security.Users.Abstractions.Queries
 {
     public class GetAuthenticatedClaimUser : Query<IUser>
@@ -24,11 +27,12 @@ namespace ExtenFlow.Security.Users.Abstractions.Queries
         }
 
         [JsonConstructor]
-        public GetAuthenticatedClaimUser(ClaimsPrincipal claim, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base("User", claim?.Identity?.Name ?? string.Empty, claim?.Identity?.Name ?? string.Empty, correlationId, messageId, dateTime)
+        public GetAuthenticatedClaimUser(ClaimsPrincipal claim, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            : base("User", claim?.Identity?.Name ?? string.Empty, claim?.Identity?.Name ?? string.Empty, correlationId, messageId, dateTime)
         {
             Claim = claim ?? throw new ArgumentNullException(nameof(claim));
         }
 
-        public ClaimsPrincipal Claim { get; }
+        public ClaimsPrincipal Claim { get; [Obsolete]set; }
     }
 }

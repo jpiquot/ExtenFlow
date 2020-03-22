@@ -1,25 +1,19 @@
 ﻿using System;
 
-using Newtonsoft.Json;
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+#pragma warning disable CS0612 // Type or member is obsolete
+#pragma warning disable CA1716 // Identifiers should not match keywords
 
 namespace ExtenFlow.Messages
 {
-#pragma warning disable CA1716 // Identifiers should not match keywords
-
     public abstract class Event : Message, IEvent
-#pragma warning restore CA1716 // Identifiers should not match keywords
     {
         [Obsolete("Can only be used by serializers", true)]
         protected Event()
         {
         }
 
-        protected Event(string userId, Guid correlationId) : this(userId, correlationId, Guid.NewGuid(), DateTimeOffset.Now)
-        {
-        }
-
-        [JsonConstructor]
-        protected Event(string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(userId, correlationId, messageId, dateTime)
+        protected Event(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
         {
         }
     }

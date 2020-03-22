@@ -1,62 +1,32 @@
 using System;
 
-using FluentAssertions;
-
 using Newtonsoft.Json;
-
-using Xunit;
 
 namespace ExtenFlow.Messages.AbstractionsTests
 {
-    internal class TestEvent : Event
+    public class TestEvent : Event
     {
         [Obsolete]
         public TestEvent()
         {
         }
 
-        public TestEvent(string userId, Guid correlationId) : base(userId, correlationId)
-        {
-        }
-
         [JsonConstructor]
-        public TestEvent(string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(userId, correlationId, messageId, dateTime)
+        public TestEvent(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
         {
         }
     }
 
-    public class EventBaseTest : MessageBaseTest
+    public abstract class EventBaseTest<T> : MessageBaseTest<T> where T : IEvent
     {
-        protected T CheckEventNewtonSonfSerialization<T>(T message) where T : IEvent
-
-        {
-            var deserializedMessage = CheckMessageNewtonSonfSerialization(message);
-            return deserializedMessage;
-        }
     }
 
-    public class EventTest : EventBaseTest
+    public class EventTest : EventBaseTest<TestEvent>
     {
-        [Fact]
-        public void CheckEventBaseState()
-        {
-            const string userId = "toto";
-            var correlationId = Guid.NewGuid();
-            var messageId = Guid.NewGuid();
-            DateTimeOffset dateTime = DateTimeOffset.Now;
-            var message = new TestEvent(userId, correlationId, messageId, dateTime);
-            message.UserId.Should().Be(userId);
-            message.CorrelationId.Should().Be(correlationId);
-            message.MessageId.Should().Be(messageId);
-            message.DateTime.Should().Be(dateTime);
-        }
+        protected override TestEvent Create(string aggregateType, string aggregateId, string userId, Guid messageId, Guid correlationId, DateTimeOffset dateTime)
+           => new TestEvent(aggregateType, aggregateId, userId, messageId, correlationId, dateTime);
 
-        [Fact]
-        public void CheckNewtonSoftJsonSerializeAndDesiarializeEvent()
-        {
-            var @event = new TestEvent("Tu To Ti", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);
-
-            CheckEventNewtonSonfSerialization(@event);
-        }
+        protected override TestEvent Create()
+            => new TestEvent("Agtype", "aggreID", "My user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);
     }
 }

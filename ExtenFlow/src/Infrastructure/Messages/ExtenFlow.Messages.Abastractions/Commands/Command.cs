@@ -1,6 +1,7 @@
 ﻿using System;
 
-using Newtonsoft.Json;
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+#pragma warning disable CS0612 // Type or member is obsolete
 
 namespace ExtenFlow.Messages
 {
@@ -11,15 +12,6 @@ namespace ExtenFlow.Messages
         {
         }
 
-        protected Command(string aggregateType, string? aggregateId, string userId, Guid correlationId) : this(aggregateType, aggregateId, userId, correlationId, Guid.NewGuid(), DateTimeOffset.Now)
-        {
-        }
-
-        protected Command(string aggregateType, string? aggregateId, string userId) : this(aggregateType, aggregateId, userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
-        {
-        }
-
-        [JsonConstructor]
         protected Command(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
         {
         }

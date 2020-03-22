@@ -4,6 +4,9 @@ using ExtenFlow.Messages;
 
 using Newtonsoft.Json;
 
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+#pragma warning disable CS0612 // Type or member is obsolete
+
 namespace ExtenFlow.Security.Users.Abstractions.Queries
 {
     public class GetAuthenticatedUser : Query<IUser>
@@ -14,33 +17,31 @@ namespace ExtenFlow.Security.Users.Abstractions.Queries
             Password = string.Empty;
         }
 
-        public GetAuthenticatedUser(string userName, string password) : this(userName, password, Guid.NewGuid())
+        public GetAuthenticatedUser(string aggregateId, string password) : this(aggregateId, password, Guid.NewGuid())
         {
         }
 
-        public GetAuthenticatedUser(string userName, string password, Guid correlationId) : this(userName, password, correlationId, Guid.NewGuid(), DateTimeOffset.Now)
+        public GetAuthenticatedUser(string aggregateId, string password, Guid correlationId) : this(aggregateId, password, correlationId, Guid.NewGuid(), DateTimeOffset.Now)
         {
         }
 
         [JsonConstructor]
-        public GetAuthenticatedUser(string userName, string password, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base("User", userName, userName, correlationId, messageId, dateTime)
+        public GetAuthenticatedUser(string aggregateId, string password, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base("User", aggregateId, aggregateId, correlationId, messageId, dateTime)
         {
             if (string.IsNullOrWhiteSpace(password))
             {
                 throw new ArgumentNullException(nameof(password));
             }
-            if (string.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(aggregateId))
             {
-                throw new ArgumentNullException(nameof(userName));
+                throw new ArgumentNullException(nameof(aggregateId));
             }
             Password = password;
         }
 
-        public string Password { get; }
-#pragma warning disable CA1303 // Do not pass literals as localized parameters
-#pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
-        public string UserName => AggregateId ?? throw new NullReferenceException(nameof(AggregateId));
-#pragma warning restore CA1065 // Do not raise exceptions in unexpected locations
-#pragma warning restore CA1303 // Do not pass literals as localized parameters
+        public string Password { get; [Obsolete]set; }
+#pragma warning disable CS8603 // Possible null reference return.
+        public string aggregateId => AggregateId;
+#pragma warning restore CS8603 // Possible null reference return.
     }
 }

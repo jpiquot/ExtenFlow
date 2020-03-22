@@ -9,5 +9,7 @@ namespace ExtenFlow.Messages
 
         DateTimeOffset DateTime { get; }
         string UserId { get; }
+        string AggregateType { get; }
+        string? AggregateId { get; }
     }
 }
