@@ -13,16 +13,16 @@ namespace ExtenFlow.Messages
             AggregateType = string.Empty;
         }
 
-        protected Request(string aggregateType, string aggregateId, string userId, Guid correlationId) : this(aggregateType, aggregateId, userId, correlationId, Guid.NewGuid(), DateTimeOffset.Now)
+        protected Request(string aggregateType, string? aggregateId, string userId, Guid correlationId) : this(aggregateType, aggregateId, userId, correlationId, Guid.NewGuid(), DateTimeOffset.Now)
         {
         }
 
-        protected Request(string aggregateType, string aggregateId, string userId) : this(aggregateType, aggregateId, userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        protected Request(string aggregateType, string? aggregateId, string userId) : this(aggregateType, aggregateId, userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
         {
         }
 
         [JsonConstructor]
-        protected Request(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(userId, correlationId, messageId, dateTime)
+        protected Request(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(userId, correlationId, messageId, dateTime)
         {
             if (string.IsNullOrWhiteSpace(aggregateType))
             {

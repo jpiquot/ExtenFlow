@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json;
 
 using FluentAssertions;
 
@@ -10,7 +11,7 @@ using static FluentAssertions.FluentActions;
 
 namespace ExtenFlow.Messages.AbstractionsTests
 {
-    internal class TestMessage : Message
+    public class TestMessage : Message
     {
         [Obsolete]
         public TestMessage()
@@ -31,21 +32,41 @@ namespace ExtenFlow.Messages.AbstractionsTests
         }
     }
 
-    public class MessageBaseTest
+    public class MessageBaseTest<T> where T : IMessage
     {
-        protected T CheckMessageNewtonSonfSerialization<T>(T message) where T : IMessage
+        protected T CheckMessageNewtonSoftSerialization(T message)
         {
             string json = JsonConvert.SerializeObject(message);
             T deserializedMessage = JsonConvert.DeserializeObject<T>(json);
-            deserializedMessage.MessageId.Should().Be(message.MessageId);
-            deserializedMessage.UserId.Should().Be(message.UserId);
-            deserializedMessage.CorrelationId.Should().Be(message.CorrelationId);
-            deserializedMessage.DateTime.Should().Be(message.DateTime);
+            CheckMessageStateAreEqual(message, deserializedMessage);
             return deserializedMessage;
+        }
+
+        protected T CheckMessageJsonSerialization(T message)
+        {
+            string json = System.Text.Json.JsonSerializer.Serialize<T>(message);
+            T deserializedMessage = System.Text.Json.JsonSerializer.Deserialize<T>(json);
+            CheckMessageStateAreEqual(message, deserializedMessage);
+            return deserializedMessage;
+        }
+
+        protected T CheckMessageStateAreEqual(T expected, T result)
+        {
+            CheckMessageStateValues(result, expected.MessageId, expected.CorrelationId, expected.UserId, expected.DateTime);
+            return result;
+        }
+
+        protected T CheckMessageStateValues(T message, Guid messageId, Guid correlationId, string userId, DateTimeOffset dateTime)
+        {
+            message.MessageId.Should().Be(messageId);
+            message.UserId.Should().Be(userId);
+            message.CorrelationId.Should().Be(correlationId);
+            message.DateTime.Should().Be(dateTime);
+            return message;
         }
     }
 
-    public class MessageTest : MessageBaseTest
+    public class MessageTest : MessageBaseTest<TestMessage>
     {
         [Fact]
         public void EmptyMessageIdShouldThrowException()
@@ -83,15 +104,6 @@ namespace ExtenFlow.Messages.AbstractionsTests
         }
 
         [Fact]
-        public void CheckMessageIdState()
-        {
-            const string userId = "toto";
-            var messageId = Guid.NewGuid();
-            var message = new TestMessage(userId, Guid.NewGuid(), messageId, DateTimeOffset.Now);
-            message.MessageId.Should().Be(messageId);
-        }
-
-        [Fact]
         public void CheckCorrelationIdState()
         {
             const string userId = "titi";
@@ -107,7 +119,7 @@ namespace ExtenFlow.Messages.AbstractionsTests
         {
             var message = new TestMessage("Tu To Ti", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);
 
-            CheckMessageNewtonSonfSerialization(message);
+            CheckMessageNewtonSoftSerialization(message);
         }
 
         [Fact]
