@@ -8,7 +8,7 @@ namespace ExtenFlow.Messages
 {
     public abstract class Event : Message, IEvent
     {
-        [Obsolete("Can only be used by serializers", true)]
+        [Obsolete("Can only be used by serializers")]
         protected Event()
         {
         }

@@ -37,7 +37,7 @@ namespace ExtenFlow.Messages.AbstractionsTests
             message.MessageId = (Guid)values[nameof(IMessage.MessageId)];
             message.DateTime = (DateTimeOffset)values[nameof(IMessage.DateTime)];
 
-            return new TestCommand[]{
+            return new TestCommand[]{message,
                 new TestCommand(
                     (string)values[nameof(IMessage.AggregateType)],
                     (string)values[nameof(IMessage.AggregateId)],

@@ -7,7 +7,7 @@ namespace ExtenFlow.Messages
 {
     public abstract class Request : Message, IRequest
     {
-        [Obsolete("Can only be used by serializers", true)]
+        [Obsolete("Can only be used by serializers")]
         protected Request()
         {
             AggregateId = string.Empty;

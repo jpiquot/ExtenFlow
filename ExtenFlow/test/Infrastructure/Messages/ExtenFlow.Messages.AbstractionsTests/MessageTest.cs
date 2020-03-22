@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using FluentAssertions;
@@ -13,115 +14,65 @@ using static FluentAssertions.FluentActions;
 
 namespace ExtenFlow.Messages.AbstractionsTests
 {
-    public class TestMessage : Message
+    public class FakeMessage : Message
     {
         [Obsolete]
-        public TestMessage()
+        public FakeMessage()
         {
         }
 
         [JsonConstructor]
-        public TestMessage(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
+        public FakeMessage(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
         {
         }
     }
 
-    public abstract class MessageBaseTest<T> where T : IMessage
+    public class MessageTestData : IEnumerable<object[]>
     {
-        protected T CheckMessageNewtonSoftSerialization(T message)
+        public IEnumerator<object[]> GetEnumerator()
         {
-            string json = JsonConvert.SerializeObject(message);
-            T deserializedMessage = JsonConvert.DeserializeObject<T>(json);
-            CheckMessageStateAreEqual(message, deserializedMessage);
-            return deserializedMessage;
+            yield return new object[] { "Aggr. Type", "Aggr. Id", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. Type", "Aggr. Id", null, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. Type", "Aggr. Id", "", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. Type", "Aggr. Id", "      ", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. Type", null, "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. Type", "", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. Type", "             ", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
         }
 
-        protected T CheckMessageJsonSerialization(T message)
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    public class MessageTest : IClassFixture<MessageFixture<FakeMessage>>
+    {
+        private MessageFixture<FakeMessage> MessageFixture { get; }
+
+        public MessageTest(MessageFixture<FakeMessage> messageFixture)
         {
-            string json = System.Text.Json.JsonSerializer.Serialize<T>(message);
-            T deserializedMessage = System.Text.Json.JsonSerializer.Deserialize<T>(json);
-            CheckMessageStateAreEqual(message, deserializedMessage);
-            return deserializedMessage;
-        }
-
-        protected T CheckMessageStateAreEqual(T expected, T result)
-        {
-            result.MessageId.Should().Be(expected.MessageId);
-            result.UserId.Should().Be(expected.UserId);
-            result.CorrelationId.Should().Be(expected.CorrelationId);
-            result.DateTime.Should().Be(expected.DateTime);
-            result.AggregateId.Should().Be(expected.AggregateId);
-            result.AggregateType.Should().Be(expected.AggregateType);
-            return result;
-        }
-
-        protected virtual T CheckMessageStateValues(T message, IDictionary<string, object> values)
-        {
-            message.MessageId.Should().Be((Guid)values[nameof(IMessage.MessageId)]);
-            message.UserId.Should().Be((string)values[nameof(IMessage.UserId)]);
-            message.CorrelationId.Should().Be((Guid)values[nameof(IMessage.CorrelationId)]);
-            message.DateTime.Should().Be((DateTimeOffset)values[nameof(IMessage.DateTime)]);
-            message.AggregateId.Should().Be((string)values[nameof(IMessage.AggregateId)]);
-            message.AggregateType.Should().Be((string)values[nameof(IMessage.AggregateType)]);
-            return message;
-        }
-
-        protected abstract IEnumerable<T> Create(IDictionary<string, object> values);
-
-        protected IEnumerable<T> Create()
-            => Create(GetTestValues());
-
-        protected virtual Dictionary<string, object> GetTestValues()
-        {
-            return new Dictionary<string, object> {
-                { nameof(IMessage.AggregateType), "agType" },
-                { nameof(IMessage.AggregateId), "aggreg ID" },
-                { nameof(IMessage.UserId), "My user" },
-                { nameof(IMessage.CorrelationId), Guid.NewGuid() },
-                { nameof(IMessage.MessageId), Guid.NewGuid() },
-                { nameof(IMessage.DateTime), DateTimeOffset.Now }
-            };
-        }
-
-        [Theory]
-        [InlineData("agType", "agId", "UsrId")]
-        [InlineData("agType", "", "UsrId")]
-        [InlineData("agType", "      ", "UsrId")]
-        [InlineData("agType", null, "UsrId")]
-        public void CheckMessageState(string aggregateType, string aggregateId, string userId)
-        {
-            var testValues = new Dictionary<string, object> {
-                { nameof(IMessage.AggregateType), aggregateType},
-                { nameof(IMessage.AggregateId), aggregateId},
-                { nameof(IMessage.UserId), userId },
-                { nameof(IMessage.CorrelationId), Guid.NewGuid() },
-                { nameof(IMessage.MessageId), Guid.NewGuid() },
-                { nameof(IMessage.DateTime), DateTimeOffset.Now } };
-            foreach (T message in Create(GetTestValues()))
-            {
-                CheckMessageStateValues(message, testValues);
-            }
+            MessageFixture = messageFixture;
         }
 
         [Fact]
-        public void EmptyMessageIdShouldThrowException()
-            => Invoking(() =>
-                {
-                    Dictionary<string, object> values = GetTestValues();
-                    values[nameof(IMessage.MessageId)] = Guid.Empty;
-                    Create(values);
-                })
+        public void CreateMessage_EmptyMessageIdShouldThrowException()
+            => Invoking(() => new FakeMessage("Aggr. Type", "Aggr. Id", "User Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
         [Fact]
-        public void EmptyCorrelationIdShouldThrowException()
-            => Invoking(() =>
-            {
-                Dictionary<string, object> values = GetTestValues();
-                values[nameof(IMessage.CorrelationId)] = Guid.Empty;
-                Create(values);
-            })
+        public void CreateMessage_DefaultMessageShouldHaveAMessageId()
+            => new FakeMessage().MessageId
+                .Should()
+                .NotBe(Guid.Empty);
+
+        [Fact]
+        public void CreateMessage_DefaultMessageShouldHaveACorrelationId()
+            => new FakeMessage().CorrelationId
+                .Should()
+                .NotBe(Guid.Empty);
+
+        [Fact]
+        public void CreateMessage_EmptyCorrelationIdShouldThrowException()
+            => Invoking(() => new FakeMessage("Aggr. Type", "Aggr. Id", "User Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
@@ -129,56 +80,24 @@ namespace ExtenFlow.Messages.AbstractionsTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("                      ")]
-        public void UndefinedUserIdShouldThrowException(string userId)
-            => Invoking(() =>
-            {
-                Dictionary<string, object> values = GetTestValues();
-                values[nameof(IMessage.UserId)] = userId;
-                Create(values);
-            })
+        public void CreateMessage_UndefinedUserIdShouldThrowException(string userId)
+            => Invoking(() => new FakeMessage("Aggr. Type", "Aggr. Id", userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
-        [Fact]
-        public void CheckNewtonSoftJsonSerializeAndDesiarializeMessage()
-        {
-            foreach (T message in Create())
-            {
-                CheckMessageNewtonSoftSerialization(message);
-            }
-        }
+        [Theory]
+        [ClassData(typeof(MessageTestData))]
+        public void NewtonsoftJsonSerializeMessage_Check(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => MessageFixture.CheckMessageNewtonSoftSerialization(new FakeMessage(aggregateType, aggregateId, userId, correlationId, messageId, dateTime));
 
-        [Fact]
-        public void CheckJsonSerializeAndDesiarializeMessage()
-        {
-            foreach (T message in Create())
-            {
-                CheckMessageJsonSerialization(message);
-            }
-        }
-    }
+        [Theory]
+        [ClassData(typeof(MessageTestData))]
+        public void DotNetJsonSerializeMessage_Check(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => MessageFixture.CheckMessageJsonSerialization(new FakeMessage(aggregateType, aggregateId, userId, correlationId, messageId, dateTime));
 
-    public class MessageTest : MessageBaseTest<TestMessage>
-    {
-        protected override IEnumerable<TestMessage> Create(IDictionary<string, object> values)
-        {
-            var message = new TestMessage();
-            message.AggregateType = (string)values[nameof(IMessage.AggregateType)];
-            message.AggregateId = (string)values[nameof(IMessage.AggregateId)];
-            message.UserId = (string)values[nameof(IMessage.UserId)];
-            message.CorrelationId = (Guid)values[nameof(IMessage.CorrelationId)];
-            message.MessageId = (Guid)values[nameof(IMessage.MessageId)];
-            message.DateTime = (DateTimeOffset)values[nameof(IMessage.DateTime)];
-
-            return new TestMessage[]{
-                new TestMessage(
-                    (string)values[nameof(IMessage.AggregateType)],
-                    (string)values[nameof(IMessage.AggregateId)],
-                    (string)values[nameof(IMessage.UserId)],
-                    (Guid)values[nameof(IMessage.CorrelationId)],
-                    (Guid)values[nameof(IMessage.MessageId)],
-                    (DateTimeOffset)values[nameof(IMessage.DateTime)]
-                ) };
-        }
+        [Theory]
+        [ClassData(typeof(MessageTestData))]
+        public void CreateMessage_CheckState(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => MessageFixture.CheckMessageState(new FakeMessage(aggregateType, aggregateId, userId, correlationId, messageId, dateTime), aggregateType, aggregateId, userId, correlationId, messageId, dateTime);
     }
 }

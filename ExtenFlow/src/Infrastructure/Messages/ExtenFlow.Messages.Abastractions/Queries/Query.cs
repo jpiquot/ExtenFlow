@@ -7,7 +7,7 @@ namespace ExtenFlow.Messages
 {
     public abstract class Query<T> : Request, IQuery<T>
     {
-        [Obsolete("Can only be used by serializers", true)]
+        [Obsolete("Can only be used by serializers")]
         protected Query()
         {
         }

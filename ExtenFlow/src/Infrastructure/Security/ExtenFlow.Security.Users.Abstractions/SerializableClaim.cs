@@ -25,7 +25,9 @@ namespace ExtenFlow.Security.Users
         /// <summary>
         /// Gets or sets the claim properties.
         /// </summary>
+#pragma warning disable CA1819 // Properties should not return arrays
         public KeyValuePair<string?, string?>[]? Properties { get; set; }
+#pragma warning restore CA1819 // Properties should not return arrays
 
         /// <summary>
         /// Gets or sets the claim type.

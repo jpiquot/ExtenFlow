@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -16,6 +17,8 @@ namespace ExtenFlow.Security.Users
         /// <returns>A list of <see cref="SerializableClaim"/>.</returns>
         public static IEnumerable<SerializableClaim> GetSerializableClaims(this ClaimsPrincipal principal)
         {
+            _ = principal ?? throw new ArgumentNullException(nameof(principal));
+
             return principal.Claims.Select(c => new SerializableClaim
             {
                 Subject = c.Subject.Name,

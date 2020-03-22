@@ -39,7 +39,7 @@ namespace ExtenFlow.Security.Users.Queries
 
         public string Password { get; [Obsolete]set; }
 #pragma warning disable CS8603 // Possible null reference return.
-        public string aggregateId => AggregateId;
+        public string UserName => AggregateId;
 #pragma warning restore CS8603 // Possible null reference return.
     }
 }

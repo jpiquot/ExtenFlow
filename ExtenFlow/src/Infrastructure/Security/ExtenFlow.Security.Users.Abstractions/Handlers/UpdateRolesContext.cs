@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+#pragma warning disable CA1819 // Properties should not return arrays
+
 namespace ExtenFlow.Security.Users.Handlers
 {
     /// <summary>
@@ -40,11 +42,11 @@ namespace ExtenFlow.Security.Users.Handlers
         /// <summary>
         /// Gets the roles to be added to the user roles.
         /// </summary>
-        public string[] RolesToAdd { get; set; } = new string[0];
+        public string[] RolesToAdd { get; set; } = System.Array.Empty<string>();
 
         /// <summary>
         /// Gets the roles to be removed from the user roles.
         /// </summary>
-        public string[] RolesToRemove { get; set; } = new string[0];
+        public string[] RolesToRemove { get; set; } = System.Array.Empty<string>();
     }
 }

@@ -7,7 +7,7 @@ namespace ExtenFlow.Messages
 {
     public abstract class Command : Request, ICommand
     {
-        [Obsolete("Can only be used by serializers", true)]
+        [Obsolete("Can only be used by serializers")]
         protected Command()
         {
         }

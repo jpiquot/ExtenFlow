@@ -11,7 +11,7 @@ namespace ExtenFlow.Security.Users.Queries
     public class GetAuthenticatedClaimUser : UserQuery<IUser>
     {
         [Obsolete("Can only be used by serializers", true)]
-        protected GetAuthenticatedClaimUser()
+        public GetAuthenticatedClaimUser()
         {
             Claim = new ClaimsPrincipal();
         }

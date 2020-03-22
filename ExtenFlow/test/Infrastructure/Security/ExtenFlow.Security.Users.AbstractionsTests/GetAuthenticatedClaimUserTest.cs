@@ -25,9 +25,8 @@ namespace ExtenFlow.Security.Users.AbstractionsTests
             var correlationId = (Guid)values[nameof(IMessage.CorrelationId)];
             var messageId = (Guid)values[nameof(IMessage.MessageId)];
             var dateTime = (DateTimeOffset)values[nameof(IMessage.DateTime)];
+
             var list = new GetAuthenticatedClaimUser[]{
-                new GetAuthenticatedClaimUser(claim),
-                new GetAuthenticatedClaimUser(claim, correlationId),
                 new GetAuthenticatedClaimUser(claim, correlationId, messageId, dateTime)
             };
             return list;
