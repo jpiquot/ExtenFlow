@@ -24,8 +24,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
     public class CommandTest : CommandBaseTest<TestCommand>
     {
-        protected override TestCommand Create(string aggregateType, string aggregateId, string userId, Guid messageId, Guid correlationId, DateTimeOffset dateTime)
-           => new TestCommand(aggregateType, aggregateId, userId, messageId, correlationId, dateTime);
+        protected override TestCommand Create(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+           => new TestCommand(aggregateType, aggregateId, userId, correlationId, messageId, dateTime);
 
         protected override TestCommand Create()
             => new TestCommand("Agtype", "aggreID", "My user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);

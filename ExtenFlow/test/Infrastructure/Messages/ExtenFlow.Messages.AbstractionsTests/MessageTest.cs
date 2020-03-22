@@ -43,11 +43,11 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         protected T CheckMessageStateAreEqual(T expected, T result)
         {
-            CheckMessageStateValues(result, expected.AggregateType, expected.AggregateId, expected.UserId, expected.MessageId, expected.CorrelationId, expected.DateTime);
+            CheckMessageStateValues(result, expected.AggregateType, expected.AggregateId, expected.UserId, expected.CorrelationId, expected.MessageId, expected.DateTime);
             return result;
         }
 
-        protected virtual T CheckMessageStateValues(T message, string aggregateType, string userId, string aggregateId, Guid messageId, Guid correlationId, DateTimeOffset dateTime)
+        protected virtual T CheckMessageStateValues(T message, string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
         {
             message.MessageId.Should().Be(messageId);
             message.UserId.Should().Be(userId);
@@ -58,7 +58,7 @@ namespace ExtenFlow.Messages.AbstractionsTests
             return message;
         }
 
-        protected abstract T Create(string aggregateType, string aggregateId, string userId, Guid messageId, Guid correlationId, DateTimeOffset dateTime);
+        protected abstract T Create(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime);
 
         protected abstract T Create();
 
@@ -72,8 +72,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
             var messageId = Guid.NewGuid();
             var correlationId = Guid.NewGuid();
             DateTimeOffset dateTime = DateTimeOffset.Now;
-            T message = Create(aggregateType, aggregateId, userId, messageId, correlationId, dateTime);
-            CheckMessageStateValues(message, aggregateType, aggregateId, userId, messageId, correlationId, dateTime);
+            T message = Create(aggregateType, aggregateId, userId, correlationId, messageId, dateTime);
+            CheckMessageStateValues(message, aggregateType, aggregateId, userId, correlationId, messageId, dateTime);
         }
 
         [Fact]
@@ -108,8 +108,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
     public class MessageTest : MessageBaseTest<TestMessage>
     {
-        protected override TestMessage Create(string aggregateType, string aggregateId, string userId, Guid messageId, Guid correlationId, DateTimeOffset dateTime)
-            => new TestMessage(aggregateType, aggregateId, userId, messageId, correlationId, dateTime);
+        protected override TestMessage Create(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => new TestMessage(aggregateType, aggregateId, userId, correlationId, messageId, dateTime);
 
         protected override TestMessage Create()
             => new TestMessage("Agtype", "aggreID", "My user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);

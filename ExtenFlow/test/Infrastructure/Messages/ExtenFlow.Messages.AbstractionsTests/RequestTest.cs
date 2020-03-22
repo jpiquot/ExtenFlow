@@ -24,8 +24,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
     public class RequestTest : RequestBaseTest<TestRequest>
     {
-        protected override TestRequest Create(string aggregateType, string aggregateId, string userId, Guid messageId, Guid correlationId, DateTimeOffset dateTime)
-           => new TestRequest(aggregateType, aggregateId, userId, messageId, correlationId, dateTime);
+        protected override TestRequest Create(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+           => new TestRequest(aggregateType, aggregateId, userId, correlationId, messageId, dateTime);
 
         protected override TestRequest Create()
             => new TestRequest("Agtype", "aggreID", "My user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);
