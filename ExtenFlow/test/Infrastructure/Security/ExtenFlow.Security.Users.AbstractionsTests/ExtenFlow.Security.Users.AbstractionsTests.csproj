@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\src\Infrastructure\Security\ExtenFlow.Security.Users.Abstractions\ExtenFlow.Security.Users.Abstractions.csproj" />
+		<ProjectReference Include="..\..\Messages\ExtenFlow.Messages.AbstractionsTests\ExtenFlow.Messages.AbstractionsTests.csproj" />
+	</ItemGroup>
+</Project>

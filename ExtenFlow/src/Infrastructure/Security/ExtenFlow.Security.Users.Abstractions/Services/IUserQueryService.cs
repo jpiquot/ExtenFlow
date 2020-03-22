@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
 
-using ExtenFlow.Security.Users.Abstractions.Queries;
+using ExtenFlow.Security.Users.Queries;
 
 namespace ExtenFlow.Security.Users.Services
 {

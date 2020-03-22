@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 
 using Newtonsoft.Json;
+
+#pragma warning disable CS0612 // Type or member is obsolete
 
 namespace ExtenFlow.Messages.AbstractionsTests
 {
@@ -24,10 +27,25 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
     public class RequestTest : RequestBaseTest<TestRequest>
     {
-        protected override TestRequest Create(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-           => new TestRequest(aggregateType, aggregateId, userId, correlationId, messageId, dateTime);
+        protected override IEnumerable<TestRequest> Create(IDictionary<string, object> values)
+        {
+            var message = new TestRequest();
+            message.AggregateType = (string)values[nameof(IMessage.AggregateType)];
+            message.AggregateId = (string)values[nameof(IMessage.AggregateId)];
+            message.UserId = (string)values[nameof(IMessage.UserId)];
+            message.CorrelationId = (Guid)values[nameof(IMessage.CorrelationId)];
+            message.MessageId = (Guid)values[nameof(IMessage.MessageId)];
+            message.DateTime = (DateTimeOffset)values[nameof(IMessage.DateTime)];
 
-        protected override TestRequest Create()
-            => new TestRequest("Agtype", "aggreID", "My user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);
+            return new TestRequest[]{
+                new TestRequest(
+                    (string)values[nameof(IMessage.AggregateType)],
+                    (string)values[nameof(IMessage.AggregateId)],
+                    (string)values[nameof(IMessage.UserId)],
+                    (Guid)values[nameof(IMessage.CorrelationId)],
+                    (Guid)values[nameof(IMessage.MessageId)],
+                    (DateTimeOffset)values[nameof(IMessage.DateTime)]
+                ) };
+        }
     }
 }
