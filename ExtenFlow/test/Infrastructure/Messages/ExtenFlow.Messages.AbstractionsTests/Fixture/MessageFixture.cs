@@ -1,5 +1,6 @@
 using System;
-
+using System.Collections;
+using System.Collections.Generic;
 using FluentAssertions;
 
 using Newtonsoft.Json;
@@ -45,5 +46,21 @@ namespace ExtenFlow.Messages.AbstractionsTests
             result.AggregateId.Should().Be(aggregateId);
             result.AggregateType.Should().Be(aggregateType);
         }
+    }
+
+    public class MessageTestData : IEnumerable<object[]>
+    {
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new object[] { "Aggr. Type", "Aggr. Id", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. Type", "Aggr. Id", null, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. Type", "Aggr. Id", "", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. Type", "Aggr. Id", "      ", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. Type", null, "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. Type", "", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. Type", "             ", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

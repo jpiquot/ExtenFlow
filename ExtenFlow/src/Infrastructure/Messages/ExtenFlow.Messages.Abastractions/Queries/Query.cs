@@ -12,7 +12,7 @@ namespace ExtenFlow.Messages
         {
         }
 
-        protected Query(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
+        protected Query(string aggregateType, string aggregateId, string? userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
         {
         }
     }

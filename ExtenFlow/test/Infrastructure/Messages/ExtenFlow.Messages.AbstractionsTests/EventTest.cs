@@ -1,50 +1,86 @@
 using System;
-using System.Collections.Generic;
+
+using FluentAssertions;
 
 using Newtonsoft.Json;
+
+using Xunit;
+
+using static FluentAssertions.FluentActions;
 
 #pragma warning disable CS0612 // Type or member is obsolete
 
 namespace ExtenFlow.Messages.AbstractionsTests
 {
-    public class TestEvent : Event
+    public class FakeEvent : Event
     {
         [Obsolete]
-        public TestEvent()
+        public FakeEvent()
         {
         }
 
         [JsonConstructor]
-        public TestEvent(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
+        public FakeEvent(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
         {
         }
     }
 
-    public abstract class EventBaseTest<T> : MessageBaseTest<T> where T : IEvent
+    public class EventTest : IClassFixture<EventFixture<FakeEvent>>
     {
-    }
+        private EventFixture<FakeEvent> MessageFixture { get; }
 
-    public class EventTest : EventBaseTest<TestEvent>
-    {
-        protected override IEnumerable<TestEvent> Create(IDictionary<string, object> values)
+        public EventTest(EventFixture<FakeEvent> messageFixture)
         {
-            var message = new TestEvent();
-            message.AggregateType = (string)values[nameof(IMessage.AggregateType)];
-            message.AggregateId = (string)values[nameof(IMessage.AggregateId)];
-            message.UserId = (string)values[nameof(IMessage.UserId)];
-            message.CorrelationId = (Guid)values[nameof(IMessage.CorrelationId)];
-            message.MessageId = (Guid)values[nameof(IMessage.MessageId)];
-            message.DateTime = (DateTimeOffset)values[nameof(IMessage.DateTime)];
-
-            return new TestEvent[]{
-                new TestEvent(
-                    (string)values[nameof(IMessage.AggregateType)],
-                    (string)values[nameof(IMessage.AggregateId)],
-                    (string)values[nameof(IMessage.UserId)],
-                    (Guid)values[nameof(IMessage.CorrelationId)],
-                    (Guid)values[nameof(IMessage.MessageId)],
-                    (DateTimeOffset)values[nameof(IMessage.DateTime)]
-                ) };
+            MessageFixture = messageFixture;
         }
+
+        [Fact]
+        public void CreateEvent_EmptyMessageIdShouldThrowException()
+            => Invoking(() => new FakeEvent("Aggr. Type", "Aggr. Id", "User Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
+                .Should()
+                .Throw<ArgumentNullException>();
+
+        [Fact]
+        public void CreateEvent_DefaultMessageShouldHaveAMessageId()
+            => new FakeEvent().MessageId
+                .Should()
+                .NotBe(Guid.Empty);
+
+        [Fact]
+        public void CreateEvent_DefaultMessageShouldHaveACorrelationId()
+            => new FakeEvent().CorrelationId
+                .Should()
+                .NotBe(Guid.Empty);
+
+        [Fact]
+        public void CreateEvent_EmptyCorrelationIdShouldThrowException()
+            => Invoking(() => new FakeEvent("Aggr. Type", "Aggr. Id", "User Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
+                .Should()
+                .Throw<ArgumentNullException>();
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("                      ")]
+        public void CreateEvent_UndefinedUserIdShouldThrowException(string userId)
+            => Invoking(() => new FakeEvent("Aggr. Type", "Aggr. Id", userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now))
+                .Should()
+                .Throw<ArgumentNullException>();
+
+        [Theory]
+        [ClassData(typeof(MessageTestData))]
+        public void NewtonsoftJsonSerializeMessage_Check(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => MessageFixture.CheckMessageNewtonSoftSerialization(new FakeEvent(aggregateType, aggregateId, userId, correlationId, messageId, dateTime));
+
+        [Theory]
+        [ClassData(typeof(MessageTestData))]
+        public void DotNetJsonSerializeMessage_Check(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => MessageFixture.CheckMessageJsonSerialization(new FakeEvent(aggregateType, aggregateId, userId, correlationId, messageId, dateTime));
+
+        [Theory]
+        [ClassData(typeof(MessageTestData))]
+        public void CreateEvent_CheckState(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => MessageFixture.CheckMessageState(new FakeEvent(aggregateType, aggregateId, userId, correlationId, messageId, dateTime), aggregateType, aggregateId, userId, correlationId, messageId, dateTime);
     }
 }

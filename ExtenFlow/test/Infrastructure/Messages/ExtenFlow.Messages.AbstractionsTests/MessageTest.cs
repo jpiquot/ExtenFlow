@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 using FluentAssertions;
 
@@ -25,22 +23,6 @@ namespace ExtenFlow.Messages.AbstractionsTests
         public FakeMessage(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
         {
         }
-    }
-
-    public class MessageTestData : IEnumerable<object[]>
-    {
-        public IEnumerator<object[]> GetEnumerator()
-        {
-            yield return new object[] { "Aggr. Type", "Aggr. Id", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
-            yield return new object[] { "Aggr. Type", "Aggr. Id", null, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
-            yield return new object[] { "Aggr. Type", "Aggr. Id", "", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
-            yield return new object[] { "Aggr. Type", "Aggr. Id", "      ", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
-            yield return new object[] { "Aggr. Type", null, "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
-            yield return new object[] { "Aggr. Type", "", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
-            yield return new object[] { "Aggr. Type", "             ", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
     public class MessageTest : IClassFixture<MessageFixture<FakeMessage>>

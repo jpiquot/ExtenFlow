@@ -15,16 +15,16 @@ namespace ExtenFlow.Security.Users.Queries
             Password = string.Empty;
         }
 
-        public GetAuthenticatedUser(string aggregateId, string password) : this(aggregateId, password, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        public GetAuthenticatedUser(string aggregateId, string password) : this(aggregateId, password, null, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
         {
         }
 
-        public GetAuthenticatedUser(string aggregateId, string password, Guid correlationId) : this(aggregateId, password, correlationId, Guid.NewGuid(), DateTimeOffset.Now)
+        public GetAuthenticatedUser(string aggregateId, string password, Guid correlationId) : this(aggregateId, password, null, correlationId, Guid.NewGuid(), DateTimeOffset.Now)
         {
         }
 
         [JsonConstructor]
-        public GetAuthenticatedUser(string aggregateId, string password, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateId, aggregateId, correlationId, messageId, dateTime)
+        public GetAuthenticatedUser(string aggregateId, string password, string? userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateId, userId, correlationId, messageId, dateTime)
         {
             if (string.IsNullOrWhiteSpace(password))
             {

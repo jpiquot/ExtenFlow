@@ -1,57 +1,88 @@
 using System;
-using System.Collections.Generic;
 
 using ExtenFlow.Security.Users.Queries;
 
+using FluentAssertions;
+
 using Newtonsoft.Json;
+
+using Xunit;
+
+using static FluentAssertions.FluentActions;
 
 #pragma warning disable CS0612 // Type or member is obsolete
 
 namespace ExtenFlow.Messages.AbstractionsTests
 {
-    public class TestUserQuery : UserQuery<string>
+    public class FakeUserQuery : UserQuery<string>
     {
         [Obsolete]
-        public TestUserQuery()
+        public FakeUserQuery()
         {
         }
 
         [JsonConstructor]
-        public TestUserQuery(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+        public FakeUserQuery(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
             : base(aggregateId, userId, correlationId, messageId, dateTime)
         {
         }
     }
 
-    public abstract class UserQueryBaseTest<TR, TQ> : QueryBaseTest<TR, TQ> where TQ : UserQuery<TR>
+    public class UserQueryTest : IClassFixture<UserQueryFixture<string, FakeUserQuery>>
     {
-        protected override Dictionary<string, object> GetTestValues()
-        {
-            var values = base.GetTestValues();
-            values[nameof(IMessage.AggregateType)] = "User";
-            return values;
-        }
-    }
+        private UserQueryFixture<string, FakeUserQuery> UserQueryFixture { get; }
 
-    public class QueryTest : QueryBaseTest<string, TestUserQuery>
-    {
-        protected override IEnumerable<TestUserQuery> Create(IDictionary<string, object> values)
+        public UserQueryTest(UserQueryFixture<string, FakeUserQuery> userQueryFixture)
         {
-            var message = new TestUserQuery();
-            message.AggregateId = (string)values[nameof(IMessage.AggregateId)];
-            message.UserId = (string)values[nameof(IMessage.UserId)];
-            message.CorrelationId = (Guid)values[nameof(IMessage.CorrelationId)];
-            message.MessageId = (Guid)values[nameof(IMessage.MessageId)];
-            message.DateTime = (DateTimeOffset)values[nameof(IMessage.DateTime)];
-
-            return new TestUserQuery[]{message,
-                new TestUserQuery(
-                    (string)values[nameof(IMessage.AggregateId)],
-                    (string)values[nameof(IMessage.UserId)],
-                    (Guid)values[nameof(IMessage.CorrelationId)],
-                    (Guid)values[nameof(IMessage.MessageId)],
-                    (DateTimeOffset)values[nameof(IMessage.DateTime)]
-                ) };
+            UserQueryFixture = userQueryFixture;
         }
+
+        [Fact]
+        public void CreateUserQuery_EmptyMessageIdShouldThrowException()
+            => Invoking(() => new FakeUserQuery("Aggr. Id", "User Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
+                .Should()
+                .Throw<ArgumentNullException>();
+
+        [Fact]
+        public void CreateUserQuery_DefaultMessageShouldHaveAMessageId()
+            => new FakeUserQuery().MessageId
+                .Should()
+                .NotBe(Guid.Empty);
+
+        [Fact]
+        public void CreateUserQuery_DefaultMessageShouldHaveACorrelationId()
+            => new FakeUserQuery().CorrelationId
+                .Should()
+                .NotBe(Guid.Empty);
+
+        [Fact]
+        public void CreateUserQuery_EmptyCorrelationIdShouldThrowException()
+            => Invoking(() => new FakeUserQuery("Aggr. Id", "User Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
+                .Should()
+                .Throw<ArgumentNullException>();
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("                      ")]
+        public void CreateUserQuery_UndefinedUserIdShouldThrowException(string userId)
+            => Invoking(() => new FakeUserQuery("Aggr. Id", userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now))
+                .Should()
+                .Throw<ArgumentNullException>();
+
+        [Theory]
+        [ClassData(typeof(UserQueryTestData))]
+        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => UserQueryFixture.CheckMessageNewtonSoftSerialization(new FakeUserQuery(aggregateId, userId, correlationId, messageId, dateTime));
+
+        [Theory]
+        [ClassData(typeof(UserQueryTestData))]
+        public void DotNetJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => UserQueryFixture.CheckMessageJsonSerialization(new FakeUserQuery(aggregateId, userId, correlationId, messageId, dateTime));
+
+        [Theory]
+        [ClassData(typeof(UserQueryTestData))]
+        public void CreateUserQuery_CheckState(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => UserQueryFixture.CheckMessageState(new FakeUserQuery(aggregateId, userId, correlationId, messageId, dateTime), "User", aggregateId, userId, correlationId, messageId, dateTime);
     }
 }
