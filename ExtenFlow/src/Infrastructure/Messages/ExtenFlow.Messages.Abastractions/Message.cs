@@ -11,9 +11,9 @@ namespace ExtenFlow.Messages
         protected Message()
         {
             UserId = string.Empty;
-            CorrelationId = Guid.Empty;
+            CorrelationId = Guid.NewGuid();
             DateTime = DateTimeOffset.Now;
-            MessageId = Guid.Empty;
+            MessageId = Guid.NewGuid();
             AggregateType = string.Empty;
             AggregateId = null;
         }

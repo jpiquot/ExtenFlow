@@ -14,16 +14,16 @@ namespace ExtenFlow.Security.Users.Queries
         {
         }
 
-        public GetUser(string aggregateId) : this(aggregateId, null, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        public GetUser(string aggregateId, string userId) : this(aggregateId, userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
         {
         }
 
-        public GetUser(string aggregateId, Guid correlationId) : this(aggregateId, null, correlationId, Guid.NewGuid(), DateTimeOffset.Now)
+        public GetUser(string aggregateId, string userId, Guid correlationId) : this(aggregateId, userId, correlationId, Guid.NewGuid(), DateTimeOffset.Now)
         {
         }
 
         [JsonConstructor]
-        public GetUser(string aggregateId, string? userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateId, userId, correlationId, messageId, dateTime)
+        public GetUser(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateId, userId, correlationId, messageId, dateTime)
         {
             if (string.IsNullOrWhiteSpace(aggregateId))
             {

@@ -12,7 +12,7 @@ namespace ExtenFlow.Security.Users.Queries
             AggregateType = "User";
         }
 
-        protected UserQuery(string aggregateId, string? userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+        protected UserQuery(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
             : base("User", aggregateId, userId, correlationId, messageId, dateTime)
         {
         }

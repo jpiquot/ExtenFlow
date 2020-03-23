@@ -19,7 +19,7 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         public GetUserTest(UserQueryFixture<IUser, GetUser> getUserFixture)
         {
-            GetUserFixture = GetUserFixture;
+            GetUserFixture = getUserFixture;
         }
 
         [Fact]
@@ -30,13 +30,13 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Fact]
         public void CreateGetUser_DefaultMessageShouldHaveAMessageId()
-            => new GetUser("aggr id").MessageId
+            => new GetUser("aggr id", "User Id").MessageId
                 .Should()
                 .NotBe(Guid.Empty);
 
         [Fact]
         public void CreateGetUser_DefaultMessageShouldHaveACorrelationId()
-            => new GetUser("aggr id").CorrelationId
+            => new GetUser("aggr id", "User Id").CorrelationId
                 .Should()
                 .NotBe(Guid.Empty);
 

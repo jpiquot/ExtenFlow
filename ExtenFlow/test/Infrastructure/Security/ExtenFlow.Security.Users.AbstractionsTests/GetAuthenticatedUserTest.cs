@@ -78,12 +78,7 @@ namespace ExtenFlow.Messages.AbstractionsTests
         public IEnumerator<object[]> GetEnumerator()
         {
             yield return new object[] { "Aggr. Id", "passWord @ 123", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
-            yield return new object[] { "Aggr. Id", "paSSword 123", null, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
-            yield return new object[] { "Aggr. Id", "Password 123", "", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
-            yield return new object[] { "Aggr. Id", "passworD 123", "      ", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
-            yield return new object[] { null, "passworD 123", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
-            yield return new object[] { "", "Password 123", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
-            yield return new object[] { "             ", "password @ 123", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. ID", "passWord123/%$", "USER", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

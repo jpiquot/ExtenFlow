@@ -14,7 +14,7 @@ namespace ExtenFlow.Messages
             AggregateType = string.Empty;
         }
 
-        protected Request(string aggregateType, string? aggregateId, string? userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
+        protected Request(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
         {
         }
     }
