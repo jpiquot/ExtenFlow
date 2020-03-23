@@ -8,6 +8,6 @@ namespace ExtenFlow.Security.Users
         /// <summary>
         /// Gets the user name.
         /// </summary>
-        string UserName { get; }
+        string Id { get; }
     }
 }

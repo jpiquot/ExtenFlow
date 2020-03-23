@@ -10,7 +10,9 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
-
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="3.1.2" />
+	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\ExtenFlow.Security.Users.Abstractions\ExtenFlow.Security.Users.Abstractions.csproj" />
 	</ItemGroup>
