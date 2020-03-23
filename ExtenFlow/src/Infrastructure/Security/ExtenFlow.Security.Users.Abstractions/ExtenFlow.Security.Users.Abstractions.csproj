@@ -6,10 +6,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Commands\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\Messages\ExtenFlow.Messages.Abastractions\ExtenFlow.Messages.Abastractions.csproj" />
 	</ItemGroup>
 	<ItemGroup>
