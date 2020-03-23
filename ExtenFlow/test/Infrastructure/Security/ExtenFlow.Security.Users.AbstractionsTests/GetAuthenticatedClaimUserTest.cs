@@ -1,44 +1,87 @@
-//using System;
-//using System.Collections.Generic;
-//using System.Security.Claims;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Security.Claims;
 
-//using ExtenFlow.Messages;
-//using ExtenFlow.Messages.AbstractionsTests;
-//using ExtenFlow.Security.Users.Queries;
+using ExtenFlow.Messages.AbstractionsTests;
+using ExtenFlow.Security.Users.Queries;
 
-//using FluentAssertions;
+using FluentAssertions;
 
-//namespace ExtenFlow.Security.Users.AbstractionsTests
-//{
-//    public class GetAuthenticatedClaimUserTest : UserQueryBaseTest<IUser, GetAuthenticatedClaimUser>
-//    {
-//        protected override Dictionary<string, object> GetTestValues()
-//        {
-//            var values = base.GetTestValues();
-//            values.Add(nameof(GetAuthenticatedClaimUser.Claim), GetUserPrincipal((string)values[nameof(IMessage.AggregateId)]));
-//            return values;
-//        }
+using Xunit;
 
-// protected override IEnumerable<GetAuthenticatedClaimUser> Create(IDictionary<string, object>
-// values) { var claim = (ClaimsPrincipal)values[nameof(GetAuthenticatedClaimUser.Claim)]; var
-// correlationId = (Guid)values[nameof(IMessage.CorrelationId)]; var messageId =
-// (Guid)values[nameof(IMessage.MessageId)]; var dateTime = (DateTimeOffset)values[nameof(IMessage.DateTime)];
+using static FluentAssertions.FluentActions;
 
-// var list = new GetAuthenticatedClaimUser[]{ new GetAuthenticatedClaimUser(claim, correlationId,
-// messageId, dateTime) }; return list; }
+namespace ExtenFlow.Security.Users.AbstractionsTests
+{
+    public class GetAuthenticatedClaimUserTest : IClassFixture<UserQueryFixture<IUser, GetAuthenticatedClaimUser>>
+    {
+        private UserQueryFixture<IUser, GetAuthenticatedClaimUser> GetAuthenticatedClaimUserFixture { get; }
 
-// protected override GetAuthenticatedClaimUser CheckMessageStateValues(GetAuthenticatedClaimUser
-// message, IDictionary<string, object> values) { base.CheckMessageStateValues(message, values);
-// message.Claim.Should().Be((ClaimsPrincipal)values[nameof(GetAuthenticatedClaimUser.Claim)]);
-// return message; }
+        public GetAuthenticatedClaimUserTest(UserQueryFixture<IUser, GetAuthenticatedClaimUser> getAuthenticatedClaimUserFixture)
+        {
+            GetAuthenticatedClaimUserFixture = getAuthenticatedClaimUserFixture;
+        }
 
-// private static ClaimsPrincipal GetUserPrincipal(string name) { var claims = new List<Claim> { new
-// Claim(ClaimTypes.Name, name, ClaimValueTypes.String, "Test") };
+        [Fact]
+        public void CreateGetAuthenticatedClaimUser_EmptyMessageIdShouldThrowException()
+            => Invoking(() => new GetAuthenticatedClaimUser(GetUserTestData.GetUserPrincipal("i am a user"), Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
+                .Should()
+                .Throw<ArgumentNullException>();
 
-// var userIdentity = new ClaimsIdentity(claims, "Passport");
+        [Fact]
+        public void CreateGetAuthenticatedClaimUser_DefaultMessageShouldHaveAMessageId()
+            => new GetAuthenticatedClaimUser(GetUserTestData.GetUserPrincipal("i am a user")).MessageId
+                .Should()
+                .NotBe(Guid.Empty);
 
-//            var userPrincipal = new ClaimsPrincipal(userIdentity);
-//            return userPrincipal;
-//        }
-//    }
-//}
+        [Fact]
+        public void CreateGetAuthenticatedClaimUser_DefaultMessageShouldHaveACorrelationId()
+            => new GetAuthenticatedClaimUser(GetUserTestData.GetUserPrincipal("i am a user")).CorrelationId
+                .Should()
+                .NotBe(Guid.Empty);
+
+        [Fact]
+        public void CreateGetAuthenticatedClaimUser_EmptyCorrelationIdShouldThrowException()
+            => Invoking(() => new GetAuthenticatedClaimUser(GetUserTestData.GetUserPrincipal("i am a user"), Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
+                .Should()
+                .Throw<ArgumentNullException>();
+
+        [Theory]
+        [ClassData(typeof(GetUserTestData))]
+        public void NewtonsoftJsonSerializeMessage_Check(ClaimsPrincipal principal, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => GetAuthenticatedClaimUserFixture.CheckMessageNewtonSoftSerialization(new GetAuthenticatedClaimUser(principal, correlationId, messageId, dateTime));
+
+        [Theory]
+        [ClassData(typeof(GetUserTestData))]
+        public void DotNetJsonSerializeMessage_Check(ClaimsPrincipal principal, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => GetAuthenticatedClaimUserFixture.CheckMessageJsonSerialization(new GetAuthenticatedClaimUser(principal, correlationId, messageId, dateTime));
+
+        [Theory]
+        [ClassData(typeof(GetUserTestData))]
+        public void CreateGetAuthenticatedClaimUser_CheckState(ClaimsPrincipal principal, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => GetAuthenticatedClaimUserFixture.CheckMessageState(new GetAuthenticatedClaimUser(principal, correlationId, messageId, dateTime), "User", principal.Identity.Name, principal.Identity.Name, correlationId, messageId, dateTime);
+    }
+
+    public class GetUserTestData : IEnumerable<object[]>
+    {
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new object[] { GetUserTestData.GetUserPrincipal("i am a user"), Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { GetUserTestData.GetUserPrincipal("I Am A User"), Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public static ClaimsPrincipal GetUserPrincipal(string name)
+        {
+            var claims = new List<Claim> { new
+ Claim(ClaimTypes.Name, name, ClaimValueTypes.String, "Test") };
+
+            var userIdentity = new ClaimsIdentity(claims, "Passport");
+
+            var userPrincipal = new ClaimsPrincipal(userIdentity);
+            return userPrincipal;
+        }
+    }
+}
