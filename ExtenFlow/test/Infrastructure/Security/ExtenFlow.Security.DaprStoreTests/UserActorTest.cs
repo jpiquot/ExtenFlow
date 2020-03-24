@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +9,8 @@ using ExtenFlow.Security.DaprStore.Actors;
 using ExtenFlow.Security.Users;
 
 using FluentAssertions;
+
+using Microsoft.AspNetCore.Identity;
 
 using Moq;
 
@@ -24,11 +25,10 @@ namespace ExtenFlow.Security.DaprStoreTests
         private UserActor CreateUserActor(IActorStateManager actorStateManager, string id)
         {
             var actorTypeInformation = ActorTypeInformation.Get(typeof(UserActor));
-            Func<ActorService, ActorId, UserActor> actorFactory
-                = (service, id) =>
+            UserActor actorFactory(ActorService service, ActorId id) =>
                 new UserActor(service, id, actorStateManager);
             var actorService = new ActorService(actorTypeInformation, actorFactory);
-            var actor = actorFactory.Invoke(actorService, new ActorId(id));
+            UserActor actor = actorFactory(actorService, new ActorId(id));
             return actor;
         }
 
@@ -42,10 +42,10 @@ namespace ExtenFlow.Security.DaprStoreTests
             var stateManager = new Mock<IActorStateManager>();
             var user = new User { Id = "testuser", UserName = "User name", NormalizedUserName = "username" };
             stateManager.Setup(manager => manager.SetStateAsync("User", user, It.IsAny<CancellationToken>())).Verifiable();
-            var testDemoActor = CreateUserActor(stateManager.Object, user.Id);
+            UserActor testDemoActor = CreateUserActor(stateManager.Object, user.Id);
             //Act
 
-            var result = await testDemoActor.Create(user);
+            IdentityResult result = await testDemoActor.Create(user);
             result.Succeeded.Should().Be(true);
 
             //Assert
@@ -57,7 +57,7 @@ namespace ExtenFlow.Security.DaprStoreTests
         {
             var stateManager = new Mock<IActorStateManager>();
             var user = new User { Id = "testuser", UserName = "User name", NormalizedUserName = "username" };
-            var testDemoActor = CreateUserActor(stateManager.Object, user.Id);
+            UserActor testDemoActor = CreateUserActor(stateManager.Object, user.Id);
             await Invoking(async () => await testDemoActor.GetUser())
                 .Should()
                 .ThrowAsync<KeyNotFoundException>();
@@ -71,7 +71,7 @@ namespace ExtenFlow.Security.DaprStoreTests
             stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(user))
                 .Verifiable();
-            var testDemoActor = CreateUserActor(stateManager.Object, user.Id);
+            UserActor testDemoActor = CreateUserActor(stateManager.Object, user.Id);
 
             // OnActivated is not called in test object. A read call needs to be done manually.
             await testDemoActor.Read();
@@ -91,12 +91,12 @@ namespace ExtenFlow.Security.DaprStoreTests
             var user = new User { Id = "testuser", UserName = "User name", NormalizedUserName = "username" };
             stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(user));
-            var testDemoActor = CreateUserActor(stateManager.Object, user.Id);
+            UserActor testDemoActor = CreateUserActor(stateManager.Object, user.Id);
 
             // OnActivated is not called in test object. A read call needs to be done manually.
             await testDemoActor.Read();
 
-            var result = await testDemoActor.Delete();
+            IdentityResult result = await testDemoActor.Delete();
             result.Succeeded.Should().Be(true);
 
             await Invoking(async () => await testDemoActor.GetUser())
@@ -114,12 +114,12 @@ namespace ExtenFlow.Security.DaprStoreTests
             stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(user));
             stateManager.Setup(manager => manager.SetStateAsync<User>("User", null, It.IsAny<CancellationToken>())).Verifiable();
-            var testDemoActor = CreateUserActor(stateManager.Object, user.Id);
+            UserActor testDemoActor = CreateUserActor(stateManager.Object, user.Id);
 
             // OnActivated is not called in test object. A read call needs to be done manually.
             await testDemoActor.Read();
 
-            var result = await testDemoActor.Delete();
+            IdentityResult result = await testDemoActor.Delete();
             result.Succeeded.Should().Be(true);
 
             stateManager.VerifyAll();
