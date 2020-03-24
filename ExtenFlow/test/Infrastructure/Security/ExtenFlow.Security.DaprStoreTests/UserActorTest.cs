@@ -33,10 +33,10 @@ namespace ExtenFlow.Security.DaprStoreTests
         }
 
         [Fact]
-        public void Constructor_Initialize() => CreateUserActor(new Mock<IActorStateManager>().Object, "test");
+        public void CreateUser_Initialized() => CreateUserActor(new Mock<IActorStateManager>().Object, "test");
 
         [Fact]
-        public async Task CreateUser_Expect_SetStateAsync()
+        public async Task CreateUser_ExpectSetStateAsync()
         {
             //Arrange
             var stateManager = new Mock<IActorStateManager>();
@@ -64,7 +64,7 @@ namespace ExtenFlow.Security.DaprStoreTests
         }
 
         [Fact]
-        public async Task GetUser_Expect_GetStateAsync()
+        public async Task GetUser_ExpectGetStateAsync()
         {
             var stateManager = new Mock<IActorStateManager>();
             var user = new User { Id = "testuser", UserName = "User name", NormalizedUserName = "username" };
@@ -78,6 +78,49 @@ namespace ExtenFlow.Security.DaprStoreTests
 
             User state = await testDemoActor.GetUser();
             state.Id.Should().Be(user.Id);
+            state.UserName.Should().Be(user.UserName);
+            state.NormalizedUserName.Should().Be(user.NormalizedUserName);
+
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task GetUserOnDeleteUser_ThrowsException()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var user = new User { Id = "testuser", UserName = "User name", NormalizedUserName = "username" };
+            stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(user));
+            var testDemoActor = CreateUserActor(stateManager.Object, user.Id);
+
+            // OnActivated is not called in test object. A read call needs to be done manually.
+            await testDemoActor.Read();
+
+            var result = await testDemoActor.Delete();
+            result.Succeeded.Should().Be(true);
+
+            await Invoking(async () => await testDemoActor.GetUser())
+                .Should()
+                .ThrowAsync<KeyNotFoundException>();
+
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task DeleteUser_ExpectSetStateAsync()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var user = new User { Id = "testuser", UserName = "User name", NormalizedUserName = "username" };
+            stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(user));
+            stateManager.Setup(manager => manager.SetStateAsync<User>("User", null, It.IsAny<CancellationToken>())).Verifiable();
+            var testDemoActor = CreateUserActor(stateManager.Object, user.Id);
+
+            // OnActivated is not called in test object. A read call needs to be done manually.
+            await testDemoActor.Read();
+
+            var result = await testDemoActor.Delete();
+            result.Succeeded.Should().Be(true);
 
             stateManager.VerifyAll();
         }
