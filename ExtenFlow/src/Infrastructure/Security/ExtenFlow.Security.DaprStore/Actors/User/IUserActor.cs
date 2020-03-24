@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 
 using Dapr.Actors;
-using Dapr.Actors.Runtime;
 
 using ExtenFlow.Security.Users;
 
@@ -9,9 +8,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Security.DaprStore.Actors
 {
-    public interface IUserActor : IActor, IRemindable
+    public interface IUserActor : IActor
     {
-        Task<string?> FindUserId();
+        Task<string> FindUserId();
 
         Task<string> GetUserName();
 

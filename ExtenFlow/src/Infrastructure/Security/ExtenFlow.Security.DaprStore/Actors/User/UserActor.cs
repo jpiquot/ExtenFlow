@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
-using Dapr.Actors.Client;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Security.Users;
@@ -13,11 +13,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Security.DaprStore.Actors
 {
-    public class UserActor : Actor, IUserActor
+    public class UserActor : Actor, IUserActor, IRemindable
     {
         private const string StateName = "User";
         private User? _state;
-        private IdentityErrorDescriber _errorDescriber;
+        private IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
 
         public User State => _state ?? throw new NullReferenceException(nameof(_state));
 
@@ -29,21 +29,14 @@ namespace ExtenFlow.Security.DaprStore.Actors
 
         public Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period) => throw new NotImplementedException();
 
-        public Task<string?> FindUserId()
-            => Task.FromResult(State?.Id);
-
         public Task<string> GetUserName()
             => Task.FromResult(State?.UserName);
 
+        public Task<string> FindUserId()
+             => Task.FromResult(_state?.Id);
+
         public Task<string> GetNormalizedUserName()
           => Task.FromResult(State?.NormalizedUserName);
-
-        public async Task SetNormalizedUserName(string normalizedName)
-        {
-            IUserNormalizedNameIndexActor actor = ActorProxy.Create<IUserNormalizedNameIndexActor>(new ActorId(normalizedName), nameof(UserNormalizedNameIndexActor));
-            await actor.Index(State.Id);
-            State.NormalizedUserName = normalizedName;
-        }
 
         public Task SetUserName(string userName)
         {
@@ -51,20 +44,25 @@ namespace ExtenFlow.Security.DaprStore.Actors
             return Task.CompletedTask;
         }
 
+        public Task SetNormalizedUserName(string normalizedName)
+        {
+            State.NormalizedUserName = (normalizedName ?? throw new NullReferenceException(nameof(_state)));
+            return Task.CompletedTask;
+        }
+
         public async Task<IdentityResult> Create(User user)
         {
             if (_state != null)
             {
-                return IdentityResult.Failed(new IdentityError[] { ErrorDescriber.DuplicateUserName(user.Id) });
+                throw new InvalidOperationException($"The user Id ({user.Id}, {_state.UserName}) already exist.");
             }
             if (user.Id != Id.GetId())
             {
-                return IdentityResult.Failed(new IdentityError[] { ErrorDescriber.(user.Id) });
                 throw new InvalidOperationException($"The user Id ({user.Id}) is not the same as the actor Id({Id.GetId()})");
             }
-            await IndexNormalizedName(user.Id);
             _state = user;
             await Save();
+            return IdentityResult.Success;
         }
 
         public async Task<IdentityResult> Update(User user)
@@ -77,41 +75,33 @@ namespace ExtenFlow.Security.DaprStore.Actors
             {
                 throw new InvalidOperationException($"The user Id ({user.Id}) is not the same as the actor Id({Id.GetId()})");
             }
-            await IndexNormalizedName(user.Id);
             _state = user;
             await Save();
+            return IdentityResult.Success;
         }
 
         private Task Save() => StateManager.SetStateAsync(StateName, _state);
 
-        private async Task Read() => _state = await StateManager.GetStateAsync<User?>(StateName);
-
-        private async Task IndexNormalizedName(string newNormalizedName)
-        {
-            if (string.IsNullOrWhiteSpace(newNormalizedName))
-            {
-                throw new ArgumentNullException(newNormalizedName);
-            }
-            if (_state?.NormalizedUserName != newNormalizedName)
-            {
-                if (_state != null)
-                {
-                    IUserNormalizedNameIndexActor oldIndex = ActorProxy.Create<IUserNormalizedNameIndexActor>(new ActorId(State.NormalizedUserName), nameof(UserNormalizedNameIndexActor));
-                    await oldIndex.Remove(State.Id);
-                }
-                IUserNormalizedNameIndexActor index = ActorProxy.Create<IUserNormalizedNameIndexActor>(new ActorId(newNormalizedName), nameof(UserNormalizedNameIndexActor));
-                await index.Index(State.Id);
-            }
-        }
+        // Public for test purposes
+        public async Task Read() => _state = await StateManager.GetStateAsync<User?>(StateName);
 
         public async Task<IdentityResult> Delete()
         {
-            IUserNormalizedNameIndexActor oldIndex = ActorProxy.Create<IUserNormalizedNameIndexActor>(new ActorId(State.NormalizedUserName), nameof(UserNormalizedNameIndexActor));
-            await oldIndex.Remove(State.Id);
+            if (_state == null)
+            {
+                throw new InvalidOperationException($"The user Id ({Id.GetId()}) already exist.");
+            }
             _state = null;
             await Save();
+            return IdentityResult.Success;
         }
 
-        public Task<User> GetUser() => Task.FromResult(State);
+        public Task<User> GetUser() => _state == null ? Task.FromException<User>(new KeyNotFoundException($"The user with Id='{Id.GetId()}' has not been created or has been deleted.")) : Task.FromResult(State);
+
+        protected override async Task OnActivateAsync()
+        {
+            await Read();
+            await base.OnActivateAsync();
+        }
     }
 }
