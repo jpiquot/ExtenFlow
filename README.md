@@ -1,37 +1,51 @@
-## Welcome to GitHub Pages
+## Welcome to ExtenFlow Enterprise Microservices
 
-You can use the [editor on GitHub](https://github.com/jpiquot/ExtenFlow/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+# Orchard Core 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+ExtenFlow consists of two distinct projects:
 
-### Markdown
+- __ExtenFlow Core Framework__: An application framework for building modular, distributed applications on ASP.NET Core.
+- __ExtenFlow Marketplace__: A Peer-to-peer marketplaces built on top of the ExtenFlow Core Framework.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+[![Join the chat at https://gitter.im/ExtenFlow/community](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ExtenFlow/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![BSD-3-Clause License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE.txt)
+[![Documentation](https://readthedocs.org/projects/extenflow/badge/)](https://docs.extenflow.net/)
 
-```markdown
-Syntax highlighted code block
 
-# Header 1
-## Header 2
-### Header 3
+## Build Status
 
-- Bulleted
-- List
+Stable (master): 
 
-1. Numbered
-2. List
+[![NuGet](https://img.shields.io/nuget/v/ExtenFlow.Messages.Abstractions.svg)](https://www.nuget.org/packages/ExtenFlow.Messages.Abstractions)
 
-**Bold** and _Italic_ and `Code` text
 
-[Link](url) and ![Image](src)
-```
+## Status
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+### 0.0.1 Alpha
 
-### Jekyll Themes
+The software can't be used. Features are under development.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/jpiquot/ExtenFlow/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+Here is a more detailed [roadmap](https://github.com/jpiquot/ExtenFlow/wiki/Roadmap).
 
-### Support or Contact
+## Getting Started
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+- Clone the repository using the command `git clone https://github.com/jpiquot/ExtenFlow.git` and checkout the `master` branch.
+
+### Command line
+
+- Install the latest version of the .NET Core SDK from this page <https://www.microsoft.com/net/download/core>
+- Install the latest version of the [Dapr](https://dapr.io/) distributed application runtime from this page <https://dapr.io/>
+- Next, navigate to `D:\ExtenFlow\ExtenFlow\src\` or wherever your folder is on the commandline in Administrator mode.
+- Call `dapr dotnet run`.
+- Then open the `http://localhost:5000` URL in your browser.
+
+### Visual Studio
+
+- Download Visual Studio 2019 (any edition) from https://www.visualstudio.com/downloads/
+- Open `ExtenFlow.sln` and wait for Visual Studio to restore all Nuget packages
+- Ensure `ExtenFlow.Marketplace` is the startup project and run it
+
+
+### Documentation
+
+The documentation can be accessed here: <https://docs.extenflow.net/>

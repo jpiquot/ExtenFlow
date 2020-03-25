@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Security.DaprStore.Actors
 {
-    public class UserActor : Actor, IUserActor, IRemindable
+    public class UserActor : Actor, IUserActor
     {
         private const string StateName = "User";
         private User? _state;
@@ -21,13 +21,9 @@ namespace ExtenFlow.Security.DaprStore.Actors
 
         public User State => _state ?? throw new NullReferenceException(nameof(_state));
 
-        public IdentityErrorDescriber ErrorDescriber { get => _errorDescriber ?? (_errorDescriber = new IdentityErrorDescriber()); }
-
         public UserActor(ActorService actorService, ActorId actorId, IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
         {
         }
-
-        public Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period) => throw new NotImplementedException();
 
         public Task<string> GetUserName()
             => Task.FromResult(State?.UserName);
@@ -40,14 +36,24 @@ namespace ExtenFlow.Security.DaprStore.Actors
 
         public Task SetUserName(string userName)
         {
-            State.UserName = (userName ?? throw new NullReferenceException(nameof(_state)));
-            return Task.CompletedTask;
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                throw new ArgumentNullException(userName);
+            }
+            State.UserName = userName;
+
+            return Save();
         }
 
         public Task SetNormalizedUserName(string normalizedName)
         {
-            State.NormalizedUserName = (normalizedName ?? throw new NullReferenceException(nameof(_state)));
-            return Task.CompletedTask;
+            if (string.IsNullOrWhiteSpace(normalizedName))
+            {
+                throw new ArgumentNullException(userName);
+            }
+            State.NormalizedUserName = normalizedName;
+
+            return Save();
         }
 
         public async Task<IdentityResult> Create(User user)
@@ -84,7 +90,7 @@ namespace ExtenFlow.Security.DaprStore.Actors
         {
             if (_state == null)
             {
-                throw new InvalidOperationException($"The user Id ({Id.GetId()}) already exist.");
+                throw new KeyNotFoundException($"The user Id ({Id.GetId()}) already exist.");
             }
             _state = null;
             await Save();

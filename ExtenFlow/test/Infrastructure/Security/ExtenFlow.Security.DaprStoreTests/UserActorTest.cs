@@ -38,22 +38,19 @@ namespace ExtenFlow.Security.DaprStoreTests
         }
 
         [Fact]
-        public void CreateUser_Initialized() => CreateUserActor(new Mock<IActorStateManager>().Object, "test");
+        public Task CreateUser_Initialized() => CreateUserActor(new Mock<IActorStateManager>().Object, "test");
 
         [Fact]
         public async Task CreateUser_ExpectSetStateAsync()
         {
-            //Arrange
             var stateManager = new Mock<IActorStateManager>();
             var user = new User { Id = "testuser", UserName = "User name", NormalizedUserName = "username" };
             stateManager.Setup(manager => manager.SetStateAsync("User", user, It.IsAny<CancellationToken>())).Verifiable();
             UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
-            //Act
 
             IdentityResult result = await testDemoActor.Create(user);
-            result.Succeeded.Should().Be(true);
+            result.Succeeded.Should().BeTrue();
 
-            //Assert
             stateManager.VerifyAll();
         }
 
@@ -141,7 +138,92 @@ namespace ExtenFlow.Security.DaprStoreTests
         }
 
         [Fact]
-        public async Task DeleteUser_ExpectSetStateAsync()
+        public async Task UpdateUninitializedUser_ThrowsException()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var user = new User { Id = "testuser", UserName = "User name", NormalizedUserName = "username" };
+            stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult<User>(null));
+            UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
+
+            await Invoking(async () => await testDemoActor.Update(new User { Id = "other user", UserName = "User name", NormalizedUserName = "username" }))
+                .Should()
+                .ThrowAsync<KeyNotFoundException>();
+
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task UpdateUser_ExpectSetStateAsyncNewValue()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var user = new User { Id = "testuser", UserName = "User name", NormalizedUserName = "username" };
+            var modifiedUser = new User { Id = "testuser", UserName = "User name modified", NormalizedUserName = "username modified" };
+            stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(user));
+            stateManager.Setup(manager => manager.SetStateAsync("User", modifiedUser, It.IsAny<CancellationToken>())).Verifiable();
+            UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
+
+            IdentityResult result = await testDemoActor.Update(modifiedUser);
+            result.Succeeded.Should().BeTrue();
+
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task SetUserName_ExpectSetStateAsyncNewValue()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var user = new User { Id = "testuser", UserName = "User name", NormalizedUserName = "username" };
+            stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(user));
+            stateManager.Setup(manager => manager.SetStateAsync("User", user, It.IsAny<CancellationToken>())).Verifiable();
+            UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
+
+            string newName = "new user name";
+            await testDemoActor.SetUserName(newName);
+            user.UserName.Should().Be(newName);
+
+            stateManager.VerifyAll();
+        }
+
+        [Theory]
+        [InlineData("new user Name")]
+        [InlineData("very long new user Name 123456789 @!)ази-")]
+        public async Task SetNormalizedUserName_ExpectSetStateAsyncNewValue(string name)
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var user = new User { Id = "testuser", UserName = "User name", NormalizedUserName = "username" };
+            stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(user));
+            stateManager.Setup(manager => manager.SetStateAsync("User", user, It.IsAny<CancellationToken>())).Verifiable();
+            UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
+
+            string newName = "new user name";
+            await testDemoActor.SetNormalizedUserName(newName);
+            user.NormalizedUserName.Should().Be(newName);
+
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task DeleteUninitializedUser_ThrowsException()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var user = new User { Id = "testuser", UserName = "User name", NormalizedUserName = "username" };
+            stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult<User>(null));
+            UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
+
+            await Invoking(async () => await testDemoActor.Delete())
+                .Should()
+                .ThrowAsync<KeyNotFoundException>();
+
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task DeleteUser_ExpectSetStateAsyncNull()
         {
             var stateManager = new Mock<IActorStateManager>();
             var user = new User { Id = "testuser", UserName = "User name", NormalizedUserName = "username" };
