@@ -14,7 +14,7 @@ ExtenFlow consists of two distinct projects:
 
 Stable (master): 
 
-[![NuGet](https://img.shields.io/nuget/v/ExtenFlow.Messages.Abstractions.svg)](https://www.nuget.org/packages/ExtenFlow.Messages.Abstractions)
+[![NuGet](https://img.shields.io/nuget/v/ExtenFlow.Messages.Abstractions.svg)](https://www.nuget.org/packages/ExtenFlow.Messages.Abstractions) [![Join the chat at https://gitter.im/ExtenFlow/community](https://badges.gitter.im/ExtenFlow/community.svg)](https://gitter.im/ExtenFlow/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 ## Status
