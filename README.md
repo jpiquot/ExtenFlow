@@ -6,7 +6,7 @@ ExtenFlow consists of two distinct projects:
 - __ExtenFlow Marketplace__: A Peer-to-peer marketplaces built on top of the ExtenFlow Core Framework.
 
 [![Join the chat at https://gitter.im/ExtenFlow/community](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ExtenFlow/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![BSD-3-Clause License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE.txt)
+[![Apache 2.0 License](https://img.shields.io/badge/license-Apache--2--Clause-blue.svg)](LICENSE.txt)
 [![Documentation](https://readthedocs.org/projects/extenflow/badge/)](https://docs.extenflow.net/)
 
 
