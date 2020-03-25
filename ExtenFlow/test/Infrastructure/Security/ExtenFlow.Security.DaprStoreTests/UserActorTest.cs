@@ -199,9 +199,8 @@ namespace ExtenFlow.Security.DaprStoreTests
             stateManager.Setup(manager => manager.SetStateAsync("User", user, It.IsAny<CancellationToken>())).Verifiable();
             UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
 
-            string newName = "new user name";
-            await testDemoActor.SetNormalizedUserName(newName);
-            user.NormalizedUserName.Should().Be(newName);
+            await testDemoActor.SetNormalizedUserName(name);
+            user.NormalizedUserName.Should().Be(name);
 
             stateManager.VerifyAll();
         }

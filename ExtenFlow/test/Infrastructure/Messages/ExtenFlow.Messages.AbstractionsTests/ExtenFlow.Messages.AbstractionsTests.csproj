@@ -4,6 +4,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\src\Infrastructure\Messages\ExtenFlow.Messages.Abastractions\ExtenFlow.Messages.Abastractions.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Infrastructure\Messages\ExtenFlow.Messages.Abstractions\ExtenFlow.Messages.Abstractions.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
