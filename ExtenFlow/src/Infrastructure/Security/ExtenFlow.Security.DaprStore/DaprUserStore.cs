@@ -61,7 +61,7 @@ namespace ExtenFlow.Security.DaprStore
             => GetUserActor(userId).GetUser();
 
         async Task<User> IUserStore<User>.FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
-            => await GetUserActor(await GetUserNameIndexActor(normalizedUserName).GetId()).GetUser();
+            => await GetUserActor(await GetUserNameIndexActor(normalizedUserName).GetId() ?? throw new KeyNotFoundException(nameof(User.NormalizedUserName) + "=" + normalizedUserName)).GetUser();
 
         #endregion User Store
     }

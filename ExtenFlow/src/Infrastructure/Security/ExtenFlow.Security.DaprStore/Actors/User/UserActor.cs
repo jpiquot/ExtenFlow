@@ -54,11 +54,7 @@ namespace ExtenFlow.Security.DaprStore.Actors
         {
             if (_state != null)
             {
-                throw new InvalidOperationException($"The user Id ({user.Id}, {_state.UserName}) already exist.");
-            }
-            if (user.Id != Id.GetId())
-            {
-                throw new InvalidOperationException($"The user Id ({user.Id}) is not the same as the actor Id({Id.GetId()})");
+                return IdentityResult.Failed(new[] { _errorDescriber.DuplicateUserName(user.Id) });
             }
             _state = user;
             await Save();
@@ -67,9 +63,9 @@ namespace ExtenFlow.Security.DaprStore.Actors
 
         public async Task<IdentityResult> Update(User user)
         {
-            if (_state != null)
+            if (_state == null)
             {
-                throw new InvalidOperationException($"The user ({Id.GetId()}, does not exist or has been deleted.");
+                throw new KeyNotFoundException($"The user ({Id.GetId()}, does not exist or has been deleted.");
             }
             if (user.Id != Id.GetId())
             {
@@ -82,8 +78,7 @@ namespace ExtenFlow.Security.DaprStore.Actors
 
         private Task Save() => StateManager.SetStateAsync(StateName, _state);
 
-        // Public for test purposes
-        public async Task Read() => _state = await StateManager.GetStateAsync<User?>(StateName);
+        protected async Task Read() => _state = await StateManager.GetStateAsync<User>(StateName);
 
         public async Task<IdentityResult> Delete()
         {
