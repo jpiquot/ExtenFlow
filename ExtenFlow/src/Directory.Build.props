@@ -1,6 +1,15 @@
 <Project>
+	<Import Project="$(MSBuildThisFileDirectory)..\Props\ManagedNetCore.props" />
+	<Import Project="$(MSBuildThisFileDirectory)..\Props\Nuget.props" />
+
 	<PropertyGroup>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<PropertyGroup>
+		<OutputPath>$(RepoRoot)bin\$(Configuration)\prod\$(MSBuildProjectName)\</OutputPath>
+
+		<!-- Stylecop needs the documentation file to exist -->
+		<DocumentationFile>$(OutputPath)$(MSBuildProjectName).xml</DocumentationFile>
 	</PropertyGroup>
 </Project>

@@ -5,8 +5,15 @@
 
 namespace ExtenFlow.Messages
 {
+    /// <summary>
+    /// The base class for all messages
+    /// </summary>
     public abstract class Message : IMessage
     {
+        /// <summary>
+        /// The message default constructor
+        /// </summary>
+        /// <remarks>Do not use this constructor. For serializer usage only.</remarks>
         [Obsolete("Can only be used by serializers")]
         protected Message()
         {
@@ -18,6 +25,15 @@ namespace ExtenFlow.Messages
             AggregateId = null;
         }
 
+        /// <summary>
+        /// The base message constructor
+        /// </summary>
+        /// <param name="aggregateType">The aggregate that will handle or has handled the message</param>
+        /// <param name="aggregateId">The aggregate id</param>
+        /// <param name="userId">The user that created the message</param>
+        /// <param name="correlationId">The correlation id to link messages</param>
+        /// <param name="messageId">The id of the message</param>
+        /// <param name="dateTime">The date and time the message was created</param>
         protected Message(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
         {
             if (string.IsNullOrWhiteSpace(userId))
@@ -44,11 +60,36 @@ namespace ExtenFlow.Messages
             AggregateType = aggregateType;
         }
 
+        /// <summary>
+        /// The message unique identifier
+        /// </summary>
         public Guid MessageId { get; [Obsolete]set; }
+
+        /// <summary>
+        /// The correlation id that links all the related messages together. Can be assimilated to a
+        /// transaction id.
+        /// </summary>
         public Guid CorrelationId { get; [Obsolete]set; }
+
+        /// <summary>
+        /// Message created date and time
+        /// </summary>
         public DateTimeOffset DateTime { get; [Obsolete]set; }
+
+        /// <summary>
+        /// The id of the message creator
+        /// </summary>
         public string UserId { get; [Obsolete]set; }
+
+        /// <summary>
+        /// The type of the aggragate that will handle the message. Or the aggregate that created
+        /// the message.
+        /// </summary>
         public string AggregateType { get; [Obsolete]set; }
+
+        /// <summary>
+        /// The aggregate id
+        /// </summary>
         public string? AggregateId { get; [Obsolete]set; }
     }
 }

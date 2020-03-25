@@ -4,6 +4,9 @@ using ExtenFlow.Security.Users.Queries;
 
 namespace ExtenFlow.Security.Users.Services
 {
+    /// <summary>
+    /// The user query service interface
+    /// </summary>
     public interface IUserQueryService
     {
         /// <summary>
@@ -15,8 +18,8 @@ namespace ExtenFlow.Security.Users.Services
         /// <summary>
         /// Gets the user with a specified username.
         /// </summary>
-        /// <param name="userName">The username.</param>
+        /// <param name="query">Get user query</param>
         /// <returns>The <see cref="IUser"/> represents the retrieved user.</returns>
-        Task<IUser> Invoke(GetUser user);
+        Task<IUser> Invoke(GetUser query);
     }
 }

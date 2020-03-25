@@ -15,6 +15,9 @@ using Microsoft.Extensions.Localization;
 
 namespace ExtenFlow.Security.DaprStore
 {
+    /// <summary>
+    /// The Dapr user store
+    /// </summary>
     public sealed class DaprUserStore :
         IUserStore<User>
     //IUserClaimStore<User>,
@@ -25,6 +28,10 @@ namespace ExtenFlow.Security.DaprStore
     {
         private readonly IStringLocalizer<DaprUserStore> T;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DaprUserStore"/> class.
+        /// </summary>
+        /// <param name="stringLocalizer">The string localizer.</param>
         public DaprUserStore(IStringLocalizer<DaprUserStore> stringLocalizer)
         {
             T = stringLocalizer;
@@ -34,6 +41,10 @@ namespace ExtenFlow.Security.DaprStore
 
         private IUserNormalizedNameIndexActor GetUserNameIndexActor(string userId) => ActorProxy.Create<IUserNormalizedNameIndexActor>(new ActorId(userId), nameof(UserNormalizedNameIndexActor));
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting
+        /// unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
         }
