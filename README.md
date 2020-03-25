@@ -1,6 +1,4 @@
-## Welcome to ExtenFlow Enterprise Microservices
-
-# Orchard Core 
+# ExtenFlow Enterprise Microservices 
 
 ExtenFlow consists of two distinct projects:
 
