@@ -6,14 +6,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\test\Infrastructure\Messages\ExtenFlow.Messages.AbstractionsTests\ExtenFlow.Messages.AbstractionsTests.csproj" />
-		<ProjectReference Include="..\..\Messages\ExtenFlow.Messages.Abastractions\ExtenFlow.Messages.Abastractions.csproj" />
-	</ItemGroup>
-	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Messages\ExtenFlow.Messages.Abstractions\ExtenFlow.Messages.Abstractions.csproj" />
 	</ItemGroup>
 </Project>
