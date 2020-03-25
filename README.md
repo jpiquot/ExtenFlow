@@ -7,7 +7,7 @@ ExtenFlow consists of two distinct projects:
 
 [![Join the chat at https://gitter.im/ExtenFlow/community](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ExtenFlow/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Apache 2.0 License](https://img.shields.io/badge/license-Apache--2--Clause-blue.svg)](LICENSE)
-[![Documentation](https://readthedocs.org/projects/extenflow/badge/)](Docs/documentation.md)
+[![Documentation](https://readthedocs.org/projects/extenflow/badge/)](https://extenflow.readthedocs.io/en/latest/)
 
 
 ## Build Status
