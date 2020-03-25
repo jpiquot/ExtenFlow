@@ -38,7 +38,7 @@ namespace ExtenFlow.Security.DaprStore.Actors
         {
             if (string.IsNullOrWhiteSpace(userName))
             {
-                throw new ArgumentNullException(userName);
+                throw new ArgumentNullException(nameof(userName));
             }
             State.UserName = userName;
 
@@ -49,7 +49,7 @@ namespace ExtenFlow.Security.DaprStore.Actors
         {
             if (string.IsNullOrWhiteSpace(normalizedName))
             {
-                throw new ArgumentNullException(userName);
+                throw new ArgumentNullException(nameof(normalizedName));
             }
             State.NormalizedUserName = normalizedName;
 
