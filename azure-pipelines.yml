@@ -15,6 +15,8 @@ stages:
   - job: 'build_projects'
     pool:
       vmImage: 'windows-2019'
+    workspace:
+      clean: all
     strategy:
       maxParallel: 2
       matrix:
@@ -58,13 +60,6 @@ stages:
           nuGetFeedType: 'internal'
           publishVstsFeed: 'ExtenFlow/ExtenFlow'
           allowPackageConflicts: true     
-      - task: DotNetCoreCLI@2
-        displayName: 'Publish stable packages to NuGet.org feed'
-        inputs:
-          command: 'push'
-          packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-          nuGetFeedType: 'external'
-          publishFeedCredentials: 'NuGet'        
       - task: CopyFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
         inputs:
@@ -83,3 +78,24 @@ stages:
         inputs:
           script: 'echo "##vso[build.addbuildtag]release'
           workingDirectory: '$(Build.ArtifactStagingDirectory)'
+
+- stage: 'PublishReleaseNuGetPackage'
+  displayName: 'Publish Release NuGet Package'
+  dependsOn: 'PublishPrereleaseNuGetPackage'
+  condition: succeeded()
+  jobs:
+  - deployment:
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: 'NugetOrg'
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+         - task: NuGetCommand@2
+           displayName: 'Push stable packages to NuGet.org feed'
+           inputs:
+             command: 'push'
+             packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg;!$(Pipeline.Workspace)/**/*.symbols.nupkg'
+             nuGetFeedType: 'external'
+             publishFeedCredentials: 'NuGet'
