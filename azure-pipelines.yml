@@ -51,15 +51,6 @@ stages:
           packagesToPack: 'ExtenFlow/ExtenFlow.sln'
           nobuild: true
           versioningScheme: 'off'
-      - task: NuGetCommand@2
-        displayName: 'Publish nuget package to latest feed'
-        condition: and(eq(variables['Configuration'], 'release'), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
-        inputs:
-          command: 'push'
-          packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-          nuGetFeedType: 'internal'
-          publishVstsFeed: 'ExtenFlow/ExtenFlow'
-          allowPackageConflicts: true     
       - task: CopyFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
         inputs:
@@ -79,6 +70,31 @@ stages:
           script: 'echo "##vso[build.addbuildtag]release'
           workingDirectory: '$(Build.ArtifactStagingDirectory)'
 
+- stage: 'PublishPrereleaseNuGetPackage'
+  displayName: 'Publish Prerelease NuGet Package'
+  dependsOn: 'Build'
+  condition: succeeded()
+  jobs:
+  - job:
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    steps:
+    - checkout: none
+
+    - download: current
+      artifact: 'packages'
+
+    - task: NuGetCommand@2
+      displayName: 'Publish nuget package to latest feed'
+      condition: and(eq(variables['Configuration'], 'release'), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Pipeline.Workspace)/debug_drop/**/*.nupkg;!$(Pipeline.Workspace)/debug_drop/**/*.symbols.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'ExtenFlow/ExtenFlow'
+        allowPackageConflicts: true     
+
 - stage: 'PublishReleaseNuGetPackage'
   displayName: 'Publish Release NuGet Package'
   dependsOn: 'PublishPrereleaseNuGetPackage'
@@ -96,6 +112,6 @@ stages:
            displayName: 'Push stable packages to NuGet.org feed'
            inputs:
              command: 'push'
-             packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg;!$(Pipeline.Workspace)/**/*.symbols.nupkg'
+             packagesToPush: '$(Pipeline.Workspace)/release_drop/**/*.nupkg;!$(Pipeline.Workspace)/release_drop/**/*.symbols.nupkg'
              nuGetFeedType: 'external'
              publishFeedCredentials: 'NuGet'
