@@ -51,7 +51,7 @@ stages:
       - task: CopyFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
         inputs:
-          SourceFolder: 'bin/$(Configuration)'
+          SourceFolder: 'ExtenFlow/bin/$(Configuration)'
           Contents: '**'
           TargetFolder: '$(Build.ArtifactStagingDirectory)'
       - task: PublishBuildArtifacts@1
