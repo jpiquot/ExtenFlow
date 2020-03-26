@@ -22,7 +22,7 @@ Latest:
 
 ## Status
 
-### 0.0.1 Alpha
+### 0.1.0 Alpha
 
 The software can't be used. Features are under development.
 
@@ -49,4 +49,4 @@ Here is a more detailed [roadmap](https://github.com/jpiquot/ExtenFlow/wiki/Road
 
 ### Documentation
 
-The documentation can be accessed here: <https://docs.extenflow.net/>
+The documentation can be accessed here: <https://readthedocs.org/projects/extenflow>

@@ -64,6 +64,8 @@ stages:
           command: 'push'
           packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
           feedsToUse: 'config'
+          nuGetFeedType: 'external'
+          nugetConfigPath: 'nuget.config'
           includeNugetOrg: 'true'         
           arguments: '-k $(NugetApiKey)'
       - task: CopyFiles@2
