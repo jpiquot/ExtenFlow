@@ -8,7 +8,8 @@
 		<!-- Version for binaries, nuget packages generated from this repo. -->
 		<MajorVersion>0</MajorVersion>
 		<MinorVersion>1</MinorVersion>
-		<BuildVersion>0</BuildVersion>
+		<BuildVersion Condition=" '$(BUILD_BUILDNUMBER)' == '' ">0</BuildVersion>
+		<BuildVersion Condition=" '$(BUILD_BUILDNUMBER)' != '' ">$(BUILD_BUILDNUMBER)</BuildVersion>
 		<Revision>0</Revision>
 		<Version>$(MajorVersion).$(MinorVersion).$(BuildVersion).$(Revision)</Version>
 		<AssemblyVersion>$(Version)</AssemblyVersion>
@@ -16,10 +17,10 @@
 		<FileVersion>$(Version)</FileVersion>
 
 		<!-- Nuget package versions -->
-		<NupkgMajorVersion>0</NupkgMajorVersion>
-		<NupkgMinorVersion>1</NupkgMinorVersion>
-		<NupkgPatchVersion>0</NupkgPatchVersion>
-		<NupkgPreviewTag>-preview01</NupkgPreviewTag>
+		<NupkgMajorVersion>$(MajorVersion)</NupkgMajorVersion>
+		<NupkgMinorVersion>$(MinorVersion)</NupkgMinorVersion>
+		<NupkgPatchVersion>2</NupkgPatchVersion>
+		<NupkgPreviewTag></NupkgPreviewTag>
 		<NupkgVersion>$(NupkgMajorVersion).$(NupkgMinorVersion).$(NupkgPatchVersion)$(NupkgPreviewTag)</NupkgVersion>
 	</PropertyGroup>
 </Project>
