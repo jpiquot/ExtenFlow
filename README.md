@@ -12,10 +12,13 @@ ExtenFlow consists of two distinct projects:
 
 ## Build Status
 
-Stable (master): 
+Stable : 
 
 [![NuGet](https://img.shields.io/nuget/v/ExtenFlow.Messages.Abstractions.svg)](https://www.nuget.org/packages/ExtenFlow.Messages.Abstractions) 
 
+Latest: 
+
+[![ExtenFlow.Messages.Abstractions package in ExtenFlow feed in Azure Artifacts](https://fiveforty.feeds.visualstudio.com/809ce676-89cb-41a2-9b29-11fb2f3e8eac/_apis/public/Packaging/Feeds/0b32c8be-a69d-4b95-94d4-68ab53649474/Packages/95720f60-409f-4453-b69c-4af804ff9066/Badge)](https://fiveforty.visualstudio.com/ExtenFlow/_packaging?_a=package&feed=0b32c8be-a69d-4b95-94d4-68ab53649474&package=95720f60-409f-4453-b69c-4af804ff9066&preferRelease=false)
 
 ## Status
 
