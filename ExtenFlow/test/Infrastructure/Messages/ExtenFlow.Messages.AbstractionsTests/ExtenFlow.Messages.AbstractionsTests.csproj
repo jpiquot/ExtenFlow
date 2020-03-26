@@ -3,7 +3,6 @@
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 	</PropertyGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\src\Infrastructure\Messages\ExtenFlow.Messages.Abastractions\ExtenFlow.Messages.Abastractions.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Infrastructure\Messages\ExtenFlow.Messages.Abstractions\ExtenFlow.Messages.Abstractions.csproj" />
 	</ItemGroup>
 	<ItemGroup>
