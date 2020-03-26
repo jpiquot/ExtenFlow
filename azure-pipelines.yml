@@ -55,7 +55,7 @@ stages:
           command: 'push'
           packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
           nuGetFeedType: 'internal'
-          publishVstsFeed: 'ExtenFlow'
+          publishVstsFeed: 'ExtenFlow/ExtenFlow'
           allowPackageConflicts: true     
       - task: CopyFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
