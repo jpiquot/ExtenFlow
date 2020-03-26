@@ -67,7 +67,7 @@ stages:
           nuGetFeedType: 'external'
           nugetConfigPath: 'nuget.config'
           includeNugetOrg: 'true'         
-          arguments: '-k $(NugetApiKey)'
+          arguments: '-ApiKey $(NugetApiKey) -NonInteractive -Source https://www.nuget.org/api/v3/package'
       - task: CopyFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
         inputs:
