@@ -15,6 +15,6 @@
 
 	<!-- Icon for nuget packages -->
 	<ItemGroup>
-		<None Include="$(MSBuildThisFileDirectory)..\properties\logo-transparent.png" Pack="true" Visible="false" PackagePath="images" />
+		<None Include="$(MSBuildThisFileDirectory)..\Props\logo-transparent.png" Pack="true" Visible="false" PackagePath="images" />
 	</ItemGroup>
 </Project>
