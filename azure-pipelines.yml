@@ -48,6 +48,15 @@ stages:
           packagesToPack: 'ExtenFlow/ExtenFlow.sln'
           nobuild: true
           versioningScheme: 'off'
+      - task: NuGetCommand@2
+        displayName: 'Publish nuget package to feed'
+        condition: false
+        inputs:
+          command: 'push'
+          packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+          nuGetFeedType: 'internal'
+          publishVstsFeed: 'ExtenFlow'
+          allowPackageConflicts: true     
       - task: CopyFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
         inputs:
