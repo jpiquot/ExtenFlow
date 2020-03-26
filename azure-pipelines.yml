@@ -65,7 +65,7 @@ stages:
           packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
           feedsToUse: 'config'
           includeNugetOrg: 'true'         
-          externalFeedCredentials: $(NugetApiKey)
+          arguments: '-k $(NugetApiKey)'
       - task: CopyFiles@2
         condition: ne(variables['Build.Reason'], 'PullRequest')
         inputs:
