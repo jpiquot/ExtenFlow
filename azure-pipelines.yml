@@ -50,7 +50,7 @@ stages:
           versioningScheme: 'off'
       - task: NuGetCommand@2
         displayName: 'Publish nuget package to feed'
-        condition: false
+        condition: and(eq(variables['Configuration'], 'release'), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
         inputs:
           command: 'push'
           packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'

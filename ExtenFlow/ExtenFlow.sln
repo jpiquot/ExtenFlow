@@ -52,6 +52,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Build", "_Build", "{08DFBCAA-67EE-4B74-A96D-9BAF4BDEBF64}"
 	ProjectSection(SolutionItems) = preProject
 		..\azure-pipelines.yml = ..\azure-pipelines.yml
+		Props\Common.props = Props\Common.props
+		Props\logo-transparent.png = Props\logo-transparent.png
+		Props\ManagedNetCore.props = Props\ManagedNetCore.props
+		Props\Nuget.props = Props\Nuget.props
 	EndProjectSection
 EndProject
 Global
