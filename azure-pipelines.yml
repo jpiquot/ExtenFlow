@@ -83,21 +83,21 @@ stages:
     - checkout: none
 
     - download: current
-      artifact: 'packages'
+      artifact: 'debug_drop'
 
     - task: NuGetCommand@2
       displayName: 'Publish nuget package to latest feed'
       condition: and(eq(variables['Configuration'], 'release'), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
       inputs:
         command: 'push'
-        packagesToPush: '$(Pipeline.Workspace)/debug_drop/**/*.nupkg;!$(Pipeline.Workspace)/debug_drop/**/*.symbols.nupkg'
+        packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg;!$(Pipeline.Workspace)/**/*.symbols.nupkg'
         nuGetFeedType: 'internal'
         publishVstsFeed: 'ExtenFlow/ExtenFlow'
         allowPackageConflicts: true     
 
 - stage: 'PublishReleaseNuGetPackage'
   displayName: 'Publish Release NuGet Package'
-  dependsOn: 'PublishPrereleaseNuGetPackage'
+  dependsOn: 'Build'
   condition: succeeded()
   jobs:
   - deployment:
@@ -108,10 +108,13 @@ stages:
      runOnce:
        deploy:
          steps:
+         - checkout: none
+         - download: current
+           artifact: 'release_drop'
          - task: NuGetCommand@2
            displayName: 'Push stable packages to NuGet.org feed'
            inputs:
              command: 'push'
-             packagesToPush: '$(Pipeline.Workspace)/release_drop/**/*.nupkg;!$(Pipeline.Workspace)/release_drop/**/*.symbols.nupkg'
+             packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg;!$(Pipeline.Workspace)/**/*.symbols.nupkg'
              nuGetFeedType: 'external'
              publishFeedCredentials: 'NuGet'
