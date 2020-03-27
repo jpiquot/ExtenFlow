@@ -98,7 +98,7 @@ stages:
 - stage: 'PublishReleaseNuGetPackage'
   displayName: 'Publish Release NuGet Package'
   dependsOn: 'Build'
-  condition: succeeded()
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
   jobs:
   - deployment:
     pool:
