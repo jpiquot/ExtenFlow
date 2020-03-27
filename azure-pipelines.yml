@@ -87,7 +87,6 @@ stages:
 
     - task: NuGetCommand@2
       displayName: 'Publish nuget package to latest feed'
-      condition: and(eq(variables['Configuration'], 'release'), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
       inputs:
         command: 'push'
         packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg;!$(Pipeline.Workspace)/**/*.symbols.nupkg'
