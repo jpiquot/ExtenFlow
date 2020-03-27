@@ -7,8 +7,8 @@
 
 		<!-- Version for binaries, nuget packages generated from this repo. -->
 		<MajorVersion>0</MajorVersion>
-		<MinorVersion>1</MinorVersion>
-		<BuildVersion>4</BuildVersion>
+		<MinorVersion>2</MinorVersion>
+		<BuildVersion>0</BuildVersion>
 		<Revision Condition=" '$(BUILD_BUILDID)' == '' ">0</Revision>
 		<Revision Condition=" '$(BUILD_BUILDID)' != '' ">$(BUILD_BUILDID)</Revision>
 		<Version>$(MajorVersion).$(MinorVersion).$(BuildVersion).$(Revision)</Version>
