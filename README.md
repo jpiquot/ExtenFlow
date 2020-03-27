@@ -14,11 +14,11 @@ ExtenFlow consists of two distinct projects:
 
 Stable : 
 
-[![NuGet](https://img.shields.io/nuget/v/ExtenFlow.Messages.Abstractions.svg)](https://www.nuget.org/packages) 
+[![NuGet](https://img.shields.io/nuget/v/ExtenFlow.Messages.Abstractions?style=plastic&logo=nuget)](https://www.nuget.org/packages) 
 
 Latest: 
 
-[![NuGet](https://img.shields.io/myget/ExtenFlow/vpre/ExtenFlow.Messages.Abstractions.svg)](https://www.myget.org/feed/Packages/extenflow) 
+[![NuGet](https://img.shields.io/myget/extenflow/vpre/ExtenFlow.Messages.Abstractions?style=plastic&logo=nuget&label=nuget)](https://www.myget.org/feed/Packages/extenflow) 
 
 ## Status
 
