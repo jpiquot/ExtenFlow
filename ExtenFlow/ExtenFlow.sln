@@ -56,7 +56,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Build", "_Build", "{08DFBC
 		Props\Common.props = Props\Common.props
 		Props\logo-transparent.png = Props\logo-transparent.png
 		Props\ManagedNetCore.props = Props\ManagedNetCore.props
-		..\nuget.config = ..\nuget.config
 		Props\Nuget.props = Props\Nuget.props
 	EndProjectSection
 EndProject
