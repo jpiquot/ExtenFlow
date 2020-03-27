@@ -8,7 +8,7 @@
 		<!-- Version for binaries, nuget packages generated from this repo. -->
 		<MajorVersion>0</MajorVersion>
 		<MinorVersion>1</MinorVersion>
-		<BuildVersion>3</BuildVersion>
+		<BuildVersion>4</BuildVersion>
 		<Revision Condition=" '$(BUILD_BUILDID)' == '' ">0</Revision>
 		<Revision Condition=" '$(BUILD_BUILDID)' != '' ">$(BUILD_BUILDID)</Revision>
 		<Version>$(MajorVersion).$(MinorVersion).$(BuildVersion).$(Revision)</Version>
@@ -20,7 +20,7 @@
 		<NupkgMajorVersion>$(MajorVersion)</NupkgMajorVersion>
 		<NupkgMinorVersion>$(MinorVersion)</NupkgMinorVersion>
 		<NupkgPatchVersion>$(BuildVersion)</NupkgPatchVersion>
-		<NupkgPreviewTag></NupkgPreviewTag>
+		<NupkgPreviewTag Condition=" '$(BUILD_ADDBUILDTAG)' != 'release' ">-preview$(Revision)</NupkgPreviewTag>
 		<NupkgVersion>$(NupkgMajorVersion).$(NupkgMinorVersion).$(NupkgPatchVersion)$(NupkgPreviewTag)</NupkgVersion>
 	</PropertyGroup>
 </Project>

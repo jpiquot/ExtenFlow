@@ -3,6 +3,10 @@
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 	</PropertyGroup>
+	<PropertyGroup>
+		<Description>This package contains the reference assemblies for Dapr Identity Store using ExtenFlow.</Description>
+		<PackageTags>$(PackageTags);Identity;Authorization;Autentication</PackageTags>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Dapr.Actors" Version="0.5.0-preview01" />
 		<PackageReference Include="System.Linq" Version="4.3.0" />
