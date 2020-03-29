@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Client;
 using Dapr.Actors.Runtime;
+
 using ExtenFlow.Identity.Models;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Identity.DaprActorsStore
@@ -19,10 +21,10 @@ namespace ExtenFlow.Identity.DaprActorsStore
         private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserActor"/> class.
+        /// Initializes a new instance of the <see cref="UserCollectionActor"/> class.
         /// </summary>
         /// <param name="actorService">
-        /// The <see cref="P:Dapr.Actors.Runtime.Actor.ActorService"/> that will host this actor instance.
+        /// The <see cref="ActorService"/> that will host this actor instance.
         /// </param>
         /// <param name="actorId">The Id of the actor.</param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
@@ -30,9 +32,10 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
         }
 
-        private HashSet<string>? _state;
+        private UserCollectionState? _state;
+        private UserCollectionState State => _state ?? (_state = new UserCollectionState());
 
-        private IUserActor GetUserActor(string userId) => ActorProxy.Create<IUserActor>(new ActorId(userId), nameof(UserActor));
+        private IUserActor GetUserActor(Guid userId) => ActorProxy.Create<IUserActor>(new ActorId(userId.ToString()), nameof(UserActor));
 
         /// <summary>
         /// Create a new user
@@ -41,35 +44,58 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <returns>The operation result</returns>
         public async Task<IdentityResult> Create(User user)
         {
-            if (string.IsNullOrWhiteSpace(user?.Id))
+            if (user == null || user.Id == default)
             {
                 throw new ArgumentNullException(nameof(User.Id));
             }
-            if (_state == null)
+            if (State.Ids.Any(p => p == user.Id))
             {
-                _state = new HashSet<string>();
+                throw new InvalidOperationException($"The user with Id='{user.Id}' already exist.");
             }
-            _state.TryGetValue(user.Id, out string? value);
-            if (value != null)
+            if (State.NormalizedNames.Any(p => p.Key.Equals(user.NormalizedUserName)))
             {
-                return IdentityResult.Failed(_errorDescriber.DuplicateUserName(value));
+                return IdentityResult.Failed(_errorDescriber.DuplicateUserName(user.NormalizedUserName));
             }
-            _state.Add(user.Id);
-            IdentityResult result;
-            try
+            IdentityResult result = await GetUserActor(user.Id).Set(user);
+            if (result.Succeeded)
             {
-                result = await GetUserActor(user.Id).Create(user);
+                State.Ids.Add(user.Id);
+                State.NormalizedNames.Add(user.NormalizedUserName, user.Id);
+                await StateManager.SetStateAsync(_stateName, _state);
             }
-            catch (Exception e)
+            return result;
+        }
+
+        /// <summary>
+        /// Create a new user
+        /// </summary>
+        /// <param name="user">The new user properties</param>
+        /// <returns>The operation result</returns>
+        public async Task<IdentityResult> Update(User user)
+        {
+            if (user == null || user.Id == default)
             {
-                _state.Remove(user.Id);
-                throw e;
+                throw new ArgumentNullException(nameof(User.Id));
             }
-            if (!result.Succeeded)
+            if (!State.Ids.Any(p => p == user.Id))
             {
-                _state.Remove(user.Id);
+                throw new InvalidOperationException($"The user with Id='{user.Id}' does not exist.");
             }
-            await StateManager.SetStateAsync(_stateName, _state);
+            if (State.NormalizedNames.Any(p => p.Key.Equals(user.NormalizedUserName) && p.Value != user.Id))
+            {
+                return IdentityResult.Failed(_errorDescriber.DuplicateUserName(user.NormalizedUserName));
+            }
+            IdentityResult result = await GetUserActor(user.Id).Set(user);
+            if (result.Succeeded)
+            {
+                if (!State.NormalizedNames.Any(p => p.Key.Equals(user.NormalizedUserName)))
+                {
+                    // The normalized name hase been changed.
+                    State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == user.Id).Select(p => p.Key).Single());
+                    State.NormalizedNames.Add(user.NormalizedUserName, user.Id);
+                }
+                await StateManager.SetStateAsync(_stateName, _state);
+            }
             return result;
         }
 
@@ -78,43 +104,38 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <returns>true if the user exists, else false.</returns>
-        public Task<bool> Exist(string userId)
+        public Task<bool> Exist(Guid userId)
         {
-            if (string.IsNullOrWhiteSpace(userId))
+            if (userId == default)
             {
                 return Task.FromException<bool>(new ArgumentNullException(nameof(userId)));
             }
-            if (_state == null || _state.Count < 1)
+            if (_state == null)
             {
                 return Task.FromResult(false);
             }
-            _state.TryGetValue(userId, out string? value);
-            return Task.FromResult(value != null);
+            return Task.FromResult(State.Ids.Any(p => p == userId));
         }
 
         /// <summary>
         /// Delete the user
         /// </summary>
         /// <returns>The operation result</returns>
-        public async Task<IdentityResult> Delete(string userId, string concurrencyString)
+        public async Task<IdentityResult> Delete(Guid userId, string concurrencyString)
         {
-            if (string.IsNullOrWhiteSpace(userId))
+            if (userId == default)
             {
                 throw new ArgumentNullException(nameof(userId));
             }
-            string? value = null;
-            _state?.TryGetValue(userId, out value);
-            if (_state == null || value == null)
+            if (!State.Ids.Any(p => p == userId))
             {
-                return IdentityResult.Failed(_errorDescriber.InvalidUserName(userId));
+                throw new InvalidOperationException($"The user with Id='{userId}' does not exist.");
             }
-            IdentityResult result = await GetUserActor(userId).Delete(concurrencyString);
-            if (result.Succeeded)
-            {
-                _state.Remove(value);
-            }
+            State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == userId).Select(p => p.Key).Single());
+            State.Ids.Remove(userId);
             await StateManager.SetStateAsync(_stateName, _state);
-            return result;
+            await GetUserActor(userId).Clear(concurrencyString);
+            return IdentityResult.Success;
         }
 
         /// <summary>
@@ -128,7 +149,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// </returns>
         protected override async Task OnActivateAsync()
         {
-            _state = await StateManager.GetStateAsync<HashSet<string>?>(_stateName);
+            _state = await StateManager.GetStateAsync<UserCollectionState?>(_stateName);
             await base.OnActivateAsync();
         }
     }

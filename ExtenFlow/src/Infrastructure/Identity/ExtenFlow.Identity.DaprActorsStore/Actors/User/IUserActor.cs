@@ -14,23 +14,11 @@ namespace ExtenFlow.Identity.DaprActorsStore
     public interface IUserActor : IActor
     {
         /// <summary>
-        /// Get the user name
-        /// </summary>
-        /// <returns>The user name</returns>
-        Task<string> GetUserName();
-
-        /// <summary>
-        /// Set the user name
-        /// </summary>
-        /// <param name="userName">The new user name</param>
-        Task SetUserName(string userName);
-
-        /// <summary>
-        /// Update user properties
+        /// Set the user value
         /// </summary>
         /// <param name="user">The new user properties</param>
         /// <returns>The operation result</returns>
-        Task<IdentityResult> Update(User user);
+        Task<IdentityResult> Set(User user);
 
         /// <summary>
         /// Deletes the specified concurrency stamp.

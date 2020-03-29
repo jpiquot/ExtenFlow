@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -21,9 +20,9 @@ namespace ExtenFlow.Identity.DaprActorsStore
     /// <seealso cref="IUserActor"/>
     public class UserActor : Actor, IUserActor
     {
-        private const string StateName = "User";
+        private const string _stateName = "User";
         private User? _state;
-        private IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
+        private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
 
         private User State => _state ?? throw new NullReferenceException(nameof(_state));
 
@@ -47,29 +46,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
             => Task.FromResult(State?.UserName);
 
         /// <summary>
-        /// Set the user name
-        /// </summary>
-        /// <param name="userName">The new user name</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">userName</exception>
-        public async Task SetUserName(string userName)
-        {
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                throw new ArgumentNullException(nameof(userName));
-            }
-            var user = new User(State)
-            {
-                UserName = userName
-            };
-            IdentityResult result = await Update(user);
-            if (!result.Succeeded)
-            {
-                throw new Exception($"Error while changing user ({Id.GetId()}) name to '{userName}' :" + string.Join("; ", result.Errors.Select(p => p.Description)));
-            }
-        }
-
-        /// <summary>
         /// Update user properties
         /// </summary>
         /// <param name="user">The new user properties</param>
@@ -77,19 +53,18 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <exception cref="InvalidOperationException">
         /// The user Id ({user?.Id}) is not the same as the actor Id({Id.GetId()})
         /// </exception>
-        public async Task<IdentityResult> Update(User user)
+        public async Task<IdentityResult> Set(User user)
         {
-            if (user?.Id != Id.GetId())
+            if (user == null || user.Id == default)
             {
-                throw new InvalidOperationException($"The user Id ({user?.Id}) is not the same as the actor Id({Id.GetId()})");
+                throw new ArgumentNullException(nameof(Role) + "." + nameof(Role.Id));
             }
-            if (_state == null && user.ConcurrencyStamp != State.ConcurrencyStamp)
+            if (_state != null && !user.ConcurrencyStamp.Equals(State.ConcurrencyStamp))
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
-            user.NormalizedUserName = Id.GetId();
             user.ConcurrencyStamp = Guid.NewGuid().ToString();
-            await StateManager.SetStateAsync(StateName, user);
+            await StateManager.SetStateAsync<User?>(_stateName, user);
             _state = user;
             return IdentityResult.Success;
         }
@@ -103,13 +78,13 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
             if (_state == null)
             {
-                throw new KeyNotFoundException($"The user Id ({Id.GetId()}) already exist.");
+                throw new KeyNotFoundException("The role does not exist.");
             }
-            if (concurrencyStamp != State.ConcurrencyStamp)
+            if (!State.ConcurrencyStamp.Equals(concurrencyStamp))
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
-            await StateManager.SetStateAsync(StateName, (User?)null);
+            await StateManager.SetStateAsync<Role?>(_stateName, null);
             _state = null;
             return IdentityResult.Success;
         }
@@ -127,7 +102,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// </summary>
         protected override async Task OnActivateAsync()
         {
-            _state = await StateManager.GetStateAsync<User?>(StateName);
+            _state = await StateManager.GetStateAsync<User?>(_stateName);
             await base.OnActivateAsync();
         }
     }

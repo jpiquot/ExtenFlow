@@ -15,29 +15,29 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <summary>
         /// Determines whether the user has the specified role.
         /// </summary>
-        /// <param name="roleNormalizedName">Normalized name of the role.</param>
+        /// <param name="roleId">The role identifier.</param>
         /// <returns>True if the user has the role</returns>
         /// <exception cref="ArgumentNullException">roleNormalizedName</exception>
-        Task<bool> HasRole(string roleNormalizedName);
+        Task<bool> HasRole(Guid roleId);
 
         /// <summary>
         /// Adds the user's role.
         /// </summary>
-        /// <param name="roleNormalizedName">Name of the role normalized.</param>
+        /// <param name="roleId">The role identifier.</param>
         /// <exception cref="ArgumentNullException">roleNormalizedName</exception>
-        Task AddRole(string roleNormalizedName);
+        Task AddRole(Guid roleId);
 
         /// <summary>
         /// Removes the role.
         /// </summary>
-        /// <param name="roleNormalizedName">Name of the role normalized.</param>
+        /// <param name="roleId">The role identifier.</param>
         /// <exception cref="ArgumentNullException">roleNormalizedName</exception>
-        Task RemoveRole(string roleNormalizedName);
+        Task RemoveRole(Guid roleId);
 
         /// <summary>
         /// Gets the all the user's roles.
         /// </summary>
         /// <returns>A list of all roles</returns>
-        Task<IList<string>> GetRoles();
+        Task<IList<Guid>> GetRoles();
     }
 }

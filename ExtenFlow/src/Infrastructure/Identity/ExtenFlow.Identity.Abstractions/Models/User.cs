@@ -7,7 +7,7 @@ namespace ExtenFlow.Identity.Models
     /// <summary>
     /// The user class
     /// </summary>
-    public class User : IdentityUser
+    public class User : IdentityUser<Guid>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="User"/> class.

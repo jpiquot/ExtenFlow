@@ -59,9 +59,9 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="role">The role.</param>
         /// <exception cref="ArgumentNullException">Role.Id</exception>
         /// <returns>The identity result object</returns>
-        public async Task<IdentityResult> Update(Role role)
+        public async Task<IdentityResult> Set(Role role)
         {
-            if (role == null || string.IsNullOrWhiteSpace(role.Id))
+            if (role == null || role.Id == default)
             {
                 throw new ArgumentNullException(nameof(Role) + "." + nameof(Role.Id));
             }
@@ -70,7 +70,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
             role.ConcurrencyStamp = Guid.NewGuid().ToString();
-            role.NormalizedName = role.Id;
             await StateManager.SetStateAsync<Role?>(_stateName, role);
             _state = role;
             return IdentityResult.Success;

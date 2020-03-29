@@ -21,17 +21,17 @@ namespace ExtenFlow.Identity.DaprActorsStore
         Task<Role> GetRole();
 
         /// <summary>
-        /// Updates the specified role.
+        /// Set the specified role value.
         /// </summary>
         /// <param name="role">The role.</param>
         /// <returns>The identity result object</returns>
-        Task<IdentityResult> Update(Role role);
+        Task<IdentityResult> Set(Role role);
 
         /// <summary>
         /// Clears the specified concurrency string.
         /// </summary>
-        /// <param name="concurrencyString">The concurrency string.</param>
+        /// <param name="concurrencyStamp">The concurrency stamp.</param>
         /// <returns>The identity result object</returns>
-        Task<IdentityResult> Clear(string concurrencyString);
+        Task<IdentityResult> Clear(string concurrencyStamp);
     }
 }
