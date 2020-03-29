@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
-using Dapr.Actors.Client;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Identity.Models;
@@ -21,8 +21,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
         private const string _stateName = "Role";
         private Role? _state;
         private IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
-
-        private IRoleNormalizedNameIndexActor GetRoleNormilizedNameIndexActor(string roleId) => ActorProxy.Create<IRoleNormalizedNameIndexActor>(new ActorId(roleId), nameof(RoleNormalizedNameIndexActor));
 
         private Role State => _state ?? throw new NullReferenceException(nameof(_state));
 
@@ -53,6 +51,49 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
             _state = await StateManager.GetStateAsync<Role?>(_stateName);
             await base.OnActivateAsync();
+        }
+
+        /// <summary>
+        /// Updates the specified role.
+        /// </summary>
+        /// <param name="role">The role.</param>
+        /// <exception cref="ArgumentNullException">Role.Id</exception>
+        /// <returns>The identity result object</returns>
+        public async Task<IdentityResult> Update(Role role)
+        {
+            if (role == null || string.IsNullOrWhiteSpace(role.Id))
+            {
+                throw new ArgumentNullException(nameof(Role) + "." + nameof(Role.Id));
+            }
+            if (_state != null && !role.ConcurrencyStamp.Equals(State.ConcurrencyStamp))
+            {
+                return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
+            }
+            role.ConcurrencyStamp = Guid.NewGuid().ToString();
+            role.NormalizedName = role.Id;
+            await StateManager.SetStateAsync<Role?>(_stateName, role);
+            _state = role;
+            return IdentityResult.Success;
+        }
+
+        /// <summary>
+        /// Clears the specified concurrency string.
+        /// </summary>
+        /// <param name="concurrencyString">The concurrency string.</param>
+        /// <returns>The identity result object</returns>
+        public async Task<IdentityResult> Clear(string concurrencyString)
+        {
+            if (_state == null)
+            {
+                throw new KeyNotFoundException("The role does not exist.");
+            }
+            if (!State.ConcurrencyStamp.Equals(concurrencyString))
+            {
+                return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
+            }
+            await StateManager.SetStateAsync<Role?>(_stateName, null);
+            _state = null;
+            return IdentityResult.Success;
         }
     }
 }

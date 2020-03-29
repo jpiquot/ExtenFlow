@@ -37,15 +37,13 @@ namespace ExtenFlow.Identity.Dapr
 
         private IRoleActor GetRoleActor(string roleId) => ActorProxy.Create<IRoleActor>(new ActorId(roleId), nameof(RoleActor));
 
-        private IUserLoginActor GetUserLoginActor(string loginProvider, string providerKey) => ActorProxy.Create<IUserLoginActor>(new ActorId(loginProvider + "." + providerKey), nameof(UserRoleActor));
+        private IUserLoginActor GetUserLoginActor(string loginProvider, string providerKey) => ActorProxy.Create<IUserLoginActor>(new ActorId(loginProvider + "." + providerKey), nameof(UserRolesActor));
 
-        private IUserRoleActor GetUserRoleActor(string userId, string roleId) => ActorProxy.Create<IUserRoleActor>(new ActorId(userId + "." + roleId), nameof(UserRoleActor));
+        private IUserRolesActor GetUserRoleActor(string userId) => ActorProxy.Create<IUserRolesActor>(new ActorId(userId), nameof(UserRolesActor));
 
         private IUserClaimsActor GetUserClaimsActor(string userId) => ActorProxy.Create<IUserClaimsActor>(new ActorId(userId), nameof(UserClaimsActor));
 
         private IUserCollectionActor GetUserCollectionActor() => ActorProxy.Create<IUserCollectionActor>(new ActorId(nameof(UserCollectionActor)), nameof(UserCollectionActor));
-
-        private IUserNormalizedNameIndexActor GetUserNormilizedNameIndexActor(string userId) => ActorProxy.Create<IUserNormalizedNameIndexActor>(new ActorId(userId), nameof(UserNormalizedNameIndexActor));
 
         private IRoleNormalizedNameIndexActor GetRoleNormilizedNameIndexActor(string roleId) => ActorProxy.Create<IRoleNormalizedNameIndexActor>(new ActorId(roleId), nameof(RoleNormalizedNameIndexActor));
 
@@ -175,14 +173,13 @@ namespace ExtenFlow.Identity.Dapr
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            string? id = await GetUserNormilizedNameIndexActor(normalizedUserName).GetId();
-            if (string.IsNullOrWhiteSpace(id))
+            if (await GetUserCollectionActor().Exist(normalizedUserName))
             {
-#pragma warning disable CS8603 // Possible null reference return.
-                return null;
-#pragma warning restore CS8603 // Possible null reference return.
+                return await GetUserActor(normalizedUserName).GetUser();
             }
-            return await GetUserActor(id).GetUser();
+#pragma warning disable CS8603 // Possible null reference return.
+            return null;
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         /// <summary>
@@ -218,7 +215,7 @@ namespace ExtenFlow.Identity.Dapr
         /// should be canceled.
         /// </param>
         /// <returns>The user role if it exists.</returns>
-        protected override Task<UserRole> FindUserRoleAsync(string userId, string roleId, CancellationToken cancellationToken)
+        protected override async Task<UserRole> FindUserRoleAsync(string userId, string roleId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -226,9 +223,9 @@ namespace ExtenFlow.Identity.Dapr
             {
 #pragma warning disable CS8603 // Possible null reference return.
                 return null;
-#pragma warning restore CS8603 // Possible null reference return.
             }
-            return GetUserRoleActor(userId, roleId).GetUserRole();
+            return (await GetUserRoleActor(userId).HasRole(roleId)) ? new UserRole() { UserId = userId, RoleId = roleId } : null;
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         /// <summary>
@@ -278,7 +275,7 @@ namespace ExtenFlow.Identity.Dapr
             {
                 throw new ArgumentNullException(nameof(userId));
             }
-            var userLogin = await GetUserLoginActor(loginProvider, providerKey).GetUserLogin();
+            UserLogin userLogin = await GetUserLoginActor(loginProvider, providerKey).GetUserLogin();
             if (userLogin.UserId == userId)
             {
 #pragma warning disable CS8603 // Possible null reference return.
@@ -325,7 +322,7 @@ namespace ExtenFlow.Identity.Dapr
         /// should be canceled.
         /// </param>
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
-        public async override Task AddToRoleAsync(User user, string normalizedRoleName, CancellationToken cancellationToken = default)
+        public override async Task AddToRoleAsync(User user, string normalizedRoleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -337,12 +334,12 @@ namespace ExtenFlow.Identity.Dapr
             {
                 throw new ArgumentNullException(nameof(normalizedRoleName));
             }
-            var roleEntity = await FindRoleAsync(normalizedRoleName, cancellationToken);
+            Role roleEntity = await FindRoleAsync(normalizedRoleName, cancellationToken);
             if (roleEntity == null)
             {
                 throw new KeyNotFoundException($"The role '{normalizedRoleName}' was not found.");
             }
-            GetUserRoleActor(user.Id, normalizedRoleName).Create();
+            await GetUserRoleActor(user.Id).AddRole(normalizedRoleName);
         }
 
         /// <summary>
@@ -367,13 +364,13 @@ namespace ExtenFlow.Identity.Dapr
             {
                 throw new ArgumentNullException(nameof(normalizedRoleName));
             }
-            var roleEntity = await FindRoleAsync(normalizedRoleName, cancellationToken);
+            Role roleEntity = await FindRoleAsync(normalizedRoleName, cancellationToken);
             if (roleEntity != null)
             {
-                var userRole = await FindUserRoleAsync(user.Id, roleEntity.Id, cancellationToken);
+                UserRole userRole = await FindUserRoleAsync(user.Id, roleEntity.Id, cancellationToken);
                 if (userRole != null)
                 {
-                    GetUserRoleActor(user.Id, normalizedRoleName).Delete();
+                    await GetUserRoleActor(user.Id).RemoveRole(normalizedRoleName);
                 }
             }
         }
@@ -389,20 +386,16 @@ namespace ExtenFlow.Identity.Dapr
         /// <returns>
         /// A <see cref="Task{TResult}"/> that contains the roles the user is a member of.
         /// </returns>
-        public override async Task<IList<string>> GeRolesAsync(User user, CancellationToken cancellationToken = default)
+        public override Task<IList<string>> GetRolesAsync(User user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
             if (user == null || string.IsNullOrWhiteSpace(user.Id))
             {
-                throw new ArgumentNullException(nameof(user));
+                return Task.FromException<IList<string>>(new ArgumentNullException(nameof(user)));
             }
-            var userId = user.Id;
-            var query = from userRole in UserRoles
-                        join role in Roles on userRole.RoleId equals role.Id
-                        where userRole.UserId.Equals(userId)
-                        select role.Name;
-            return await query.ToListAsync(cancellationToken);
+
+            return GetUserRoleActor(user.Id).GetRoles();
         }
 
         /// <summary>
@@ -423,18 +416,18 @@ namespace ExtenFlow.Identity.Dapr
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            if (user == null)
+            if (user == null || string.IsNullOrWhiteSpace(user.Id))
             {
                 throw new ArgumentNullException(nameof(user));
             }
             if (string.IsNullOrWhiteSpace(normalizedRoleName))
             {
-                throw new ArgumentException(Resources.ValueCannotBeNullOrEmpty, nameof(normalizedRoleName));
+                throw new ArgumentNullException(nameof(normalizedRoleName));
             }
-            var role = await FindRoleAsync(normalizedRoleName, cancellationToken);
+            Role role = await FindRoleAsync(normalizedRoleName, cancellationToken);
             if (role != null)
             {
-                var userRole = await FindUserRoleAsync(user.Id, role.Id, cancellationToken);
+                UserRole userRole = await FindUserRoleAsync(user.Id, role.Id, cancellationToken);
                 return userRole != null;
             }
             return false;
@@ -451,13 +444,14 @@ namespace ExtenFlow.Identity.Dapr
         /// <returns>A <see cref="Task{TResult}"/> that contains the claims granted to a user.</returns>
         public async override Task<IList<Claim>> GetClaimsAsync(User user, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            if (user == null)
+            if (user == null || string.IsNullOrWhiteSpace(user.Id))
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return await UserClaims.Where(uc => uc.UserId.Equals(user.Id)).Select(c => c.ToClaim()).ToListAsync(cancellationToken);
+            return (await GetUserClaimsActor(user.Id).GetClaims()).Select(p => new Claim(p.Item1, p.Item2)).ToList();
         }
 
         /// <summary>
@@ -470,10 +464,11 @@ namespace ExtenFlow.Identity.Dapr
         /// should be canceled.
         /// </param>
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
-        public override Task AddClaimsAsync(User user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
+        public override async Task AddClaimsAsync(User user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            if (user == null)
+            if (user == null || string.IsNullOrWhiteSpace(user.Id))
             {
                 throw new ArgumentNullException(nameof(user));
             }
@@ -481,11 +476,11 @@ namespace ExtenFlow.Identity.Dapr
             {
                 throw new ArgumentNullException(nameof(claims));
             }
-            foreach (var claim in claims)
+            IUserClaimsActor actor = GetUserClaimsActor(user.Id);
+            foreach (Claim claim in claims)
             {
-                UserClaims.Add(CreateUserClaim(user, claim));
+                await actor.AddClaim(claim.Type, claim.Value);
             }
-            return Task.FromResult(false);
         }
 
         /// <summary>
@@ -502,8 +497,9 @@ namespace ExtenFlow.Identity.Dapr
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
         public async override Task ReplaceClaimAsync(User user, Claim claim, Claim newClaim, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            if (user == null)
+            if (user == null || string.IsNullOrWhiteSpace(user.Id))
             {
                 throw new ArgumentNullException(nameof(user));
             }
@@ -515,13 +511,9 @@ namespace ExtenFlow.Identity.Dapr
             {
                 throw new ArgumentNullException(nameof(newClaim));
             }
-
-            var matchedClaims = await UserClaims.Where(uc => uc.UserId.Equals(user.Id) && uc.ClaimValue == claim.Value && uc.ClaimType == claim.Type).ToListAsync(cancellationToken);
-            foreach (var matchedClaim in matchedClaims)
-            {
-                matchedClaim.ClaimValue = newClaim.Value;
-                matchedClaim.ClaimType = newClaim.Type;
-            }
+            IUserClaimsActor actor = GetUserClaimsActor(user.Id);
+            await actor.RemoveClaim(claim.Type, claim.Value);
+            await actor.AddClaim(newClaim.Type, newClaim.Value);
         }
 
         /// <summary>
@@ -536,8 +528,9 @@ namespace ExtenFlow.Identity.Dapr
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
         public async override Task RemoveClaimsAsync(User user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            if (user == null)
+            if (user == null || string.IsNullOrWhiteSpace(user.Id))
             {
                 throw new ArgumentNullException(nameof(user));
             }
@@ -545,13 +538,10 @@ namespace ExtenFlow.Identity.Dapr
             {
                 throw new ArgumentNullException(nameof(claims));
             }
-            foreach (var claim in claims)
+            IUserClaimsActor actor = GetUserClaimsActor(user.Id);
+            foreach (Claim claim in claims)
             {
-                var matchedClaims = await UserClaims.Where(uc => uc.UserId.Equals(user.Id) && uc.ClaimValue == claim.Value && uc.ClaimType == claim.Type).ToListAsync(cancellationToken);
-                foreach (var c in matchedClaims)
-                {
-                    UserClaims.Remove(c);
-                }
+                await actor.RemoveClaim(claim.Type, claim.Value);
             }
         }
 

@@ -1,23 +1,43 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Dapr.Actors;
-
-using ExtenFlow.Identity.Models;
 
 namespace ExtenFlow.Identity.DaprActorsStore
 {
     /// <summary>
-    /// The user role actor interface
+    /// The user roles actor interface
     /// </summary>
     /// <seealso cref="IActor"/>
-    public interface IUserRoleActor : IActor
+    public interface IUserRolesActor : IActor
     {
         /// <summary>
-        /// Gets the user role.
+        /// Determines whether the user has the specified role.
         /// </summary>
-        /// <returns>The user role object</returns>
-        Task<UserRole> GetUserRole();
-        void Create();
-        void Delete();
+        /// <param name="roleNormalizedName">Normalized name of the role.</param>
+        /// <returns>True if the user has the role</returns>
+        /// <exception cref="ArgumentNullException">roleNormalizedName</exception>
+        Task<bool> HasRole(string roleNormalizedName);
+
+        /// <summary>
+        /// Adds the user's role.
+        /// </summary>
+        /// <param name="roleNormalizedName">Name of the role normalized.</param>
+        /// <exception cref="ArgumentNullException">roleNormalizedName</exception>
+        Task AddRole(string roleNormalizedName);
+
+        /// <summary>
+        /// Removes the role.
+        /// </summary>
+        /// <param name="roleNormalizedName">Name of the role normalized.</param>
+        /// <exception cref="ArgumentNullException">roleNormalizedName</exception>
+        Task RemoveRole(string roleNormalizedName);
+
+        /// <summary>
+        /// Gets the all the user's roles.
+        /// </summary>
+        /// <returns>A list of all roles</returns>
+        Task<IList<string>> GetRoles();
     }
 }
