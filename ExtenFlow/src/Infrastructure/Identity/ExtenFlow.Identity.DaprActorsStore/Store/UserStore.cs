@@ -33,6 +33,30 @@ namespace ExtenFlow.Identity.Dapr
         {
         }
 
+        /// <summary>
+        /// List of users as Queryable
+        /// </summary>
+        /// <remarks>Warning : a call to this object reads all the users in the database.</remarks>
+        public override IQueryable<User> Users => UserList().GetAwaiter().GetResult().AsQueryable();
+
+        private async Task<List<User>> UserList()
+        {
+            IList<Guid> userIds = await GetUserCollectionActor().GetIds();
+            var tasks = new List<Task<User>>();
+            int taskCount = 0;
+            foreach (Guid userId in userIds)
+            {
+                taskCount++;
+                tasks.Add(GetUserActor(userId).GetUser());
+                if (taskCount % 1000 == 0)
+                {
+                    await Task.WhenAll(tasks);
+                }
+            }
+            await Task.WhenAll(tasks);
+            return tasks.Select(p => p.Result).ToList();
+        }
+
         private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
 
         private IUserActor GetUserActor(Guid userId) => ActorProxy.Create<IUserActor>(new ActorId(ConvertIdToString(userId)), nameof(UserActor));
@@ -555,11 +579,11 @@ namespace ExtenFlow.Identity.Dapr
         /// </param>
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
         public override Task AddLoginAsync(User user, UserLoginInfo login,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            if (user == null)
+            if (user == null || user.Id == default)
             {
                 throw new ArgumentNullException(nameof(user));
             }

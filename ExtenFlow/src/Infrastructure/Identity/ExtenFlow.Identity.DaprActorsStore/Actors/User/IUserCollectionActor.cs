@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -42,5 +43,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         Task<IdentityResult> Delete(Guid userId, string concurrencyString);
 
         Task<Guid?> FindByNormalizedName(string normalizedUserName);
+
+        Task<IList<Guid>> GetIds();
     }
 }
