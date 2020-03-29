@@ -22,10 +22,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\src\Infrastructure\Security\ExtenFlow.Security.DaprStore\ExtenFlow.Security.DaprStore.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <PackageReference Update="FluentAssertions" Version="5.10.3" />
 	</ItemGroup>
 </Project>

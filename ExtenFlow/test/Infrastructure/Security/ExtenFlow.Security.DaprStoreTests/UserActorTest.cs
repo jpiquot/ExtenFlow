@@ -111,7 +111,7 @@ namespace ExtenFlow.Security.DaprStoreTests
                 .Returns(Task.FromResult(user));
             UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
 
-            IdentityResult result = await testDemoActor.Delete();
+            IdentityResult result = await testDemoActor.SetDeleted();
             result.Succeeded.Should().Be(true);
 
             await Invoking(async () => await testDemoActor.GetUser())
@@ -214,7 +214,7 @@ namespace ExtenFlow.Security.DaprStoreTests
                 .Returns(Task.FromResult<User>(null));
             UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
 
-            await Invoking(async () => await testDemoActor.Delete())
+            await Invoking(async () => await testDemoActor.SetDeleted())
                 .Should()
                 .ThrowAsync<KeyNotFoundException>();
 
@@ -231,7 +231,7 @@ namespace ExtenFlow.Security.DaprStoreTests
             stateManager.Setup(manager => manager.SetStateAsync<User>("User", null, It.IsAny<CancellationToken>())).Verifiable();
             UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
 
-            IdentityResult result = await testDemoActor.Delete();
+            IdentityResult result = await testDemoActor.SetDeleted();
             result.Succeeded.Should().Be(true);
 
             stateManager.VerifyAll();
