@@ -152,5 +152,19 @@ namespace ExtenFlow.Identity.DaprActorsStore
             _state = await StateManager.GetStateAsync<RoleCollectionState?>(_stateName);
             await base.OnActivateAsync();
         }
+
+        /// <summary>
+        /// Finds the name of the by normalized.
+        /// </summary>
+        /// <param name="normalizedRoleName">Name of the normalized role.</param>
+        /// <returns>The id of the role if exists, else null.</returns>
+        public Task<Guid?> FindByNormalizedName(string normalizedRoleName)
+        {
+            if (string.IsNullOrWhiteSpace(normalizedRoleName))
+            {
+                return Task.FromException<Guid?>(new ArgumentNullException(nameof(normalizedRoleName)));
+            }
+            return Task.FromResult<Guid?>(State.NormalizedNames.Where(p => p.Key.Equals(normalizedRoleName)).Select(p => p.Value).FirstOrDefault());
+        }
     }
 }

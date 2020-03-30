@@ -63,11 +63,15 @@ namespace ExtenFlow.Identity.Dapr
 
         private IRoleActor GetRoleActor(Guid roleId) => ActorProxy.Create<IRoleActor>(new ActorId(ConvertIdToString(roleId)), nameof(RoleActor));
 
-        private IUserLoginActor GetUserLoginActor(string loginProvider, string providerKey) => ActorProxy.Create<IUserLoginActor>(new ActorId(loginProvider + "." + providerKey), nameof(UserRolesActor));
+        private IUserLoginsActor GetUserLoginsActor(Guid userId) => ActorProxy.Create<IUserLoginsActor>(new ActorId(ConvertIdToString(userId)), nameof(UserLoginsActor));
+
+        private IUserLoginsCollectionActor GetUserLoginsCollectionActor() => ActorProxy.Create<IUserLoginsCollectionActor>(new ActorId(nameof(IUserLoginsCollectionActor)), nameof(UserLoginsCollectionActor));
 
         private IUserRolesActor GetUserRoleActor(Guid userId) => ActorProxy.Create<IUserRolesActor>(new ActorId(ConvertIdToString(userId)), nameof(UserRolesActor));
 
         private IUserClaimsActor GetUserClaimsActor(Guid userId) => ActorProxy.Create<IUserClaimsActor>(new ActorId(ConvertIdToString(userId)), nameof(UserClaimsActor));
+
+        private IUserTokensActor GetUserTokensActor(Guid userId) => ActorProxy.Create<IUserTokensActor>(new ActorId(ConvertIdToString(userId)), nameof(UserTokensActor));
 
         private IUserCollectionActor GetUserCollectionActor() => ActorProxy.Create<IUserCollectionActor>(new ActorId(nameof(UserCollectionActor)), nameof(UserCollectionActor));
 
@@ -301,14 +305,15 @@ namespace ExtenFlow.Identity.Dapr
             {
                 throw new ArgumentNullException(nameof(userId));
             }
-            UserLogin userLogin = await GetUserLoginActor(loginProvider, providerKey).GetUserLogin();
-            if (userLogin.UserId != userId)
+            IUserLoginsActor actor = GetUserLoginsActor(userId);
+            UserLoginInfo? userLogin = await actor.FindUserLogin(loginProvider, providerKey);
+            if (userLogin == null)
             {
 #pragma warning disable CS8603 // Possible null reference return.
                 return null;
 #pragma warning restore CS8603 // Possible null reference return.
             }
-            return userLogin;
+            return new UserLogin() { UserId = userId, LoginProvider = userLogin.LoginProvider, ProviderDisplayName = userLogin.ProviderDisplayName, ProviderKey = userLogin.ProviderKey };
         }
 
         /// <summary>
@@ -335,7 +340,7 @@ namespace ExtenFlow.Identity.Dapr
             {
                 return Task.FromException<UserLogin>(new ArgumentNullException(nameof(providerKey)));
             }
-            return GetUserLoginActor(loginProvider, providerKey).GetUserLogin();
+            return GetUserLoginsCollectionActor().FindByProvider(loginProvider, providerKey);
         }
 
         /// <summary>
@@ -585,14 +590,13 @@ namespace ExtenFlow.Identity.Dapr
             ThrowIfDisposed();
             if (user == null || user.Id == default)
             {
-                throw new ArgumentNullException(nameof(user));
+                return Task.FromException(new ArgumentNullException(nameof(user)));
             }
             if (login == null)
             {
-                throw new ArgumentNullException(nameof(login));
+                return Task.FromException(new ArgumentNullException(nameof(login)));
             }
-            UserLogins.Add(CreateUserLogin(user, login));
-            return Task.FromResult(false);
+            return GetUserLoginsCollectionActor().Create(CreateUserLogin(user, login));
         }
 
         /// <summary>
@@ -608,20 +612,15 @@ namespace ExtenFlow.Identity.Dapr
         /// should be canceled.
         /// </param>
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
-        public override async Task RemoveLoginAsync(User user, string loginProvider, string providerKey,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public override Task RemoveLoginAsync(User user, string loginProvider, string providerKey, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            if (user == null)
+            if (user == null || user.Id == default)
             {
-                throw new ArgumentNullException(nameof(user));
+                return Task.FromException(new ArgumentNullException(nameof(user) + "." + nameof(User.Id)));
             }
-            var entry = await FindUserLoginAsync(user.Id, loginProvider, providerKey, cancellationToken);
-            if (entry != null)
-            {
-                UserLogins.Remove(entry);
-            }
+            return GetUserLoginsCollectionActor().Delete(user.Id, loginProvider, providerKey);
         }
 
         /// <summary>
@@ -636,17 +635,15 @@ namespace ExtenFlow.Identity.Dapr
         /// The <see cref="Task"/> for the asynchronous operation, containing a list of <see
         /// cref="UserLoginInfo"/> for the specified <paramref name="user"/>, if any.
         /// </returns>
-        public async override Task<IList<UserLoginInfo>> GetLoginsAsync(User user, CancellationToken cancellationToken = default)
+        public override Task<IList<UserLoginInfo>> GetLoginsAsync(User user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            if (user == null)
+            if (user == null || user.Id == default)
             {
-                throw new ArgumentNullException(nameof(user));
+                return Task.FromException<IList<UserLoginInfo>>(new ArgumentNullException(nameof(user) + "." + nameof(User.Id)));
             }
-            var userId = user.Id;
-            return await UserLogins.Where(l => l.UserId.Equals(userId))
-                .Select(l => new UserLoginInfo(l.LoginProvider, l.ProviderKey, l.ProviderDisplayName)).ToListAsync(cancellationToken);
+            return GetUserLoginsActor(user.Id).GetAll();
         }
 
         /// <summary>
@@ -664,17 +661,18 @@ namespace ExtenFlow.Identity.Dapr
         /// The <see cref="Task"/> for the asynchronous operation, containing the user, if any which
         /// matched the specified login provider and key.
         /// </returns>
-        public async override Task<User> FindByLoginAsync(string loginProvider, string providerKey,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public async override Task<User> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            var userLogin = await FindUserLoginAsync(loginProvider, providerKey, cancellationToken);
+            UserLogin userLogin = await FindUserLoginAsync(loginProvider, providerKey, cancellationToken);
             if (userLogin != null)
             {
                 return await FindUserAsync(userLogin.UserId, cancellationToken);
             }
+#pragma warning disable CS8603 // Possible null reference return.
             return null;
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         /// <summary>
@@ -792,8 +790,12 @@ namespace ExtenFlow.Identity.Dapr
         /// <returns></returns>
         protected override Task RemoveUserTokenAsync(UserToken token)
         {
-            UserTokens.Remove(token);
-            return Task.CompletedTask;
+            ThrowIfDisposed();
+            if (token == null || token.UserId == default)
+            {
+                return Task.FromException<IList<UserLoginInfo>>(new ArgumentNullException(nameof(token) + "." + nameof(UserToken.UserId)));
+            }
+            return GetUserTokensActor(token.UserId).RemoveToken(token.LoginProvider, token.Name);
         }
     }
 }
