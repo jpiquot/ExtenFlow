@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,19 +42,23 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <returns>The operation result</returns>
         public async Task<IdentityResult> Create(User user)
         {
-            if (user == null || user.Id == default)
+            if (user == null)
             {
-                throw new ArgumentNullException(nameof(User.Id));
+                throw new ArgumentNullException(nameof(user));
+            }
+            if (user.Id == default)
+            {
+                throw new ArgumentOutOfRangeException(Resource.UserIdNotDefined);
             }
             if (State.Ids.Any(p => p == user.Id))
             {
-                throw new InvalidOperationException($"The user with Id='{user.Id}' already exist.");
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resource.DuplicateUser, Id.GetId()));
             }
-            if (State.NormalizedNames.Any(p => p.Key.Equals(user.NormalizedUserName)))
+            if (State.NormalizedNames.Any(p => p.Key == user.NormalizedUserName))
             {
                 return IdentityResult.Failed(_errorDescriber.DuplicateUserName(user.NormalizedUserName));
             }
-            IdentityResult result = await GetUserActor(user.Id).Set(user);
+            IdentityResult result = await GetUserActor(user.Id).SetUser(user);
             if (result.Succeeded)
             {
                 State.Ids.Add(user.Id);
@@ -70,22 +75,26 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <returns>The operation result</returns>
         public async Task<IdentityResult> Update(User user)
         {
-            if (user == null || user.Id == default)
+            if (user == null)
             {
-                throw new ArgumentNullException(nameof(User.Id));
+                throw new ArgumentNullException(nameof(user));
+            }
+            if (user.Id == default)
+            {
+                throw new ArgumentOutOfRangeException(Resource.UserIdNotDefined);
             }
             if (!State.Ids.Any(p => p == user.Id))
             {
-                throw new InvalidOperationException($"The user with Id='{user.Id}' does not exist.");
+                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.UserNotFound, Id.GetId()));
             }
-            if (State.NormalizedNames.Any(p => p.Key.Equals(user.NormalizedUserName) && p.Value != user.Id))
+            if (State.NormalizedNames.Any(p => p.Key == user.NormalizedUserName && p.Value != user.Id))
             {
                 return IdentityResult.Failed(_errorDescriber.DuplicateUserName(user.NormalizedUserName));
             }
-            IdentityResult result = await GetUserActor(user.Id).Set(user);
+            IdentityResult result = await GetUserActor(user.Id).SetUser(user);
             if (result.Succeeded)
             {
-                if (!State.NormalizedNames.Any(p => p.Key.Equals(user.NormalizedUserName)))
+                if (!State.NormalizedNames.Any(p => p.Key == user.NormalizedUserName))
                 {
                     // The normalized name hase been changed.
                     State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == user.Id).Select(p => p.Key).Single());
@@ -126,12 +135,12 @@ namespace ExtenFlow.Identity.DaprActorsStore
             }
             if (!State.Ids.Any(p => p == userId))
             {
-                throw new InvalidOperationException($"The user with Id='{userId}' does not exist.");
+                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.UserNotFound, Id.GetId()));
             }
             State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == userId).Select(p => p.Key).Single());
             State.Ids.Remove(userId);
             await SetState();
-            await GetUserActor(userId).Clear(concurrencyString);
+            await GetUserActor(userId).ClearUser(concurrencyString);
             return IdentityResult.Success;
         }
 
@@ -146,7 +155,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 Task.FromException<Guid?>(new ArgumentNullException(nameof(normalizedUserName)));
             }
-            return Task.FromResult<Guid?>(State.NormalizedNames.Where(p => p.Key.Equals(normalizedUserName)).Select(p => p.Value).FirstOrDefault());
+            return Task.FromResult<Guid?>(State.NormalizedNames.Where(p => p.Key == normalizedUserName).Select(p => p.Value).FirstOrDefault());
         }
 
         /// <summary>

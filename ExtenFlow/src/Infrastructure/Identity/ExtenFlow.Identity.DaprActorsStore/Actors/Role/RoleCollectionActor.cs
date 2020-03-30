@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,7 +25,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// Initializes a new instance of the <see cref="RoleCollectionActor"/> class.
         /// </summary>
         /// <param name="actorService">
-        /// The <see cref="P:Dapr.Actors.Runtime.Actor.ActorService"/> that will host this actor instance.
+        /// The <see cref="ActorService"/> that will host this actor instance.
         /// </param>
         /// <param name="actorId">The Id of the actor.</param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
@@ -40,19 +42,23 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <returns>The operation result</returns>
         public async Task<IdentityResult> Create(Role role)
         {
-            if (role == null || role.Id == default)
+            if (role == null)
             {
-                throw new ArgumentNullException(nameof(Role.Id));
+                throw new ArgumentNullException(nameof(role));
+            }
+            if (role.Id == default)
+            {
+                throw new ArgumentOutOfRangeException(Resource.RoleIdNotDefined);
             }
             if (State.Ids.Any(p => p == role.Id))
             {
-                throw new InvalidOperationException($"The role with Id='{role.Id}' already exist.");
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resource.DuplicateRole, role.Id));
             }
-            if (State.NormalizedNames.Any(p => p.Key.Equals(role.NormalizedName)))
+            if (State.NormalizedNames.Any(p => p.Key == role.NormalizedName))
             {
                 return IdentityResult.Failed(_errorDescriber.DuplicateRoleName(role.NormalizedName));
             }
-            IdentityResult result = await GetRoleActor(role.Id).Set(role);
+            IdentityResult result = await GetRoleActor(role.Id).SetRole(role);
             if (result.Succeeded)
             {
                 State.Ids.Add(role.Id);
@@ -69,22 +75,26 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <returns>The operation result</returns>
         public async Task<IdentityResult> Update(Role role)
         {
-            if (role == null || role.Id == default)
+            if (role == null)
             {
-                throw new ArgumentNullException(nameof(Role.Id));
+                throw new ArgumentNullException(nameof(role));
+            }
+            if (role.Id == default)
+            {
+                throw new ArgumentOutOfRangeException(Resource.RoleIdNotDefined);
             }
             if (!State.Ids.Any(p => p == role.Id))
             {
-                throw new InvalidOperationException($"The role with Id='{role.Id}' does not exist.");
+                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.RoleNotFound, role.Id));
             }
-            if (State.NormalizedNames.Any(p => p.Key.Equals(role.NormalizedName) && p.Value != role.Id))
+            if (State.NormalizedNames.Any(p => p.Key == role.NormalizedName && p.Value != role.Id))
             {
                 return IdentityResult.Failed(_errorDescriber.DuplicateRoleName(role.NormalizedName));
             }
-            IdentityResult result = await GetRoleActor(role.Id).Set(role);
+            IdentityResult result = await GetRoleActor(role.Id).SetRole(role);
             if (result.Succeeded)
             {
-                if (!State.NormalizedNames.Any(p => p.Key.Equals(role.NormalizedName)))
+                if (!State.NormalizedNames.Any(p => p.Key == role.NormalizedName))
                 {
                     // The normalized name hase been changed.
                     State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == role.Id).Select(p => p.Key).Single());
@@ -125,7 +135,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             }
             if (!State.Ids.Any(p => p == roleId))
             {
-                throw new InvalidOperationException($"The role with Id='{roleId}' does not exist.");
+                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.RoleNotFound, roleId));
             }
             State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == roleId).Select(p => p.Key).Single());
             State.Ids.Remove(roleId);
@@ -145,7 +155,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 return Task.FromException<Guid?>(new ArgumentNullException(nameof(normalizedRoleName)));
             }
-            return Task.FromResult<Guid?>(State.NormalizedNames.Where(p => p.Key.Equals(normalizedRoleName)).Select(p => p.Value).FirstOrDefault());
+            return Task.FromResult<Guid?>(State.NormalizedNames.Where(p => p.Key == normalizedRoleName).Select(p => p.Value).FirstOrDefault());
         }
     }
 }

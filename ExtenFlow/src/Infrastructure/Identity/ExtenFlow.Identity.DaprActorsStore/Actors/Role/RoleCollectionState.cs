@@ -8,14 +8,20 @@ namespace ExtenFlow.Identity.DaprActorsStore
     /// </summary>
     public class RoleCollectionState
     {
-        /// <summary>
-        /// The ids of all existing roles
-        /// </summary>
-        public HashSet<Guid> Ids = new HashSet<Guid>();
+        private HashSet<Guid>? _ids;
+
+        private Dictionary<string, Guid>? _normalizedNames;
 
         /// <summary>
-        /// The normalized names of all existing roles
+        /// Gets the all roles ids.
         /// </summary>
-        public Dictionary<string, Guid> NormalizedNames = new Dictionary<string, Guid>();
+        /// <value>The role ids.</value>
+        public HashSet<Guid> Ids => _ids ?? (_ids = new HashSet<Guid>());
+
+        /// <summary>
+        /// Gets all the role normalized names.
+        /// </summary>
+        /// <value>The role normalized names.</value>
+        public Dictionary<string, Guid> NormalizedNames => _normalizedNames ?? (_normalizedNames = new Dictionary<string, Guid>());
     }
 }

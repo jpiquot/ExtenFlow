@@ -41,7 +41,7 @@ namespace ExtenFlow.Identity.Dapr
 
         private async Task<List<User>> UserList()
             => (await Task.WhenAll((await GetUserCollectionActor().GetIds())
-                .Select(p => GetUserActor(p).Get())))
+                .Select(p => GetUserActor(p).GetUser())))
                 .ToList();
 
         private static IUserActor GetUserActor(Guid userId) => ActorProxy.Create<IUserActor>(new ActorId(userId.ToString()), nameof(UserActor));
@@ -96,7 +96,7 @@ namespace ExtenFlow.Identity.Dapr
             IdentityResult result = await GetUserCollectionActor().Create(user);
             if (result.Succeeded)
             {
-                user.Copy(await GetUserActor(user.Id).Get());
+                user.Copy(await GetUserActor(user.Id).GetUser());
             }
             return result;
         }
@@ -121,7 +121,7 @@ namespace ExtenFlow.Identity.Dapr
             IdentityResult result = await GetUserCollectionActor().Update(user);
             if (result.Succeeded)
             {
-                user.Copy(await GetUserActor(user.Id).Get());
+                user.Copy(await GetUserActor(user.Id).GetUser());
             }
             return result;
         }
@@ -170,7 +170,7 @@ namespace ExtenFlow.Identity.Dapr
                 return null;
 #pragma warning restore CS8603 // Possible null reference return.
             }
-            return await GetUserActor(id).Get();
+            return await GetUserActor(id).GetUser();
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace ExtenFlow.Identity.Dapr
             Guid? id = await GetUserCollectionActor().FindByNormalizedName(normalizedUserName);
             if (id != null)
             {
-                return await GetUserActor(id.Value).Get();
+                return await GetUserActor(id.Value).GetUser();
             }
 #pragma warning disable CS8603 // Possible null reference return.
             return null;
@@ -215,7 +215,7 @@ namespace ExtenFlow.Identity.Dapr
             Guid? id = await GetRoleCollectionActor().FindByNormalizedName(normalizedRoleName);
             if (id != null)
             {
-                return await GetRoleActor(id.Value).Get();
+                return await GetRoleActor(id.Value).GetRole();
             }
 #pragma warning disable CS8603 // Possible null reference return.
             return null;
@@ -264,7 +264,7 @@ namespace ExtenFlow.Identity.Dapr
             }
             if (await GetUserCollectionActor().Exist(userId))
             {
-                return await GetUserActor(userId).Get();
+                return await GetUserActor(userId).GetUser();
             }
 #pragma warning disable CS8603 // Possible null reference return.
             return null;
@@ -732,7 +732,7 @@ namespace ExtenFlow.Identity.Dapr
             }
             return (await Task.WhenAll(
                 (await GetUserRoleCollectionActor().GetUserIds(roleId.Value))
-                .Select(p => GetUserActor(p).Get()))
+                .Select(p => GetUserActor(p).GetUser()))
                 )
                 .ToList();
         }

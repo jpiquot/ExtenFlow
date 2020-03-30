@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -24,7 +25,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// Initializes a new instance of the <see cref="RoleActor"/> class.
         /// </summary>
         /// <param name="actorService">
-        /// The <see cref="P:Dapr.Actors.Runtime.Actor.ActorService"/> that will host this actor instance.
+        /// The <see cref="ActorService"/> that will host this actor instance.
         /// </param>
         /// <param name="actorId">The Id of the actor.</param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
@@ -36,7 +37,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// Gets the role.
         /// </summary>
         /// <returns>The role object</returns>
-        public Task<Role> Get() => Task.FromResult(State);
+        public Task<Role> GetRole() => Task.FromResult(State);
 
         /// <summary>
         /// Updates the specified role.
@@ -44,13 +45,17 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="role">The role.</param>
         /// <exception cref="ArgumentNullException">Role.Id</exception>
         /// <returns>The identity result object</returns>
-        public async Task<IdentityResult> Set(Role role)
+        public async Task<IdentityResult> SetRole(Role role)
         {
-            if (role == null || role.Id == default)
+            if (role == null)
             {
-                throw new ArgumentNullException(nameof(Role) + "." + nameof(Role.Id));
+                throw new ArgumentNullException(nameof(role));
             }
-            if (_state != null && !role.ConcurrencyStamp.Equals(State.ConcurrencyStamp))
+            if (role.Id == default)
+            {
+                throw new ArgumentOutOfRangeException(Resource.RoleIdNotDefined);
+            }
+            if (_state != null && role.ConcurrencyStamp != State.ConcurrencyStamp)
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
@@ -68,9 +73,9 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
             if (_state == null)
             {
-                throw new KeyNotFoundException("The role does not exist.");
+                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.RoleNotFound, Id.GetId()));
             }
-            if (!State.ConcurrencyStamp.Equals(concurrencyString))
+            if (State.ConcurrencyStamp != concurrencyString)
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }

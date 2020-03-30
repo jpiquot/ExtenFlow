@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
-using Dapr.Actors.Client;
 using Dapr.Actors.Runtime;
 
 namespace ExtenFlow.Identity.DaprActorsStore
@@ -26,19 +25,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
         public UserTokensActor(ActorService actorService, ActorId actorId, IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
         {
-        }
-
-        private ITokenUsersActor GetTokenUsersActor(string tokenType) => ActorProxy.Create<ITokenUsersActor>(new ActorId(tokenType), nameof(TokenUsersActor));
-
-        /// <summary>
-        /// Override this method to initialize the members, initialize state or register timers.
-        /// This method is called right after the actor is activated and before any method call or
-        /// reminders are dispatched on it.
-        /// </summary>
-        protected override async Task OnActivateAsync()
-        {
-            _state = await StateManager.GetStateAsync<HashSet<string>?>(_stateName);
-            await base.OnActivateAsync();
         }
 
         /// <summary>

@@ -70,6 +70,24 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The role &apos;{0}&apos; already exist..
+        /// </summary>
+        internal static string DuplicateRole {
+            get {
+                return ResourceManager.GetString("DuplicateRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The user &apos;{0}&apos; already exist..
+        /// </summary>
+        internal static string DuplicateUser {
+            get {
+                return ResourceManager.GetString("DuplicateUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate user for login : UserIds=&apos;{0}/{3}&apos;; LoginProvider=&apos;{1}&apos;; ProviderKey=&apos;{2}&apos;..
         /// </summary>
         internal static string DuplicateUserForLogin {
@@ -115,6 +133,15 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Role &apos;{0}&apos; not found..
+        /// </summary>
+        internal static string RoleNotFound {
+            get {
+                return ResourceManager.GetString("RoleNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The user id is not defined..
         /// </summary>
         internal static string UserIdNotDefined {
@@ -129,6 +156,15 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         internal static string UserLoginNotFound {
             get {
                 return ResourceManager.GetString("UserLoginNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User &apos;{0}&apos; not found..
+        /// </summary>
+        internal static string UserNotFound {
+            get {
+                return ResourceManager.GetString("UserNotFound", resourceCulture);
             }
         }
     }

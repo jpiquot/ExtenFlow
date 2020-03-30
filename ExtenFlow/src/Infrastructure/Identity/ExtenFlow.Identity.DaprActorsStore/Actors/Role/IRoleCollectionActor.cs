@@ -41,6 +41,11 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <returns>The operation result</returns>
         Task<IdentityResult> Delete(Guid roleId, string concurrencyString);
 
+        /// <summary>
+        /// Finds the name of the by normalized.
+        /// </summary>
+        /// <param name="normalizedRoleName">Name of the normalized role.</param>
+        /// <returns>The role id</returns>
         Task<Guid?> FindByNormalizedName(string normalizedRoleName);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -26,7 +27,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// Initializes a new instance of the <see cref="UserActor"/> class.
         /// </summary>
         /// <param name="actorService">
-        /// The <see cref="P:Dapr.Actors.Runtime.Actor.ActorService"/> that will host this actor instance.
+        /// The <see cref="ActorService"/> that will host this actor instance.
         /// </param>
         /// <param name="actorId">The Id of the actor.</param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
@@ -42,13 +43,17 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <exception cref="InvalidOperationException">
         /// The user Id ({user?.Id}) is not the same as the actor Id({Id.GetId()})
         /// </exception>
-        public async Task<IdentityResult> Set(User user)
+        public async Task<IdentityResult> SetUser(User user)
         {
-            if (user == null || user.Id == default)
+            if (user == null)
             {
-                throw new ArgumentNullException(nameof(Role) + "." + nameof(Role.Id));
+                throw new ArgumentNullException(nameof(user));
             }
-            if (_state != null && !user.ConcurrencyStamp.Equals(State.ConcurrencyStamp))
+            if (user.Id == default)
+            {
+                throw new ArgumentOutOfRangeException(Resource.UserIdNotDefined);
+            }
+            if (_state != null && user.ConcurrencyStamp != State.ConcurrencyStamp)
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
@@ -62,13 +67,13 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// </summary>
         /// <returns>The operation result</returns>
         /// <exception cref="KeyNotFoundException">The user Id ({Id.GetId()}) already exist.</exception>
-        public async Task<IdentityResult> Clear(string concurrencyStamp)
+        public async Task<IdentityResult> ClearUser(string concurrencyStamp)
         {
             if (_state == null)
             {
-                throw new KeyNotFoundException("The role does not exist.");
+                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.UserNotFound, Id.GetId()));
             }
-            if (!State.ConcurrencyStamp.Equals(concurrencyStamp))
+            if (State.ConcurrencyStamp != concurrencyStamp)
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
@@ -80,6 +85,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// Getthe user
         /// </summary>
         /// <returns>The user object</returns>
-        public Task<User> Get() => _state == null ? Task.FromException<User>(new KeyNotFoundException($"The user with Id='{Id.GetId()}' has not been created or has been deleted.")) : Task.FromResult(State);
+        public Task<User> GetUser() => _state == null ? Task.FromException<User>(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.UserNotFound, Id.GetId()))) : Task.FromResult(State);
     }
 }
