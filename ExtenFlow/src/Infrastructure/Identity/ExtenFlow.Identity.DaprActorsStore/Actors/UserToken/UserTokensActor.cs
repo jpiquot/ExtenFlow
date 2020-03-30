@@ -14,13 +14,8 @@ namespace ExtenFlow.Identity.DaprActorsStore
     /// </summary>
     /// <seealso cref="Actor"/>
     /// <seealso cref="IUserTokensActor"/>
-    public class UserTokensActor : Actor, IUserTokensActor
+    public class UserTokensActor : BaseActor<Dictionary<string, Dictionary<string, string>>>, IUserTokensActor
     {
-        private const string _stateName = "UserTokens";
-        private HashSet<string>? _state;
-
-        private HashSet<string> State => _state ?? (_state = new HashSet<string>());
-
         /// <summary>
         /// Initializes a new instance of the <see cref="UserTokensActor"/> class.
         /// </summary>

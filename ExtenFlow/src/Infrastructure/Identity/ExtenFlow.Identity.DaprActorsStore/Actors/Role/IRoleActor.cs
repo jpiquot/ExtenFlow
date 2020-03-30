@@ -18,7 +18,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// Gets the role.
         /// </summary>
         /// <returns>The role object</returns>
-        Task<Role> GetRole();
+        Task<Role> Get();
 
         /// <summary>
         /// Set the specified role value.

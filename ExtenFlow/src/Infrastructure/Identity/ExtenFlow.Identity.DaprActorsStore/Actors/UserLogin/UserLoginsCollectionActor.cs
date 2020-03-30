@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -15,142 +14,95 @@ namespace ExtenFlow.Identity.DaprActorsStore
     /// <summary>
     /// The user collection actor class
     /// </summary>
-    public class UserLoginsCollectionActor : Actor, IUserLoginsCollectionActor
+    public class UserLoginsCollectionActor : BaseActor<UserLoginsCollectionState>, IUserLoginsCollectionActor
     {
-        private const string _stateName = "UserLoginsCollection";
-        private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserCollectionActor"/> class.
+        /// Initializes a new instance of the <see cref="UserLoginsCollectionActor"/> class.
         /// </summary>
         /// <param name="actorService">
         /// The <see cref="ActorService"/> that will host this actor instance.
         /// </param>
         /// <param name="actorId">The Id of the actor.</param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
-        public UserCollectionActor(ActorService actorService, ActorId actorId, IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
+        public UserLoginsCollectionActor(ActorService actorService, ActorId actorId, IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
         {
         }
 
-        private UserCollectionState? _state;
-        private UserCollectionState State => _state ?? (_state = new UserCollectionState());
-
-        private IUserActor GetUserActor(Guid userId) => ActorProxy.Create<IUserActor>(new ActorId(userId.ToString()), nameof(UserActor));
+        private static IUserLoginsActor GetUserLoginsActor(Guid userId) => ActorProxy.Create<IUserLoginsActor>(new ActorId(userId.ToString()), nameof(UserLoginsActor));
 
         /// <summary>
-        /// Create a new user
+        /// Creates the specified user login.
         /// </summary>
-        /// <param name="user">The new user properties</param>
-        /// <returns>The operation result</returns>
-        public async Task<IdentityResult> Create(User user)
+        /// <param name="userLogin">The user login.</param>
+        /// <exception cref="ArgumentNullException">userLogin</exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public async Task Create(UserLogin userLogin)
         {
-            if (user == null || user.Id == default)
+            if (userLogin == null)
             {
-                throw new ArgumentNullException(nameof(User.Id));
+                throw new ArgumentNullException(nameof(userLogin));
             }
-            if (State.Ids.Any(p => p == user.Id))
+            if (userLogin.UserId == default)
             {
-                throw new InvalidOperationException($"The user with Id='{user.Id}' already exist.");
+                throw new ArgumentOutOfRangeException(Resource.UserIdNotDefined);
             }
-            if (State.NormalizedNames.Any(p => p.Key.Equals(user.NormalizedUserName)))
+            if (string.IsNullOrWhiteSpace(userLogin.LoginProvider))
             {
-                return IdentityResult.Failed(_errorDescriber.DuplicateUserName(user.NormalizedUserName));
+                throw new ArgumentOutOfRangeException(Resource.LoginProviderNotDefined);
             }
-            IdentityResult result = await GetUserActor(user.Id).Set(user);
-            if (result.Succeeded)
+            if (string.IsNullOrWhiteSpace(userLogin.ProviderKey))
             {
-                State.Ids.Add(user.Id);
-                State.NormalizedNames.Add(user.NormalizedUserName, user.Id);
-                await StateManager.SetStateAsync(_stateName, _state);
+                throw new ArgumentOutOfRangeException(Resource.ProviderKeyNotDefined);
             }
-            return result;
+            await GetUserLoginsActor(userLogin.UserId).Add(new UserLoginInfo(userLogin.LoginProvider, userLogin.ProviderKey, userLogin.ProviderDisplayName));
+            State.Add(userLogin.LoginProvider, userLogin.ProviderKey, userLogin.UserId);
+            await SetState();
         }
 
         /// <summary>
-        /// Create a new user
+        /// Delete the user login
         /// </summary>
-        /// <param name="user">The new user properties</param>
-        /// <returns>The operation result</returns>
-        public async Task<IdentityResult> Update(User user)
+        /// <param name="userId"></param>
+        /// <param name="loginProvider"></param>
+        /// <param name="providerKey"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public async Task Delete(Guid userId, string loginProvider, string providerKey)
         {
-            if (user == null || user.Id == default)
+            if (userId == default)
             {
-                throw new ArgumentNullException(nameof(User.Id));
+                throw new ArgumentOutOfRangeException(Resource.UserIdNotDefined);
             }
-            if (!State.Ids.Any(p => p == user.Id))
+            if (string.IsNullOrWhiteSpace(loginProvider))
             {
-                throw new InvalidOperationException($"The user with Id='{user.Id}' does not exist.");
+                throw new ArgumentOutOfRangeException(Resource.LoginProviderNotDefined);
             }
-            if (State.NormalizedNames.Any(p => p.Key.Equals(user.NormalizedUserName) && p.Value != user.Id))
+            if (string.IsNullOrWhiteSpace(providerKey))
             {
-                return IdentityResult.Failed(_errorDescriber.DuplicateUserName(user.NormalizedUserName));
+                throw new ArgumentOutOfRangeException(Resource.ProviderKeyNotDefined);
             }
-            IdentityResult result = await GetUserActor(user.Id).Set(user);
-            if (result.Succeeded)
+            await GetUserLoginsActor(userId).Delete(loginProvider, providerKey);
+            State.Remove(loginProvider, providerKey, userId);
+            await SetState();
+        }
+
+        /// <summary>
+        /// Finds the user login by provider.
+        /// </summary>
+        /// <param name="loginProvider">The login provider.</param>
+        /// <param name="providerKey">The provider key.</param>
+        /// <returns>The user login object if found, else null.</returns>
+        public async Task<UserLogin?> FindByProvider(string loginProvider, string providerKey)
+        {
+            Guid? userId = State.GetProviderKeys(loginProvider)[providerKey];
+            if (userId != null)
             {
-                if (!State.NormalizedNames.Any(p => p.Key.Equals(user.NormalizedUserName)))
+                UserLoginInfo? loginInfo = await GetUserLoginsActor(userId.Value).Find(loginProvider, providerKey);
+                if (loginInfo != null)
                 {
-                    // The normalized name hase been changed.
-                    State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == user.Id).Select(p => p.Key).Single());
-                    State.NormalizedNames.Add(user.NormalizedUserName, user.Id);
+                    return new UserLogin() { LoginProvider = loginInfo.LoginProvider, ProviderKey = loginInfo.ProviderKey, ProviderDisplayName = loginInfo.ProviderDisplayName, UserId = userId.Value };
                 }
-                await StateManager.SetStateAsync(_stateName, _state);
             }
-            return result;
-        }
-
-        /// <summary>
-        /// Checks if a user with the given identifier exists.
-        /// </summary>
-        /// <param name="userId">The user identifier.</param>
-        /// <returns>true if the user exists, else false.</returns>
-        public Task<bool> Exist(Guid userId)
-        {
-            if (userId == default)
-            {
-                return Task.FromException<bool>(new ArgumentNullException(nameof(userId)));
-            }
-            if (_state == null)
-            {
-                return Task.FromResult(false);
-            }
-            return Task.FromResult(State.Ids.Any(p => p == userId));
-        }
-
-        /// <summary>
-        /// Delete the user
-        /// </summary>
-        /// <returns>The operation result</returns>
-        public async Task<IdentityResult> Delete(Guid userId, string concurrencyString)
-        {
-            if (userId == default)
-            {
-                throw new ArgumentNullException(nameof(userId));
-            }
-            if (!State.Ids.Any(p => p == userId))
-            {
-                throw new InvalidOperationException($"The user with Id='{userId}' does not exist.");
-            }
-            State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == userId).Select(p => p.Key).Single());
-            State.Ids.Remove(userId);
-            await StateManager.SetStateAsync(_stateName, _state);
-            await GetUserActor(userId).Clear(concurrencyString);
-            return IdentityResult.Success;
-        }
-
-        /// <summary>
-        /// Override this method to initialize the members, initialize state or register timers.
-        /// This method is called right after the actor is activated and before any method call or
-        /// reminders are dispatched on it.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.Threading.Tasks.Task">Task</see> that represents outstanding
-        /// OnActivateAsync operation.
-        /// </returns>
-        protected override async Task OnActivateAsync()
-        {
-            _state = await StateManager.GetStateAsync<UserCollectionState?>(_stateName);
-            await base.OnActivateAsync();
+            return null;
         }
     }
 }

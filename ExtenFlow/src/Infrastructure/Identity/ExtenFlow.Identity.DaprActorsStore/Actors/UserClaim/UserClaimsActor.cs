@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
-using Dapr.Actors.Client;
 using Dapr.Actors.Runtime;
 
 namespace ExtenFlow.Identity.DaprActorsStore
@@ -14,13 +13,8 @@ namespace ExtenFlow.Identity.DaprActorsStore
     /// </summary>
     /// <seealso cref="Actor"/>
     /// <seealso cref="IUserClaimsActor"/>
-    public class UserClaimsActor : Actor, IUserClaimsActor
+    public class UserClaimsActor : BaseActor<Dictionary<string, HashSet<string>>>, IUserClaimsActor
     {
-        private const string _stateName = "UserClaims";
-        private HashSet<string>? _state;
-
-        private HashSet<string> State => _state ?? (_state = new HashSet<string>());
-
         /// <summary>
         /// Initializes a new instance of the <see cref="UserClaimsActor"/> class.
         /// </summary>
@@ -33,17 +27,15 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
         }
 
-        private IClaimUsersActor GetClaimUsersActor(string claimType) => ActorProxy.Create<IClaimUsersActor>(new ActorId(claimType), nameof(ClaimUsersActor));
-
-        /// <summary>
-        /// Override this method to initialize the members, initialize state or register timers.
-        /// This method is called right after the actor is activated and before any method call or
-        /// reminders are dispatched on it.
-        /// </summary>
-        protected override async Task OnActivateAsync()
+        private HashSet<string> ClaimValues(string claimType)
         {
-            _state = await StateManager.GetStateAsync<HashSet<string>?>(_stateName);
-            await base.OnActivateAsync();
+            HashSet<string>? values;
+            if (!State.TryGetValue(claimType, out values))
+            {
+                values = new HashSet<string>();
+                State.Add(claimType, values);
+            }
+            return values;
         }
 
         /// <summary>
@@ -53,17 +45,13 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="claimValue">Value of the claim</param>
         /// <returns>True if the user has the Claim</returns>
         /// <exception cref="ArgumentNullException">claimType</exception>
-        public Task<bool> HasClaim(string claimType, string claimValue)
+        public Task<bool> Exist(string claimType, string claimValue)
         {
             if (string.IsNullOrWhiteSpace(claimType))
             {
                 return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
-            if (!State.Any(p => p.Equals(claimType)))
-            {
-                return Task.FromResult(false);
-            }
-            return GetClaimUsersActor(claimType).HasUser(Id.GetId(), claimValue);
+            return Task.FromResult(ClaimValues(claimType).Any(p => p.Equals(claimValue)));
         }
 
         /// <summary>
@@ -72,15 +60,14 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="claimType">Type of the claim</param>
         /// <param name="claimValue">Value of the claim</param>
         /// <exception cref="ArgumentNullException">claimType</exception>
-        public async Task AddClaim(string claimType, string claimValue)
+        public Task Add(string claimType, string claimValue)
         {
-            if (State.Where(p => p.Equals(claimType)).Any())
+            if (string.IsNullOrWhiteSpace(claimType))
             {
-                throw new InvalidOperationException($"The user is already in Claim '{claimType}'.");
+                return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
-            State.Add(claimType);
-            await StateManager.SetStateAsync(_stateName, _state);
-            await GetClaimUsersActor(claimType).AddUser(Id.GetId(), claimValue);
+            ClaimValues(claimType).Add(claimValue);
+            return SetState();
         }
 
         /// <summary>
@@ -89,32 +76,31 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="claimType">Type of the claim</param>
         /// <param name="claimValue">Value of the claim</param>
         /// <exception cref="ArgumentNullException">claimType</exception>
-        public async Task RemoveClaim(string claimType, string claimValue)
+        public Task Remove(string claimType, string claimValue)
         {
-            if (!State.Where(p => p.Equals(claimType)).Any())
+            if (string.IsNullOrWhiteSpace(claimType))
             {
-                throw new InvalidOperationException($"The user does not have the Claim '{claimType}'.");
+                return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
-            await GetClaimUsersActor(claimType).RemoveUser(Id.GetId(), claimValue);
-            State.Remove(claimType);
-            await StateManager.SetStateAsync(_stateName, _state);
+            ClaimValues(claimType).Remove(claimValue);
+            return SetState();
         }
 
         /// <summary>
         /// Gets the all the user's Claims.
         /// </summary>
         /// <returns>A list of all Claims</returns>
-        public async Task<IList<Tuple<string, string>>> GetClaims()
+        public Task<IList<Tuple<string, string>>> GetAll()
         {
-            var claims = new List<Tuple<string, string>>();
-            foreach (string claimType in State)
+            var list = new List<Tuple<string, string>>();
+            foreach (KeyValuePair<string, HashSet<string>> entry in State)
             {
-                foreach (string claimValue in await GetClaimUsersActor(claimType).GetClaimValues(Id.GetId()))
+                foreach (string value in entry.Value)
                 {
-                    claims.Add(new Tuple<string, string>(claimType, claimValue));
+                    list.Add(new Tuple<string, string>(entry.Key, value));
                 }
             }
-            return claims;
+            return Task.FromResult<IList<Tuple<string, string>>>(list);
         }
     }
 }

@@ -18,13 +18,9 @@ namespace ExtenFlow.Identity.DaprActorsStore
     /// </summary>
     /// <seealso cref="Actor"/>
     /// <seealso cref="IUserActor"/>
-    public class UserActor : Actor, IUserActor
+    public class UserActor : BaseActor<User>, IUserActor
     {
-        private const string _stateName = "User";
-        private User? _state;
         private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
-
-        private User State => _state ?? throw new NullReferenceException(nameof(_state));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserActor"/> class.
@@ -37,13 +33,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
         public UserActor(ActorService actorService, ActorId actorId, IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
         {
         }
-
-        /// <summary>
-        /// Get the user name
-        /// </summary>
-        /// <returns>The user name</returns>
-        public Task<string> GetUserName()
-            => Task.FromResult(State?.UserName);
 
         /// <summary>
         /// Update user properties
@@ -64,8 +53,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
             user.ConcurrencyStamp = Guid.NewGuid().ToString();
-            await StateManager.SetStateAsync<User?>(_stateName, user);
-            _state = user;
+            await SetState(user);
             return IdentityResult.Success;
         }
 
@@ -84,8 +72,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
-            await StateManager.SetStateAsync<Role?>(_stateName, null);
-            _state = null;
+            await SetState(null);
             return IdentityResult.Success;
         }
 
@@ -93,17 +80,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// Getthe user
         /// </summary>
         /// <returns>The user object</returns>
-        public Task<User> GetUser() => _state == null ? Task.FromException<User>(new KeyNotFoundException($"The user with Id='{Id.GetId()}' has not been created or has been deleted.")) : Task.FromResult(State);
-
-        /// <summary>
-        /// Override this method to initialize the members, initialize state or register timers.
-        /// This method is called right after the actor is activated and before any method call or
-        /// reminders are dispatched on it.
-        /// </summary>
-        protected override async Task OnActivateAsync()
-        {
-            _state = await StateManager.GetStateAsync<User?>(_stateName);
-            await base.OnActivateAsync();
-        }
+        public Task<User> Get() => _state == null ? Task.FromException<User>(new KeyNotFoundException($"The user with Id='{Id.GetId()}' has not been created or has been deleted.")) : Task.FromResult(State);
     }
 }

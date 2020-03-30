@@ -55,6 +55,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.DaprActo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Abstractions", "src\Infrastructure\Identity\ExtenFlow.Identity.Abstractions\ExtenFlow.Identity.Abstractions.csproj", "{37D1FE3F-47C5-4100-AD27-08D3C063652D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7231E4E9-48F9-4A13-BCC5-9047C71E7A0E}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

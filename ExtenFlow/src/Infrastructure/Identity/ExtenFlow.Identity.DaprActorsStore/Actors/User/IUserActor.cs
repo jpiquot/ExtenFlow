@@ -31,6 +31,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// Gets the user.
         /// </summary>
         /// <returns>The user object</returns>
-        Task<User> GetUser();
+        Task<User> Get();
     }
 }

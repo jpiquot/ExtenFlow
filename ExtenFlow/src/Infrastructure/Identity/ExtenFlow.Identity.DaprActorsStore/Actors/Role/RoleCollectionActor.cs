@@ -15,9 +15,8 @@ namespace ExtenFlow.Identity.DaprActorsStore
     /// <summary>
     /// The role collection actor class
     /// </summary>
-    public class RoleCollectionActor : Actor, IRoleCollectionActor
+    public class RoleCollectionActor : BaseActor<RoleCollectionState>, IRoleCollectionActor
     {
-        private const string _stateName = "RoleCollection";
         private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
 
         /// <summary>
@@ -31,9 +30,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
         public RoleCollectionActor(ActorService actorService, ActorId actorId, IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
         {
         }
-
-        private RoleCollectionState? _state;
-        private RoleCollectionState State => _state ?? (_state = new RoleCollectionState());
 
         private IRoleActor GetRoleActor(Guid roleId) => ActorProxy.Create<IRoleActor>(new ActorId(roleId.ToString()), nameof(RoleActor));
 
@@ -61,7 +57,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 State.Ids.Add(role.Id);
                 State.NormalizedNames.Add(role.NormalizedName, role.Id);
-                await StateManager.SetStateAsync(_stateName, _state);
+                await SetState();
             }
             return result;
         }
@@ -94,7 +90,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
                     State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == role.Id).Select(p => p.Key).Single());
                     State.NormalizedNames.Add(role.NormalizedName, role.Id);
                 }
-                await StateManager.SetStateAsync(_stateName, _state);
+                await SetState();
             }
             return result;
         }
@@ -133,24 +129,9 @@ namespace ExtenFlow.Identity.DaprActorsStore
             }
             State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == roleId).Select(p => p.Key).Single());
             State.Ids.Remove(roleId);
-            await StateManager.SetStateAsync(_stateName, _state);
+            await SetState();
             await GetRoleActor(roleId).Clear(concurrencyString);
             return IdentityResult.Success;
-        }
-
-        /// <summary>
-        /// Override this method to initialize the members, initialize state or register timers.
-        /// This method is called right after the actor is activated and before any method call or
-        /// reminders are dispatched on it.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.Threading.Tasks.Task">Task</see> that represents outstanding
-        /// OnActivateAsync operation.
-        /// </returns>
-        protected override async Task OnActivateAsync()
-        {
-            _state = await StateManager.GetStateAsync<RoleCollectionState?>(_stateName);
-            await base.OnActivateAsync();
         }
 
         /// <summary>

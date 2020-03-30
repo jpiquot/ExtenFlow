@@ -23,8 +23,12 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// </summary>
         Task Delete(Guid userId, string loginProvider, string providerKey);
 
-        Task<UserLogin> FindByUserLogin(Guid userId, string loginProvider);
-
-        Task<UserLogin> FindByProvider(string loginProvider, string providerKey);
+        /// <summary>
+        /// Finds the user login by provider.
+        /// </summary>
+        /// <param name="loginProvider">The login provider.</param>
+        /// <param name="providerKey">The provider key.</param>
+        /// <returns>The user login object if found, else null.</returns>
+        Task<UserLogin?> FindByProvider(string loginProvider, string providerKey);
     }
 }

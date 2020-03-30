@@ -40,42 +40,29 @@ namespace ExtenFlow.Identity.Dapr
         public override IQueryable<User> Users => UserList().GetAwaiter().GetResult().AsQueryable();
 
         private async Task<List<User>> UserList()
-        {
-            IList<Guid> userIds = await GetUserCollectionActor().GetIds();
-            var tasks = new List<Task<User>>();
-            int taskCount = 0;
-            foreach (Guid userId in userIds)
-            {
-                taskCount++;
-                tasks.Add(GetUserActor(userId).GetUser());
-                if (taskCount % 1000 == 0)
-                {
-                    await Task.WhenAll(tasks);
-                }
-            }
-            await Task.WhenAll(tasks);
-            return tasks.Select(p => p.Result).ToList();
-        }
+            => (await Task.WhenAll((await GetUserCollectionActor().GetIds())
+                .Select(p => GetUserActor(p).Get())))
+                .ToList();
 
-        private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
+        private static IUserActor GetUserActor(Guid userId) => ActorProxy.Create<IUserActor>(new ActorId(userId.ToString()), nameof(UserActor));
 
-        private IUserActor GetUserActor(Guid userId) => ActorProxy.Create<IUserActor>(new ActorId(ConvertIdToString(userId)), nameof(UserActor));
+        private static IRoleActor GetRoleActor(Guid roleId) => ActorProxy.Create<IRoleActor>(new ActorId(roleId.ToString()), nameof(RoleActor));
 
-        private IRoleActor GetRoleActor(Guid roleId) => ActorProxy.Create<IRoleActor>(new ActorId(ConvertIdToString(roleId)), nameof(RoleActor));
+        private static IUserLoginsActor GetUserLoginsActor(Guid userId) => ActorProxy.Create<IUserLoginsActor>(new ActorId(userId.ToString()), nameof(UserLoginsActor));
 
-        private IUserLoginsActor GetUserLoginsActor(Guid userId) => ActorProxy.Create<IUserLoginsActor>(new ActorId(ConvertIdToString(userId)), nameof(UserLoginsActor));
+        private static IUserLoginsCollectionActor GetUserLoginsCollectionActor() => ActorProxy.Create<IUserLoginsCollectionActor>(new ActorId(nameof(IUserLoginsCollectionActor)), nameof(UserLoginsCollectionActor));
 
-        private IUserLoginsCollectionActor GetUserLoginsCollectionActor() => ActorProxy.Create<IUserLoginsCollectionActor>(new ActorId(nameof(IUserLoginsCollectionActor)), nameof(UserLoginsCollectionActor));
+        private static IUserRoleCollectionActor GetUserRoleCollectionActor() => ActorProxy.Create<IUserRoleCollectionActor>(new ActorId(nameof(IUserRoleCollectionActor)), nameof(UserRoleCollectionActor));
 
-        private IUserRolesActor GetUserRoleActor(Guid userId) => ActorProxy.Create<IUserRolesActor>(new ActorId(ConvertIdToString(userId)), nameof(UserRolesActor));
+        private static IUserClaimsActor GetUserClaimsActor(Guid userId) => ActorProxy.Create<IUserClaimsActor>(new ActorId(userId.ToString()), nameof(UserClaimsActor));
 
-        private IUserClaimsActor GetUserClaimsActor(Guid userId) => ActorProxy.Create<IUserClaimsActor>(new ActorId(ConvertIdToString(userId)), nameof(UserClaimsActor));
+        private static IUserClaimsCollectionActor GetUserClaimsCollectionActor() => ActorProxy.Create<IUserClaimsCollectionActor>(new ActorId(nameof(IUserClaimsCollectionActor)), nameof(UserClaimsCollectionActor));
 
-        private IUserTokensActor GetUserTokensActor(Guid userId) => ActorProxy.Create<IUserTokensActor>(new ActorId(ConvertIdToString(userId)), nameof(UserTokensActor));
+        private static IUserTokensActor GetUserTokensActor(Guid userId) => ActorProxy.Create<IUserTokensActor>(new ActorId(userId.ToString()), nameof(UserTokensActor));
 
-        private IUserCollectionActor GetUserCollectionActor() => ActorProxy.Create<IUserCollectionActor>(new ActorId(nameof(UserCollectionActor)), nameof(UserCollectionActor));
+        private static IUserCollectionActor GetUserCollectionActor() => ActorProxy.Create<IUserCollectionActor>(new ActorId(nameof(UserCollectionActor)), nameof(UserCollectionActor));
 
-        private IRoleCollectionActor GetRoleCollectionActor() => ActorProxy.Create<IRoleCollectionActor>(new ActorId(nameof(RoleCollectionActor)), nameof(RoleCollectionActor));
+        private static IRoleCollectionActor GetRoleCollectionActor() => ActorProxy.Create<IRoleCollectionActor>(new ActorId(nameof(RoleCollectionActor)), nameof(RoleCollectionActor));
 
         private void CheckValid(User? user)
         {
@@ -109,7 +96,7 @@ namespace ExtenFlow.Identity.Dapr
             IdentityResult result = await GetUserCollectionActor().Create(user);
             if (result.Succeeded)
             {
-                user.Copy(await GetUserActor(user.Id).GetUser());
+                user.Copy(await GetUserActor(user.Id).Get());
             }
             return result;
         }
@@ -134,7 +121,7 @@ namespace ExtenFlow.Identity.Dapr
             IdentityResult result = await GetUserCollectionActor().Update(user);
             if (result.Succeeded)
             {
-                user.Copy(await GetUserActor(user.Id).GetUser());
+                user.Copy(await GetUserActor(user.Id).Get());
             }
             return result;
         }
@@ -183,7 +170,7 @@ namespace ExtenFlow.Identity.Dapr
                 return null;
 #pragma warning restore CS8603 // Possible null reference return.
             }
-            return await GetUserActor(id).GetUser();
+            return await GetUserActor(id).Get();
         }
 
         /// <summary>
@@ -205,7 +192,7 @@ namespace ExtenFlow.Identity.Dapr
             Guid? id = await GetUserCollectionActor().FindByNormalizedName(normalizedUserName);
             if (id != null)
             {
-                return await GetUserActor(id.Value).GetUser();
+                return await GetUserActor(id.Value).Get();
             }
 #pragma warning disable CS8603 // Possible null reference return.
             return null;
@@ -228,7 +215,7 @@ namespace ExtenFlow.Identity.Dapr
             Guid? id = await GetRoleCollectionActor().FindByNormalizedName(normalizedRoleName);
             if (id != null)
             {
-                return await GetRoleActor(id.Value).GetRole();
+                return await GetRoleActor(id.Value).Get();
             }
 #pragma warning disable CS8603 // Possible null reference return.
             return null;
@@ -254,7 +241,7 @@ namespace ExtenFlow.Identity.Dapr
 #pragma warning disable CS8603 // Possible null reference return.
                 return null;
             }
-            return (await GetUserRoleActor(userId).HasRole(roleId)) ? new UserRole() { UserId = userId, RoleId = roleId } : null;
+            return (await GetUserRoleCollectionActor().Exist(userId, roleId)) ? new UserRole() { UserId = userId, RoleId = roleId } : null;
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
@@ -277,7 +264,7 @@ namespace ExtenFlow.Identity.Dapr
             }
             if (await GetUserCollectionActor().Exist(userId))
             {
-                return await GetUserActor(userId).GetUser();
+                return await GetUserActor(userId).Get();
             }
 #pragma warning disable CS8603 // Possible null reference return.
             return null;
@@ -306,7 +293,7 @@ namespace ExtenFlow.Identity.Dapr
                 throw new ArgumentNullException(nameof(userId));
             }
             IUserLoginsActor actor = GetUserLoginsActor(userId);
-            UserLoginInfo? userLogin = await actor.FindUserLogin(loginProvider, providerKey);
+            UserLoginInfo? userLogin = await actor.Find(loginProvider, providerKey);
             if (userLogin == null)
             {
 #pragma warning disable CS8603 // Possible null reference return.
@@ -340,7 +327,9 @@ namespace ExtenFlow.Identity.Dapr
             {
                 return Task.FromException<UserLogin>(new ArgumentNullException(nameof(providerKey)));
             }
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
             return GetUserLoginsCollectionActor().FindByProvider(loginProvider, providerKey);
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
         }
 
         /// <summary>
@@ -370,7 +359,7 @@ namespace ExtenFlow.Identity.Dapr
             {
                 throw new KeyNotFoundException($"The role '{normalizedRoleName}' was not found.");
             }
-            await GetUserRoleActor(user.Id).AddRole(roleId.Value);
+            await GetUserRoleCollectionActor().Create(user.Id, roleId.Value);
         }
 
         /// <summary>
@@ -400,7 +389,7 @@ namespace ExtenFlow.Identity.Dapr
             {
                 throw new KeyNotFoundException($"The role '{normalizedRoleName}' was not found.");
             }
-            await GetUserRoleActor(user.Id).RemoveRole(roleId.Value);
+            await GetUserRoleCollectionActor().Delete(user.Id, roleId.Value);
         }
 
         /// <summary>
@@ -423,7 +412,7 @@ namespace ExtenFlow.Identity.Dapr
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return (await GetUserRoleActor(user.Id).GetRoles()).Select(p => ConvertIdToString(p)).ToList();
+            return (await GetUserRoleCollectionActor().GetRoleIds(user.Id)).Select(p => p.ToString()).ToList();
         }
 
         /// <summary>
@@ -479,7 +468,7 @@ namespace ExtenFlow.Identity.Dapr
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return (await GetUserClaimsActor(user.Id).GetClaims()).Select(p => new Claim(p.Item1, p.Item2)).ToList();
+            return (await GetUserClaimsActor(user.Id).GetAll()).Select(p => new Claim(p.Item1, p.Item2)).ToList();
         }
 
         /// <summary>
@@ -504,10 +493,10 @@ namespace ExtenFlow.Identity.Dapr
             {
                 throw new ArgumentNullException(nameof(claims));
             }
-            IUserClaimsActor actor = GetUserClaimsActor(user.Id);
+            IUserClaimsCollectionActor actor = GetUserClaimsCollectionActor();
             foreach (Claim claim in claims)
             {
-                await actor.AddClaim(claim.Type, claim.Value);
+                await actor.Create(CreateUserClaim(user, claim));
             }
         }
 
@@ -539,9 +528,9 @@ namespace ExtenFlow.Identity.Dapr
             {
                 throw new ArgumentNullException(nameof(newClaim));
             }
-            IUserClaimsActor actor = GetUserClaimsActor(user.Id);
-            await actor.RemoveClaim(claim.Type, claim.Value);
-            await actor.AddClaim(newClaim.Type, newClaim.Value);
+            IUserClaimsCollectionActor actor = GetUserClaimsCollectionActor();
+            await actor.Delete(CreateUserClaim(user, claim));
+            await actor.Create(CreateUserClaim(user, newClaim));
         }
 
         /// <summary>
@@ -566,10 +555,10 @@ namespace ExtenFlow.Identity.Dapr
             {
                 throw new ArgumentNullException(nameof(claims));
             }
-            IUserClaimsActor actor = GetUserClaimsActor(user.Id);
+            IUserClaimsCollectionActor actor = GetUserClaimsCollectionActor();
             foreach (Claim claim in claims)
             {
-                await actor.RemoveClaim(claim.Type, claim.Value);
+                await actor.Delete(CreateUserClaim(user, claim));
             }
         }
 
@@ -618,7 +607,7 @@ namespace ExtenFlow.Identity.Dapr
             ThrowIfDisposed();
             if (user == null || user.Id == default)
             {
-                return Task.FromException(new ArgumentNullException(nameof(user) + "." + nameof(User.Id)));
+                return Task.FromException(new ArgumentOutOfRangeException(Resource.UserIdNotDefined));
             }
             return GetUserLoginsCollectionActor().Delete(user.Id, loginProvider, providerKey);
         }
@@ -641,7 +630,7 @@ namespace ExtenFlow.Identity.Dapr
             ThrowIfDisposed();
             if (user == null || user.Id == default)
             {
-                return Task.FromException<IList<UserLoginInfo>>(new ArgumentNullException(nameof(user) + "." + nameof(User.Id)));
+                return Task.FromException<IList<UserLoginInfo>>(new ArgumentOutOfRangeException(Resource.UserIdNotDefined));
             }
             return GetUserLoginsActor(user.Id).GetAll();
         }
@@ -706,22 +695,15 @@ namespace ExtenFlow.Identity.Dapr
         /// <returns>
         /// The <see cref="Task"/> contains a list of users, if any, that contain the specified claim.
         /// </returns>
-        public async override Task<IList<User>> GeUsersForClaimAsync(Claim claim, CancellationToken cancellationToken = default)
+        public override Task<IList<User>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            if (claim == null)
+            if (claim == null || string.IsNullOrWhiteSpace(claim.Type))
             {
-                throw new ArgumentNullException(nameof(claim));
+                throw new ArgumentOutOfRangeException(Resource.UserIdNotDefined);
             }
-
-            var query = from userclaims in UserClaims
-                        join user in Users on userclaims.UserId equals user.Id
-                        where userclaims.ClaimValue == claim.Value
-                        && userclaims.ClaimType == claim.Type
-                        select user;
-
-            return await query.ToListAsync(cancellationToken);
+            return GetUserClaimsCollectionActor().GetUsers(claim.Type, claim.Value);
         }
 
         /// <summary>
@@ -735,7 +717,7 @@ namespace ExtenFlow.Identity.Dapr
         /// <returns>
         /// The <see cref="Task"/> contains a list of users, if any, that are in the specified role.
         /// </returns>
-        public async override Task<IList<User>> GeUsersInRoleAsync(string normalizedRoleName, CancellationToken cancellationToken = default)
+        public async override Task<IList<User>> GetUsersInRoleAsync(string normalizedRoleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -743,19 +725,16 @@ namespace ExtenFlow.Identity.Dapr
             {
                 throw new ArgumentNullException(nameof(normalizedRoleName));
             }
-
-            var role = await FindRoleAsync(normalizedRoleName, cancellationToken);
-
-            if (role != null)
+            Guid? roleId = await GetRoleCollectionActor().FindByNormalizedName(normalizedRoleName);
+            if (roleId == null)
             {
-                var query = from userrole in UserRoles
-                            join user in Users on userrole.UserId equals user.Id
-                            where userrole.RoleId.Equals(role.Id)
-                            select user;
-
-                return await query.ToListAsync(cancellationToken);
+                throw new KeyNotFoundException($"Role with normalized name '{normalizedRoleName}' not found.");
             }
-            return new List<User>();
+            return (await Task.WhenAll(
+                (await GetUserRoleCollectionActor().GetUserIds(roleId.Value))
+                .Select(p => GetUserActor(p).Get()))
+                )
+                .ToList();
         }
 
         /// <summary>
@@ -769,8 +748,30 @@ namespace ExtenFlow.Identity.Dapr
         /// should be canceled.
         /// </param>
         /// <returns>The user token if it exists.</returns>
-        protected override Task<UserToken> FindTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken)
-            => UserTokens.FindAsync(new object[] { user.Id, loginProvider, name }, cancellationToken).AsTask();
+        protected override async Task<UserToken> FindTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken)
+        {
+            ThrowIfDisposed();
+            if (user == null || user.Id == default)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            if (string.IsNullOrWhiteSpace(loginProvider))
+            {
+                throw new ArgumentNullException(nameof(loginProvider));
+            }
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+            string? value = await GetUserTokensActor(user.Id).FindValue(loginProvider, name);
+            if (value == null)
+            {
+#pragma warning disable CS8603 // Possible null reference return.
+                return null;
+#pragma warning restore CS8603 // Possible null reference return.
+            }
+            return new UserToken() { UserId = user.Id, LoginProvider = loginProvider, Name = name, Value = value };
+        }
 
         /// <summary>
         /// Add a new user token.
@@ -779,8 +780,12 @@ namespace ExtenFlow.Identity.Dapr
         /// <returns></returns>
         protected override Task AddUserTokenAsync(UserToken token)
         {
-            UserTokens.Add(token);
-            return Task.CompletedTask;
+            ThrowIfDisposed();
+            if (token == null || token.UserId == default)
+            {
+                return Task.FromException<IList<UserLoginInfo>>(new ArgumentOutOfRangeException(Resource.UserIdNotDefined));
+            }
+            return GetUserTokensActor(token.UserId).Add(token.LoginProvider, token.Name, token.Value);
         }
 
         /// <summary>
@@ -793,9 +798,9 @@ namespace ExtenFlow.Identity.Dapr
             ThrowIfDisposed();
             if (token == null || token.UserId == default)
             {
-                return Task.FromException<IList<UserLoginInfo>>(new ArgumentNullException(nameof(token) + "." + nameof(UserToken.UserId)));
+                return Task.FromException<IList<UserLoginInfo>>(new ArgumentOutOfRangeException(Resource.UserIdNotDefined));
             }
-            return GetUserTokensActor(token.UserId).RemoveToken(token.LoginProvider, token.Name);
+            return GetUserTokensActor(token.UserId).Remove(token.LoginProvider, token.Name);
         }
     }
 }

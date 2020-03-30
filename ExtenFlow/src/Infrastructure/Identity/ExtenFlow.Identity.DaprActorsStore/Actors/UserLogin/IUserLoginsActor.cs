@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 
 using Dapr.Actors;
-
+using ExtenFlow.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Identity.DaprActorsStore
@@ -19,7 +19,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="providerName">Name of the provider.</param>
         /// <param name="providerKey">The provider key.</param>
         /// <returns>The UserLoginInfo object.</returns>
-        Task<UserLoginInfo> GetUserLogin(string providerName, string providerKey);
+        Task<UserLoginInfo> Get(string providerName, string providerKey);
 
         /// <summary>
         /// Finds the user login.
@@ -27,8 +27,12 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="providerName">Name of the provider.</param>
         /// <param name="providerKey">The provider key.</param>
         /// <returns>The UserLoginInfo object if exists, else null.</returns>
-        Task<UserLoginInfo?> FindUserLogin(string providerName, string providerKey);
+        Task<UserLoginInfo?> Find(string providerName, string providerKey);
 
         Task<IList<UserLoginInfo>> GetAll();
+
+        Task Add(UserLoginInfo userLoginInfo);
+
+        Task Delete(string loginProvider, string providerKey);
     }
 }

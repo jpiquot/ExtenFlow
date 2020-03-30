@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,9 +16,8 @@ namespace ExtenFlow.Identity.DaprActorsStore
     /// <summary>
     /// The user collection actor class
     /// </summary>
-    public class UserCollectionActor : Actor, IUserCollectionActor
+    public class UserCollectionActor : BaseActor<UserCollectionState>, IUserCollectionActor
     {
-        private const string _stateName = "UserCollection";
         private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
 
         /// <summary>
@@ -31,9 +31,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
         public UserCollectionActor(ActorService actorService, ActorId actorId, IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
         {
         }
-
-        private UserCollectionState? _state;
-        private UserCollectionState State => _state ?? (_state = new UserCollectionState());
 
         private IUserActor GetUserActor(Guid userId) => ActorProxy.Create<IUserActor>(new ActorId(userId.ToString()), nameof(UserActor));
 
@@ -61,7 +58,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 State.Ids.Add(user.Id);
                 State.NormalizedNames.Add(user.NormalizedUserName, user.Id);
-                await StateManager.SetStateAsync(_stateName, _state);
+                await SetState();
             }
             return result;
         }
@@ -94,7 +91,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
                     State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == user.Id).Select(p => p.Key).Single());
                     State.NormalizedNames.Add(user.NormalizedUserName, user.Id);
                 }
-                await StateManager.SetStateAsync(_stateName, _state);
+                await SetState();
             }
             return result;
         }
@@ -133,24 +130,30 @@ namespace ExtenFlow.Identity.DaprActorsStore
             }
             State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == userId).Select(p => p.Key).Single());
             State.Ids.Remove(userId);
-            await StateManager.SetStateAsync(_stateName, _state);
+            await SetState();
             await GetUserActor(userId).Clear(concurrencyString);
             return IdentityResult.Success;
         }
 
         /// <summary>
-        /// Override this method to initialize the members, initialize state or register timers.
-        /// This method is called right after the actor is activated and before any method call or
-        /// reminders are dispatched on it.
+        /// Finds the user by it's normalized name.
         /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.Threading.Tasks.Task">Task</see> that represents outstanding
-        /// OnActivateAsync operation.
-        /// </returns>
-        protected override async Task OnActivateAsync()
+        /// <param name="normalizedUserName">The user normalized name.</param>
+        /// <returns>The user id if exists, else null.</returns>
+        public Task<Guid?> FindByNormalizedName(string normalizedUserName)
         {
-            _state = await StateManager.GetStateAsync<UserCollectionState?>(_stateName);
-            await base.OnActivateAsync();
+            if (string.IsNullOrWhiteSpace(normalizedUserName))
+            {
+                Task.FromException<Guid?>(new ArgumentNullException(nameof(normalizedUserName)));
+            }
+            return Task.FromResult<Guid?>(State.NormalizedNames.Where(p => p.Key.Equals(normalizedUserName)).Select(p => p.Value).FirstOrDefault());
         }
+
+        /// <summary>
+        /// Gets the all the user ids.
+        /// </summary>
+        /// <returns></returns>
+        public Task<IList<Guid>> GetIds()
+            => Task.FromResult<IList<Guid>>(State.Ids.ToList());
     }
 }

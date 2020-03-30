@@ -16,13 +16,9 @@ namespace ExtenFlow.Identity.DaprActorsStore
     /// </summary>
     /// <seealso cref="Actor"/>
     /// <seealso cref="IRoleActor"/>
-    public class RoleActor : Actor, IRoleActor
+    public class RoleActor : BaseActor<Role>, IRoleActor
     {
-        private const string _stateName = "Role";
-        private Role? _state;
         private IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
-
-        private Role State => _state ?? throw new NullReferenceException(nameof(_state));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleActor"/> class.
@@ -40,18 +36,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// Gets the role.
         /// </summary>
         /// <returns>The role object</returns>
-        public Task<Role> GetRole() => Task.FromResult(State);
-
-        /// <summary>
-        /// Override this method to initialize the members, initialize state or register timers.
-        /// This method is called right after the actor is activated and before any method call or
-        /// reminders are dispatched on it.
-        /// </summary>
-        protected override async Task OnActivateAsync()
-        {
-            _state = await StateManager.GetStateAsync<Role?>(_stateName);
-            await base.OnActivateAsync();
-        }
+        public Task<Role> Get() => Task.FromResult(State);
 
         /// <summary>
         /// Updates the specified role.
@@ -70,8 +55,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
             role.ConcurrencyStamp = Guid.NewGuid().ToString();
-            await StateManager.SetStateAsync<Role?>(_stateName, role);
-            _state = role;
+            await SetState(role);
             return IdentityResult.Success;
         }
 
@@ -90,8 +74,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
-            await StateManager.SetStateAsync<Role?>(_stateName, null);
-            _state = null;
+            await SetState(null);
             return IdentityResult.Success;
         }
     }

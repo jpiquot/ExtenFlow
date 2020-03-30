@@ -19,7 +19,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="claimValue">The value of the claim</param>
         /// <returns>True if the user has the claims</returns>
         /// <exception cref="ArgumentNullException">claimType</exception>
-        Task<bool> HasClaim(string claimType, string claimValue);
+        Task<bool> Exist(string claimType, string claimValue);
 
         /// <summary>
         /// Adds the user's claims.
@@ -27,7 +27,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="claimType">The type of the claim</param>
         /// <param name="claimValue">The value of the claim</param>
         /// <exception cref="ArgumentNullException">claimType</exception>
-        Task AddClaim(string claimType, string claimValue);
+        Task Add(string claimType, string claimValue);
 
         /// <summary>
         /// Removes the claims.
@@ -35,12 +35,12 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="claimType">The type of the claim</param>
         /// <param name="claimValue">The value of the claim</param>
         /// <exception cref="ArgumentNullException">claimType</exception>
-        Task RemoveClaim(string claimType, string claimValue);
+        Task Remove(string claimType, string claimValue);
 
         /// <summary>
         /// Gets the all the user's claimss.
         /// </summary>
         /// <returns>A list of all claims as tuples of strings (Claim Type, Claim Value)</returns>
-        Task<IList<Tuple<string, string>>> GetClaims();
+        Task<IList<Tuple<string, string>>> GetAll();
     }
 }
