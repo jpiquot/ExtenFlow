@@ -20,6 +20,14 @@ namespace ExtenFlow.Identity.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="User"/> class.
         /// </summary>
+        /// <param name="userName">The user name.</param>
+        public User(string userName) : base(userName)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="User"/> class.
+        /// </summary>
         /// <param name="user">The user.</param>
         /// <exception cref="System.ArgumentNullException">user</exception>
         public User(User user)

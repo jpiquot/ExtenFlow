@@ -10,6 +10,21 @@ namespace ExtenFlow.Identity.Models
     public class Role : IdentityRole<Guid>
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="Role"/> class.
+        /// </summary>
+        /// <param name="roleName">The role name.</param>
+        public Role(string roleName) : base(roleName)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Role"/> class.
+        /// </summary>
+        public Role()
+        {
+        }
+
+        /// <summary>
         /// Copies the specified role property values to this role.
         /// </summary>
         /// <param name="role">The role.</param>

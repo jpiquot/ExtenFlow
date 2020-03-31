@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Properties;
+
 using Microsoft.AspNetCore.Identity;
 
-namespace ExtenFlow.Identity.DaprActorsStore.Store
+namespace ExtenFlow.Identity.DaprActorsStore
 {
     /// <summary>
     /// The Dapr role store
@@ -21,6 +22,7 @@ namespace ExtenFlow.Identity.DaprActorsStore.Store
     public class RoleStore : RoleStoreBase<Role, Guid, UserRole, RoleClaim>,
         IQueryableRoleStore<Role>,
         IRoleClaimStore<Role>
+
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleStore"/> class.

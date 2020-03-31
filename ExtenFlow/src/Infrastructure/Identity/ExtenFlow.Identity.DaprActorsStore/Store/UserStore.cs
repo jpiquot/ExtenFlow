@@ -9,12 +9,12 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-using ExtenFlow.Identity.DaprActorsStore;
 using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Properties;
+
 using Microsoft.AspNetCore.Identity;
 
-namespace ExtenFlow.Identity.Dapr
+namespace ExtenFlow.Identity.DaprActorsStore
 {
     /// <summary>
     /// Represents a new instance of a persistence store for the specified user and role types.
