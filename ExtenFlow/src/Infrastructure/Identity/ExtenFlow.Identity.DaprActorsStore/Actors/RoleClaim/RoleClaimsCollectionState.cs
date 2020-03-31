@@ -4,21 +4,21 @@ using System.Collections.Generic;
 namespace ExtenFlow.Identity.DaprActorsStore
 {
     /// <summary>
-    /// The user claim collection state
+    /// The role claim collection state
     /// </summary>
-    public class UserClaimsCollectionState
+    public class RoleClaimsCollectionState
     {
         private Dictionary<string, HashSet<Guid>>? _claimTypes;
-        private HashSet<Guid>? _userIds;
+        private HashSet<Guid>? _roleIds;
 
         /// <summary>
-        /// The users by claim type
+        /// The roles by claim type
         /// </summary>
         public Dictionary<string, HashSet<Guid>> ClaimTypes => _claimTypes ?? (_claimTypes = new Dictionary<string, HashSet<Guid>>());
 
         /// <summary>
-        /// The ids of all existing users
+        /// The ids of all existing roles
         /// </summary>
-        public HashSet<Guid> UserIds => _userIds ?? (_userIds = new HashSet<Guid>());
+        public HashSet<Guid> RoleIds => _roleIds ?? (_roleIds = new HashSet<Guid>());
     }
 }

@@ -116,10 +116,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 return Task.FromException<bool>(new ArgumentNullException(nameof(userId)));
             }
-            if (_state == null)
-            {
-                return Task.FromResult(false);
-            }
             return Task.FromResult(State.Ids.Any(p => p == userId));
         }
 

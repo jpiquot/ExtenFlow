@@ -79,6 +79,15 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Duplicate Token : UserId=&apos;{0}&apos;; LoginProvider=&apos;{1}&apos;; TokenName=&apos;{2}&apos;.
+        /// </summary>
+        internal static string DuplicateToken {
+            get {
+                return ResourceManager.GetString("DuplicateToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The user &apos;{0}&apos; already exist..
         /// </summary>
         internal static string DuplicateUser {
@@ -138,6 +147,15 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         internal static string RoleNotFound {
             get {
                 return ResourceManager.GetString("RoleNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Token not found : UserId=&apos;{0}&apos;; LoginProvider=&apos;{1}&apos;; TokenName=&apos;{2}&apos;.
+        /// </summary>
+        internal static string TokenNotFound {
+            get {
+                return ResourceManager.GetString("TokenNotFound", resourceCulture);
             }
         }
         

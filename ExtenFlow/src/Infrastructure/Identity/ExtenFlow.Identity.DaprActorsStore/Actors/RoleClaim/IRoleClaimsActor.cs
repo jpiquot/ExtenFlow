@@ -7,13 +7,13 @@ using Dapr.Actors;
 namespace ExtenFlow.Identity.DaprActorsStore
 {
     /// <summary>
-    /// The user claims actor interface
+    /// The role claims actor interface
     /// </summary>
     /// <seealso cref="IActor"/>
-    public interface IUserClaimsActor : IActor
+    public interface IRoleClaimsActor : IActor
     {
         /// <summary>
-        /// Adds the user's claims.
+        /// Adds the role's claims.
         /// </summary>
         /// <param name="claimType">The type of the claim</param>
         /// <param name="claimValue">The value of the claim</param>
@@ -21,16 +21,16 @@ namespace ExtenFlow.Identity.DaprActorsStore
         Task Add(string claimType, string claimValue);
 
         /// <summary>
-        /// Determines whether the user has the specified claim.
+        /// Determines whether the role has the specified claim.
         /// </summary>
         /// <param name="claimType">The type of the claim</param>
         /// <param name="claimValue">The value of the claim</param>
-        /// <returns>True if the user has the claims</returns>
+        /// <returns>True if the role has the claims</returns>
         /// <exception cref="ArgumentNullException">claimType</exception>
         Task<bool> Exist(string claimType, string claimValue);
 
         /// <summary>
-        /// Gets the all the user's claimss.
+        /// Gets the all the role's claimss.
         /// </summary>
         /// <returns>A list of all claims as tuples of strings (Claim Type, Claim Value)</returns>
         Task<IList<Tuple<string, string>>> GetAll();

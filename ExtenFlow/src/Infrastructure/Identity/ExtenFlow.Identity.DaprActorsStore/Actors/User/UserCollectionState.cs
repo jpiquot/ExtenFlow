@@ -8,14 +8,17 @@ namespace ExtenFlow.Identity.DaprActorsStore
     /// </summary>
     public class UserCollectionState
     {
+        private HashSet<Guid>? _ids;
+        private Dictionary<string, Guid>? _normalizedNames;
+
         /// <summary>
         /// The ids of all existing users
         /// </summary>
-        public HashSet<Guid> Ids = new HashSet<Guid>();
+        public HashSet<Guid> Ids => _ids ?? (_ids = new HashSet<Guid>());
 
         /// <summary>
         /// The normalized names of all existing users
         /// </summary>
-        public Dictionary<string, Guid> NormalizedNames = new Dictionary<string, Guid>();
+        public Dictionary<string, Guid> NormalizedNames => _normalizedNames ?? (_normalizedNames = new Dictionary<string, Guid>());
     }
 }

@@ -53,7 +53,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 throw new ArgumentOutOfRangeException(Resource.UserIdNotDefined);
             }
-            if (_state != null && user.ConcurrencyStamp != State.ConcurrencyStamp)
+            if (State.ConcurrencyStamp != null && user.ConcurrencyStamp != State.ConcurrencyStamp)
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
@@ -69,7 +69,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <exception cref="KeyNotFoundException">The user Id ({Id.GetId()}) already exist.</exception>
         public async Task<IdentityResult> ClearUser(string concurrencyStamp)
         {
-            if (_state == null)
+            if (State.Id == default)
             {
                 throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.UserNotFound, Id.GetId()));
             }
@@ -85,6 +85,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// Getthe user
         /// </summary>
         /// <returns>The user object</returns>
-        public Task<User> GetUser() => _state == null ? Task.FromException<User>(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.UserNotFound, Id.GetId()))) : Task.FromResult(State);
+        public Task<User> GetUser() => State.Id == default ? Task.FromException<User>(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.UserNotFound, Id.GetId()))) : Task.FromResult(State);
     }
 }

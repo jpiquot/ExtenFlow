@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Globalization;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -27,75 +27,100 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
         }
 
-        /// <summary>
-        /// Determines whether the user has the specified Token.
-        /// </summary>
-        /// <param name="tokenType">Type of the token</param>
-        /// <param name="tokenValue">Value of the token</param>
-        /// <returns>True if the user has the Token</returns>
-        /// <exception cref="ArgumentNullException">tokenType</exception>
-        public Task<bool> HasToken(string tokenType, string tokenValue)
+        private Dictionary<string, string> GetTokens(string loginProvider)
         {
-            if (string.IsNullOrWhiteSpace(tokenType))
+            if (!State.TryGetValue(loginProvider, out Dictionary<string, string>? tokens))
             {
-                return Task.FromException<bool>(new ArgumentNullException(nameof(tokenType)));
-            }
-            if (!State.Any(p => p.Equals(tokenType)))
-            {
-                return Task.FromResult(false);
-            }
-            return GetTokenUsersActor(tokenType).HasUser(Id.GetId(), tokenValue);
-        }
-
-        /// <summary>
-        /// Adds the user's Token.
-        /// </summary>
-        /// <param name="tokenType">Type of the token</param>
-        /// <param name="tokenValue">Value of the token</param>
-        /// <exception cref="ArgumentNullException">tokenType</exception>
-        public async Task AddToken(string tokenType, string tokenValue)
-        {
-            if (State.Where(p => p.Equals(tokenType)).Any())
-            {
-                throw new InvalidOperationException($"The user is already in Token '{tokenType}'.");
-            }
-            State.Add(tokenType);
-            await StateManager.SetStateAsync(_stateName, _state);
-            await GetTokenUsersActor(tokenType).AddUser(Id.GetId(), tokenValue);
-        }
-
-        /// <summary>
-        /// Removes the Token.
-        /// </summary>
-        /// <param name="tokenType">Type of the token</param>
-        /// <param name="tokenValue">Value of the token</param>
-        /// <exception cref="ArgumentNullException">tokenType</exception>
-        public async Task RemoveToken(string tokenType, string tokenValue)
-        {
-            if (!State.Where(p => p.Equals(tokenType)).Any())
-            {
-                throw new InvalidOperationException($"The user does not have the Token '{tokenType}'.");
-            }
-            await GetTokenUsersActor(tokenType).RemoveUser(Id.GetId(), tokenValue);
-            State.Remove(tokenType);
-            await StateManager.SetStateAsync(_stateName, _state);
-        }
-
-        /// <summary>
-        /// Gets the all the user's Tokens.
-        /// </summary>
-        /// <returns>A list of all Tokens</returns>
-        public async Task<IList<Tuple<string, string>>> GetTokens()
-        {
-            var tokens = new List<Tuple<string, string>>();
-            foreach (string tokenType in State)
-            {
-                foreach (string tokenValue in await GetTokenUsersActor(tokenType).GetTokenValues(Id.GetId()))
-                {
-                    tokens.Add(new Tuple<string, string>(tokenType, tokenValue));
-                }
+                tokens = new Dictionary<string, string>();
             }
             return tokens;
+        }
+
+        /// <summary>
+        /// Adds the specified token.
+        /// </summary>
+        /// <param name="loginProvider">The login provider.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <exception cref="ArgumentNullException">loginProvider is null</exception>
+        /// <exception cref="ArgumentNullException">name is null</exception>
+        /// <exception cref="ArgumentNullException">value is null</exception>
+        /// <exception cref="InvalidOperationException">Duplicate token</exception>
+        public Task Add(string loginProvider, string name, string value)
+        {
+            if (string.IsNullOrWhiteSpace(loginProvider))
+            {
+                return Task.FromException(new ArgumentNullException(nameof(loginProvider)));
+            }
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return Task.FromException(new ArgumentNullException(nameof(name)));
+            }
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return Task.FromException(new ArgumentNullException(nameof(value)));
+            }
+            var tokens = GetTokens(loginProvider);
+            if (tokens.ContainsKey(name))
+            {
+                return Task.FromException(new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resource.DuplicateToken, Id.GetId(), loginProvider, name)));
+            }
+            tokens.Add(name, value);
+            SetState();
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Removes the specified token.
+        /// </summary>
+        /// <param name="loginProvider">The login provider.</param>
+        /// <param name="name">The name.</param>
+        /// <exception cref="ArgumentNullException">loginProvider is null</exception>
+        /// <exception cref="ArgumentNullException">name is null</exception>
+        /// <exception cref="KeyNotFoundException">Token not found</exception>
+        public Task Remove(string loginProvider, string name)
+        {
+            if (string.IsNullOrWhiteSpace(loginProvider))
+            {
+                return Task.FromException(new ArgumentNullException(nameof(loginProvider)));
+            }
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return Task.FromException(new ArgumentNullException(nameof(name)));
+            }
+            var tokens = GetTokens(loginProvider);
+            if (!tokens.ContainsKey(name))
+            {
+                return Task.FromException(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.TokenNotFound, Id.GetId(), loginProvider, name)));
+            }
+            tokens.Remove(name);
+            SetState();
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Finds the token value.
+        /// </summary>
+        /// <param name="loginProvider">The login provider.</param>
+        /// <param name="name">The name.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">loginProvider is null</exception>
+        /// <exception cref="ArgumentNullException">name is null</exception>
+        public Task<string?> FindValue(string loginProvider, string name)
+        {
+            if (string.IsNullOrWhiteSpace(loginProvider))
+            {
+                return Task.FromException<string?>(new ArgumentNullException(nameof(loginProvider)));
+            }
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return Task.FromException<string?>(new ArgumentNullException(nameof(name)));
+            }
+            if (GetTokens(loginProvider).TryGetValue(name, out string? value))
+            {
+                return Task.FromResult<string?>(value);
+            }
+            return Task.FromResult<string?>(null);
         }
     }
 }

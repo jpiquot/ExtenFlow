@@ -8,28 +8,28 @@ using ExtenFlow.Identity.Models;
 namespace ExtenFlow.Identity.DaprActorsStore
 {
     /// <summary>
-    /// The user collection actor interface
+    /// The role collection actor interface
     /// </summary>
-    public interface IUserClaimsCollectionActor : IActor
+    public interface IRoleClaimsCollectionActor : IActor
     {
         /// <summary>
-        /// Create a new user
+        /// Create a new role
         /// </summary>
-        /// <param name="userClaim">The user claim</param>
-        Task Create(UserClaim userClaim);
+        /// <param name="roleClaim">The role claim</param>
+        Task Create(RoleClaim roleClaim);
 
         /// <summary>
-        /// Delete the user
+        /// Delete the role
         /// </summary>
-        /// <param name="userClaim">The user claim</param>
-        Task Delete(UserClaim userClaim);
+        /// <param name="roleClaim">The role claim</param>
+        Task Delete(RoleClaim roleClaim);
 
         /// <summary>
-        /// Gets all the users having the given claim.
+        /// Gets all the roles having the given claim.
         /// </summary>
         /// <param name="type">The claim type.</param>
         /// <param name="value">The claim value.</param>
         /// <returns></returns>
-        Task<IList<User>> GetUsers(string type, string value);
+        Task<IList<Role>> GetRoles(string type, string value);
     }
 }

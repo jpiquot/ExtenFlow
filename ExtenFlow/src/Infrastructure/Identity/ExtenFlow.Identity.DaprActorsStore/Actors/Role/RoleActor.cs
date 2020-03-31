@@ -55,7 +55,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 throw new ArgumentOutOfRangeException(Resource.RoleIdNotDefined);
             }
-            if (_state != null && role.ConcurrencyStamp != State.ConcurrencyStamp)
+            if (State.ConcurrencyStamp != null && role.ConcurrencyStamp != State.ConcurrencyStamp)
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
@@ -71,7 +71,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <returns>The identity result object</returns>
         public async Task<IdentityResult> Clear(string concurrencyString)
         {
-            if (_state == null)
+            if (State.Id == default)
             {
                 throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.RoleNotFound, Id.GetId()));
             }

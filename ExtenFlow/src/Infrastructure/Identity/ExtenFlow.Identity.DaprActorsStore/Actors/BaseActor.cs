@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
@@ -26,7 +27,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <summary>
         /// The state
         /// </summary>
-        protected T? _state;
+        private T? _state;
 
         private string? _stateName;
 
@@ -34,7 +35,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// Gets the name of the state.By default it's the actor class name without the 'Actor' word.
         /// </summary>
         /// <value>The name of the state.</value>
-        protected virtual string StateName => _stateName ?? (_stateName = GetType().Name.Replace("Actor", string.Empty));
+        protected virtual string StateName => _stateName ?? (_stateName = GetType().Name.Replace("Actor", string.Empty, StringComparison.InvariantCulture));
 
         /// <summary>
         /// Gets the state.

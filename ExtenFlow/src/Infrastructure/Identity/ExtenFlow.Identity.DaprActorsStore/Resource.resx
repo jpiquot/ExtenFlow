@@ -123,6 +123,9 @@
   <data name="DuplicateRole" xml:space="preserve">
     <value>The role '{0}' already exist.</value>
   </data>
+  <data name="DuplicateToken" xml:space="preserve">
+    <value>Duplicate Token : UserId='{0}'; LoginProvider='{1}'; TokenName='{2}'</value>
+  </data>
   <data name="DuplicateUser" xml:space="preserve">
     <value>The user '{0}' already exist.</value>
   </data>
@@ -143,6 +146,9 @@
   </data>
   <data name="RoleNotFound" xml:space="preserve">
     <value>Role '{0}' not found.</value>
+  </data>
+  <data name="TokenNotFound" xml:space="preserve">
+    <value>Token not found : UserId='{0}'; LoginProvider='{1}'; TokenName='{2}'</value>
   </data>
   <data name="UserIdNotDefined" xml:space="preserve">
     <value>The user id is not defined.</value>

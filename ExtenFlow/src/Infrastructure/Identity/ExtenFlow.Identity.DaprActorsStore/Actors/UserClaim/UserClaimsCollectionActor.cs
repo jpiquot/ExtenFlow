@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -27,8 +28,13 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
         }
 
-        private static IUserClaimsActor GetUserClaimsActor(Guid userId) => ActorProxy.Create<IUserClaimsActor>(new ActorId(userId.ToString()), nameof(UserClaimsActor));
-
+        /// <summary>
+        /// Create a new user claim
+        /// </summary>
+        /// <param name="userClaim">The user claim</param>
+        /// <exception cref="ArgumentNullException">user claim is null</exception>
+        /// <exception cref="ArgumentOutOfRangeException">User identifier not defined</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Claim type not defined</exception>
         public async Task Create(UserClaim userClaim)
         {
             if (userClaim == null)
@@ -52,14 +58,74 @@ namespace ExtenFlow.Identity.DaprActorsStore
                 State.ClaimTypes.Add(userClaim.ClaimType, new HashSet<Guid>() { userClaim.UserId });
             }
             await GetUserClaimsActor(userClaim.UserId).Add(userClaim.ClaimType, userClaim.ClaimValue);
+            await SetState();
         }
 
-        public Task Update(UserClaim userClaim) => throw new NotImplementedException();
+        /// <summary>
+        /// Delete a new user claim
+        /// </summary>
+        /// <param name="userClaim">The user claim</param>
+        /// <exception cref="ArgumentNullException">user claim is null</exception>
+        /// <exception cref="ArgumentOutOfRangeException">User identifier not defined</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Claim type not defined</exception>
+        public async Task Delete(UserClaim userClaim)
+        {
+            if (userClaim == null)
+            {
+                throw new ArgumentNullException(nameof(userClaim));
+            }
+            if (userClaim.UserId == default)
+            {
+                throw new ArgumentOutOfRangeException(Resource.UserIdNotDefined);
+            }
+            if (userClaim.ClaimType == default)
+            {
+                throw new ArgumentOutOfRangeException(Resource.ClaimTypeNotDefined);
+            }
+            if (!State.UserIds.Contains(userClaim.UserId))
+            {
+                State.UserIds.Add(userClaim.UserId);
+            }
+            if (!State.ClaimTypes.ContainsKey(userClaim.ClaimType))
+            {
+                State.ClaimTypes.Add(userClaim.ClaimType, new HashSet<Guid>() { userClaim.UserId });
+            }
+            await GetUserClaimsActor(userClaim.UserId).Add(userClaim.ClaimType, userClaim.ClaimValue);
+            await SetState();
+        }
 
-        public Task<bool> Exist(UserClaim userClaim) => throw new NotImplementedException();
+        /// <summary>
+        /// Gets the users having a claim with the given type and value.
+        /// </summary>
+        /// <param name="claimType">Type of the claim.</param>
+        /// <param name="claimValue">The claim value.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Claim type</exception>
+        public async Task<IList<User>> GetUsers(string claimType, string claimValue)
+        {
+            if (string.IsNullOrWhiteSpace(claimType))
+            {
+                throw new ArgumentNullException(claimType);
+            }
+            var list = new List<Task<User?>>();
+            foreach (Guid userId in State.ClaimTypes.Where(p => p.Key == claimType).SelectMany(p => p.Value))
+            {
+                list.Add(FindClaimUser(userId, claimType, claimValue));
+            }
+            return (await Task.WhenAll(list)).Where(p => p != null).ToList();
+        }
 
-        public Task Delete(UserClaim userClaim) => throw new NotImplementedException();
+        private static async Task<User?> FindClaimUser(Guid userId, string claimType, string claimValue)
+        {
+            if (await GetUserClaimsActor(userId).HasValue(claimType, claimValue))
+            {
+                return await GetUserActor(userId).GetUser();
+            }
+            return null;
+        }
 
-        public Task<IList<User>> GetUsers(string type, string value) => throw new NotImplementedException();
+        private static IUserActor GetUserActor(Guid userId) => ActorProxy.Create<IUserActor>(new ActorId(userId.ToString()), nameof(UserActor));
+
+        private static IUserClaimsActor GetUserClaimsActor(Guid userId) => ActorProxy.Create<IUserClaimsActor>(new ActorId(userId.ToString()), nameof(UserClaimsActor));
     }
 }
