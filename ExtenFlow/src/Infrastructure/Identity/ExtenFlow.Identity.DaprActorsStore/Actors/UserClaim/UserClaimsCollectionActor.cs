@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
-using Dapr.Actors.Client;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Identity.Models;
+using ExtenFlow.Identity.Properties;
 
 namespace ExtenFlow.Identity.DaprActorsStore
 {
@@ -43,11 +43,11 @@ namespace ExtenFlow.Identity.DaprActorsStore
             }
             if (userClaim.UserId == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.UserIdNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.UserIdNotDefined);
             }
             if (userClaim.ClaimType == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.ClaimTypeNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.ClaimTypeNotDefined);
             }
             if (!State.UserIds.Contains(userClaim.UserId))
             {
@@ -57,7 +57,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 State.ClaimTypes.Add(userClaim.ClaimType, new HashSet<Guid>() { userClaim.UserId });
             }
-            await GetUserClaimsActor(userClaim.UserId).Add(userClaim.ClaimType, userClaim.ClaimValue);
+            await IdentityActors.UserClaims(userClaim.UserId).Add(userClaim.ClaimType, userClaim.ClaimValue);
             await SetState();
         }
 
@@ -76,11 +76,11 @@ namespace ExtenFlow.Identity.DaprActorsStore
             }
             if (userClaim.UserId == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.UserIdNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.UserIdNotDefined);
             }
             if (userClaim.ClaimType == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.ClaimTypeNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.ClaimTypeNotDefined);
             }
             if (!State.UserIds.Contains(userClaim.UserId))
             {
@@ -90,7 +90,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 State.ClaimTypes.Add(userClaim.ClaimType, new HashSet<Guid>() { userClaim.UserId });
             }
-            await GetUserClaimsActor(userClaim.UserId).Add(userClaim.ClaimType, userClaim.ClaimValue);
+            await IdentityActors.UserClaims(userClaim.UserId).Add(userClaim.ClaimType, userClaim.ClaimValue);
             await SetState();
         }
 
@@ -117,15 +117,11 @@ namespace ExtenFlow.Identity.DaprActorsStore
 
         private static async Task<User?> FindClaimUser(Guid userId, string claimType, string claimValue)
         {
-            if (await GetUserClaimsActor(userId).HasValue(claimType, claimValue))
+            if (await IdentityActors.UserClaims(userId).Exist(claimType, claimValue))
             {
-                return await GetUserActor(userId).GetUser();
+                return await IdentityActors.User(userId).GetUser();
             }
             return null;
         }
-
-        private static IUserActor GetUserActor(Guid userId) => ActorProxy.Create<IUserActor>(new ActorId(userId.ToString()), nameof(UserActor));
-
-        private static IUserClaimsActor GetUserClaimsActor(Guid userId) => ActorProxy.Create<IUserClaimsActor>(new ActorId(userId.ToString()), nameof(UserClaimsActor));
     }
 }

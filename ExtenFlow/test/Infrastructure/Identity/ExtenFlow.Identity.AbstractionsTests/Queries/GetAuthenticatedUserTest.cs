@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-using ExtenFlow.Security.Users;
-using ExtenFlow.Security.Users.Queries;
+using ExtenFlow.Identity.Models;
+using ExtenFlow.Identity.Queries;
 
 using FluentAssertions;
 
@@ -15,26 +15,19 @@ using static FluentAssertions.FluentActions;
 
 namespace ExtenFlow.Messages.AbstractionsTests
 {
-    public class GetAuthenticatedUserTest : IClassFixture<UserQueryFixture<IUser, GetAuthenticatedUser>>
+    public class GetAuthenticatedUserTest : IClassFixture<UserQueryFixture<User, GetAuthenticatedUser>>
     {
-        private UserQueryFixture<IUser, GetAuthenticatedUser> GetAuthenticatedUserFixture { get; }
-
-        public GetAuthenticatedUserTest(UserQueryFixture<IUser, GetAuthenticatedUser> getAuthenticatedUserFixture)
+        public GetAuthenticatedUserTest(UserQueryFixture<User, GetAuthenticatedUser> getAuthenticatedUserFixture)
         {
             GetAuthenticatedUserFixture = getAuthenticatedUserFixture;
         }
 
-        [Fact]
-        public void CreateGetAuthenticatedUser_EmptyMessageIdShouldThrowException()
-            => Invoking(() => new GetAuthenticatedUser("Aggr. Id", "pass", "User Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
-                .Should()
-                .Throw<ArgumentNullException>();
+        private UserQueryFixture<User, GetAuthenticatedUser> GetAuthenticatedUserFixture { get; }
 
-        [Fact]
-        public void CreateGetAuthenticatedUser_DefaultMessageShouldHaveAMessageId()
-            => new GetAuthenticatedUser("aggr id", "pass").MessageId
-                .Should()
-                .NotBe(Guid.Empty);
+        [Theory]
+        [ClassData(typeof(GetUserTestData))]
+        public void CreateGetAuthenticatedUser_CheckState(string aggregateId, string password, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => GetAuthenticatedUserFixture.CheckMessageState(new GetAuthenticatedUser(aggregateId, password, userId, correlationId, messageId, dateTime), "User", aggregateId, userId, correlationId, messageId, dateTime);
 
         [Fact]
         public void CreateGetAuthenticatedUser_DefaultMessageShouldHaveACorrelationId()
@@ -43,8 +36,20 @@ namespace ExtenFlow.Messages.AbstractionsTests
                 .NotBe(Guid.Empty);
 
         [Fact]
+        public void CreateGetAuthenticatedUser_DefaultMessageShouldHaveAMessageId()
+            => new GetAuthenticatedUser("aggr id", "pass").MessageId
+                .Should()
+                .NotBe(Guid.Empty);
+
+        [Fact]
         public void CreateGetAuthenticatedUser_EmptyCorrelationIdShouldThrowException()
             => Invoking(() => new GetAuthenticatedUser("Aggr. Id", "pass", "User Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
+                .Should()
+                .Throw<ArgumentNullException>();
+
+        [Fact]
+        public void CreateGetAuthenticatedUser_EmptyMessageIdShouldThrowException()
+            => Invoking(() => new GetAuthenticatedUser("Aggr. Id", "pass", "User Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
@@ -59,18 +64,13 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(GetUserTestData))]
-        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string password, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => GetAuthenticatedUserFixture.CheckMessageNewtonSoftSerialization(new GetAuthenticatedUser(aggregateId, password, userId, correlationId, messageId, dateTime));
-
-        [Theory]
-        [ClassData(typeof(GetUserTestData))]
         public void DotNetJsonSerializeMessage_Check(string aggregateId, string password, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
             => GetAuthenticatedUserFixture.CheckMessageJsonSerialization(new GetAuthenticatedUser(aggregateId, password, userId, correlationId, messageId, dateTime));
 
         [Theory]
         [ClassData(typeof(GetUserTestData))]
-        public void CreateGetAuthenticatedUser_CheckState(string aggregateId, string password, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => GetAuthenticatedUserFixture.CheckMessageState(new GetAuthenticatedUser(aggregateId, password, userId, correlationId, messageId, dateTime), "User", aggregateId, userId, correlationId, messageId, dateTime);
+        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string password, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => GetAuthenticatedUserFixture.CheckMessageNewtonSoftSerialization(new GetAuthenticatedUser(aggregateId, password, userId, correlationId, messageId, dateTime));
     }
 
     public class GetUserTestData : IEnumerable<object[]>

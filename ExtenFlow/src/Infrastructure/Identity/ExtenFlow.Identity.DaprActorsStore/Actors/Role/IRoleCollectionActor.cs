@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -22,11 +23,10 @@ namespace ExtenFlow.Identity.DaprActorsStore
         Task<IdentityResult> Create(Role role);
 
         /// <summary>
-        /// Update a existing role
+        /// Delete the role
         /// </summary>
-        /// <param name="role">The new role properties</param>
         /// <returns>The operation result</returns>
-        Task<IdentityResult> Update(Role role);
+        Task<IdentityResult> Delete(Guid roleId, string concurrencyString);
 
         /// <summary>
         /// Checks if a role with the given identifier exists.
@@ -36,16 +36,23 @@ namespace ExtenFlow.Identity.DaprActorsStore
         Task<bool> Exist(Guid roleId);
 
         /// <summary>
-        /// Delete the role
-        /// </summary>
-        /// <returns>The operation result</returns>
-        Task<IdentityResult> Delete(Guid roleId, string concurrencyString);
-
-        /// <summary>
         /// Finds the name of the by normalized.
         /// </summary>
         /// <param name="normalizedRoleName">Name of the normalized role.</param>
         /// <returns>The role id</returns>
         Task<Guid?> FindByNormalizedName(string normalizedRoleName);
+
+        /// <summary>
+        /// Gets all the role ids.
+        /// </summary>
+        /// <returns>The role ids</returns>
+        Task<IList<Guid>> GetIds();
+
+        /// <summary>
+        /// Update a existing role
+        /// </summary>
+        /// <param name="role">The new role properties</param>
+        /// <returns>The operation result</returns>
+        Task<IdentityResult> Update(Role role);
     }
 }

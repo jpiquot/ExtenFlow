@@ -69,7 +69,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// </summary>
         /// <param name="userId">The user identifier.</param>
         /// <returns>The actor instance interface</returns>
-        public static IUserLoginsActor UserLogin(Guid userId) => ActorProxy.Create<IUserLoginsActor>(new ActorId(userId.ToString()), nameof(UserLoginsActor));
+        public static IUserLoginsActor UserLogins(Guid userId) => ActorProxy.Create<IUserLoginsActor>(new ActorId(userId.ToString()), nameof(UserLoginsActor));
 
         /// <summary>
         /// Creates a user logins collection actor.

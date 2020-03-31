@@ -5,6 +5,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\src\Infrastructure\Identity\ExtenFlow.Identity.Abstractions\ExtenFlow.Identity.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Messages\ExtenFlow.Messages.AbstractionsTests\ExtenFlow.Messages.AbstractionsTests.csproj" />
 	</ItemGroup>
 

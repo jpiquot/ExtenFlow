@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
-
+using ExtenFlow.Identity.Properties;
 using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Identity.DaprActorsStore
@@ -31,27 +31,55 @@ namespace ExtenFlow.Identity.DaprActorsStore
         }
 
         /// <summary>
-        /// Gets the user login.
+        /// Adds the specified user login information.
+        /// </summary>
+        /// <param name="userLoginInfo">The user login information.</param>
+        /// <returns></returns>
+        public Task AddLogin(UserLoginInfo userLoginInfo)
+        {
+            if (userLoginInfo == null)
+            {
+                return Task.FromException(new ArgumentNullException(nameof(userLoginInfo)));
+            }
+            if (string.IsNullOrWhiteSpace(userLoginInfo.LoginProvider))
+            {
+                return Task.FromException(new ArgumentOutOfRangeException(Resources.LoginProviderNotDefined));
+            }
+            if (string.IsNullOrWhiteSpace(userLoginInfo.ProviderKey))
+            {
+                return Task.FromException(new ArgumentOutOfRangeException(Resources.ProviderKeyNotDefined));
+            }
+            if (State.Any(p => p.LoginProvider == userLoginInfo.LoginProvider && p.ProviderKey == userLoginInfo.ProviderKey))
+            {
+                return Task.FromException(new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.DuplicateUserLogin, Id.GetId(), userLoginInfo.LoginProvider, userLoginInfo.ProviderKey)));
+            }
+            State.Add(userLoginInfo);
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Deletes the specified login provider.
         /// </summary>
         /// <param name="loginProvider">The login provider.</param>
         /// <param name="providerKey">The provider key.</param>
-        /// <returns>The user login info object.</returns>
-        public Task<UserLoginInfo> Get(string loginProvider, string providerKey)
+        /// <returns></returns>
+        public Task DeleteLogin(string loginProvider, string providerKey)
         {
             if (string.IsNullOrWhiteSpace(loginProvider))
             {
-                return Task.FromException<UserLoginInfo>(new ArgumentNullException(nameof(loginProvider)));
+                return Task.FromException(new ArgumentNullException(nameof(loginProvider)));
             }
             if (string.IsNullOrWhiteSpace(providerKey))
             {
-                return Task.FromException<UserLoginInfo>(new ArgumentNullException(nameof(providerKey)));
+                return Task.FromException(new ArgumentNullException(nameof(providerKey)));
             }
-            UserLoginInfo? login = State.Where(p => p.LoginProvider == loginProvider && p.ProviderKey == providerKey).FirstOrDefault();
-            if (login == null)
+            UserLoginInfo? userLoginInfo = State.FirstOrDefault(p => p.LoginProvider == loginProvider && p.ProviderKey == providerKey);
+            if (userLoginInfo == null)
             {
-                return Task.FromException<UserLoginInfo>(new KeyNotFoundException($"User Id = '{Id.GetId()}'; Login Provider = '{nameof(providerKey)}'; Povider Key = '{providerKey}'."));
+                return Task.FromException(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.UserLoginNotFound, Id.GetId(), loginProvider, providerKey)));
             }
-            return Task.FromResult(login);
+            State.Remove(userLoginInfo);
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -60,7 +88,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="loginProvider">The login provider.</param>
         /// <param name="providerKey">The provider key.</param>
         /// <returns>The user login info object if exists, else null.</returns>
-        public Task<UserLoginInfo?> Find(string loginProvider, string providerKey)
+        public Task<UserLoginInfo?> FindLogin(string loginProvider, string providerKey)
         {
             if (string.IsNullOrWhiteSpace(loginProvider))
             {
@@ -80,55 +108,27 @@ namespace ExtenFlow.Identity.DaprActorsStore
         public Task<IList<UserLoginInfo>> GetAll() => Task.FromResult<IList<UserLoginInfo>>(State.ToList());
 
         /// <summary>
-        /// Adds the specified user login information.
-        /// </summary>
-        /// <param name="userLoginInfo">The user login information.</param>
-        /// <returns></returns>
-        public Task Add(UserLoginInfo userLoginInfo)
-        {
-            if (userLoginInfo == null)
-            {
-                return Task.FromException(new ArgumentNullException(nameof(userLoginInfo)));
-            }
-            if (string.IsNullOrWhiteSpace(userLoginInfo.LoginProvider))
-            {
-                return Task.FromException(new ArgumentOutOfRangeException(Resource.LoginProviderNotDefined));
-            }
-            if (string.IsNullOrWhiteSpace(userLoginInfo.ProviderKey))
-            {
-                return Task.FromException(new ArgumentOutOfRangeException(Resource.ProviderKeyNotDefined));
-            }
-            if (State.Any(p => p.LoginProvider == userLoginInfo.LoginProvider && p.ProviderKey == userLoginInfo.ProviderKey))
-            {
-                return Task.FromException(new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resource.DuplicateUserLogin, Id.GetId(), userLoginInfo.LoginProvider, userLoginInfo.ProviderKey)));
-            }
-            State.Add(userLoginInfo);
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// Deletes the specified login provider.
+        /// Gets the user login.
         /// </summary>
         /// <param name="loginProvider">The login provider.</param>
         /// <param name="providerKey">The provider key.</param>
-        /// <returns></returns>
-        public Task Delete(string loginProvider, string providerKey)
+        /// <returns>The user login info object.</returns>
+        public Task<UserLoginInfo> GetLogin(string loginProvider, string providerKey)
         {
             if (string.IsNullOrWhiteSpace(loginProvider))
             {
-                return Task.FromException(new ArgumentNullException(nameof(loginProvider)));
+                return Task.FromException<UserLoginInfo>(new ArgumentNullException(nameof(loginProvider)));
             }
             if (string.IsNullOrWhiteSpace(providerKey))
             {
-                return Task.FromException(new ArgumentNullException(nameof(providerKey)));
+                return Task.FromException<UserLoginInfo>(new ArgumentNullException(nameof(providerKey)));
             }
-            UserLoginInfo? userLoginInfo = State.FirstOrDefault(p => p.LoginProvider == loginProvider && p.ProviderKey == providerKey);
-            if (userLoginInfo == null)
+            UserLoginInfo? login = State.Where(p => p.LoginProvider == loginProvider && p.ProviderKey == providerKey).FirstOrDefault();
+            if (login == null)
             {
-                return Task.FromException(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.UserLoginNotFound, Id.GetId(), loginProvider, providerKey)));
+                return Task.FromException<UserLoginInfo>(new KeyNotFoundException($"User Id = '{Id.GetId()}'; Login Provider = '{nameof(providerKey)}'; Povider Key = '{providerKey}'."));
             }
-            State.Remove(userLoginInfo);
-            return Task.CompletedTask;
+            return Task.FromResult(login);
         }
     }
 }

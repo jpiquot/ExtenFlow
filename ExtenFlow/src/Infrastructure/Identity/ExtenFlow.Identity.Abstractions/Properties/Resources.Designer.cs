@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ExtenFlow.Identity.DaprActorsStore {
+namespace ExtenFlow.Identity.Properties {
     using System;
     
     
@@ -22,24 +22,24 @@ namespace ExtenFlow.Identity.DaprActorsStore {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resource {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resource() {
+        internal Resources() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ExtenFlow.Identity.DaprActorsStore.Resource", typeof(Resource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ExtenFlow.Identity.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to The claim type is not defined..
         /// </summary>
-        internal static string ClaimTypeNotDefined {
+        public static string ClaimTypeNotDefined {
             get {
                 return ResourceManager.GetString("ClaimTypeNotDefined", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to The role &apos;{0}&apos; already exist..
         /// </summary>
-        internal static string DuplicateRole {
+        public static string DuplicateRole {
             get {
                 return ResourceManager.GetString("DuplicateRole", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to Duplicate Token : UserId=&apos;{0}&apos;; LoginProvider=&apos;{1}&apos;; TokenName=&apos;{2}&apos;.
         /// </summary>
-        internal static string DuplicateToken {
+        public static string DuplicateToken {
             get {
                 return ResourceManager.GetString("DuplicateToken", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to The user &apos;{0}&apos; already exist..
         /// </summary>
-        internal static string DuplicateUser {
+        public static string DuplicateUser {
             get {
                 return ResourceManager.GetString("DuplicateUser", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to Duplicate user for login : UserIds=&apos;{0}/{3}&apos;; LoginProvider=&apos;{1}&apos;; ProviderKey=&apos;{2}&apos;..
         /// </summary>
-        internal static string DuplicateUserForLogin {
+        public static string DuplicateUserForLogin {
             get {
                 return ResourceManager.GetString("DuplicateUserForLogin", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to Duplicate user login : UserId=&apos;{0}&apos;; LoginProvider=&apos;{1}&apos;; ProviderKey=&apos;{2}&apos;..
         /// </summary>
-        internal static string DuplicateUserLogin {
+        public static string DuplicateUserLogin {
             get {
                 return ResourceManager.GetString("DuplicateUserLogin", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to The login provider is not defined..
         /// </summary>
-        internal static string LoginProviderNotDefined {
+        public static string LoginProviderNotDefined {
             get {
                 return ResourceManager.GetString("LoginProviderNotDefined", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to The login provider key is not defined..
         /// </summary>
-        internal static string ProviderKeyNotDefined {
+        public static string ProviderKeyNotDefined {
             get {
                 return ResourceManager.GetString("ProviderKeyNotDefined", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to The role id is not defined.
         /// </summary>
-        internal static string RoleIdNotDefined {
+        public static string RoleIdNotDefined {
             get {
                 return ResourceManager.GetString("RoleIdNotDefined", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to Role &apos;{0}&apos; not found..
         /// </summary>
-        internal static string RoleNotFound {
+        public static string RoleNotFound {
             get {
                 return ResourceManager.GetString("RoleNotFound", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to Token not found : UserId=&apos;{0}&apos;; LoginProvider=&apos;{1}&apos;; TokenName=&apos;{2}&apos;.
         /// </summary>
-        internal static string TokenNotFound {
+        public static string TokenNotFound {
             get {
                 return ResourceManager.GetString("TokenNotFound", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to The user id is not defined..
         /// </summary>
-        internal static string UserIdNotDefined {
+        public static string UserIdNotDefined {
             get {
                 return ResourceManager.GetString("UserIdNotDefined", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to User login not found : UserId=&apos;{0}&apos;; LoginProvider=&apos;{1}&apos;; ProviderKey=&apos;{2}&apos;..
         /// </summary>
-        internal static string UserLoginNotFound {
+        public static string UserLoginNotFound {
             get {
                 return ResourceManager.GetString("UserLoginNotFound", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace ExtenFlow.Identity.DaprActorsStore {
         /// <summary>
         ///   Looks up a localized string similar to User &apos;{0}&apos; not found..
         /// </summary>
-        internal static string UserNotFound {
+        public static string UserNotFound {
             get {
                 return ResourceManager.GetString("UserNotFound", resourceCulture);
             }

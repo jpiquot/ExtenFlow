@@ -3,16 +3,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
-using ExtenFlow.Security.Users.Queries;
+using ExtenFlow.Identity.Users.Commands;
 
 namespace ExtenFlow.Messages.AbstractionsTests
 {
-    public class UserQueryFixture<TR, TQ> : QueryFixture<TR, TQ> where TQ : UserQuery<TR>
+    public class UserCommandFixture<T> : CommandFixture<T> where T : UserCommand
     {
     }
 
-    public class UserQueryTestData : IEnumerable<object[]>
+    public class UserCommandTestData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {

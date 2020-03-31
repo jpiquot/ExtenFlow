@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
+using ExtenFlow.Identity.Properties;
 
 namespace ExtenFlow.Identity.DaprActorsStore
 {
@@ -27,16 +28,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
         }
 
-        private HashSet<Guid> GetUserRoles(Guid userId)
-        {
-            if (!State.TryGetValue(userId, out HashSet<Guid>? roles))
-            {
-                roles = new HashSet<Guid>();
-                State.Add(userId, roles);
-            }
-            return roles;
-        }
-
         /// <summary>
         /// Creates the specified user/role identifiers association.
         /// </summary>
@@ -47,11 +38,11 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
             if (userId == default)
             {
-                return Task.FromException<bool>(new ArgumentOutOfRangeException(Resource.UserIdNotDefined));
+                return Task.FromException<bool>(new ArgumentOutOfRangeException(Resources.UserIdNotDefined));
             }
             if (roleId == default)
             {
-                return Task.FromException<bool>(new ArgumentOutOfRangeException(Resource.RoleIdNotDefined));
+                return Task.FromException<bool>(new ArgumentOutOfRangeException(Resources.RoleIdNotDefined));
             }
             GetUserRoles(userId).Add(roleId);
             return SetState();
@@ -67,11 +58,11 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
             if (userId == default)
             {
-                return Task.FromException<bool>(new ArgumentOutOfRangeException(Resource.UserIdNotDefined));
+                return Task.FromException<bool>(new ArgumentOutOfRangeException(Resources.UserIdNotDefined));
             }
             if (roleId == default)
             {
-                return Task.FromException<bool>(new ArgumentOutOfRangeException(Resource.RoleIdNotDefined));
+                return Task.FromException<bool>(new ArgumentOutOfRangeException(Resources.RoleIdNotDefined));
             }
             GetUserRoles(userId).Remove(roleId);
             return SetState();
@@ -87,11 +78,11 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
             if (userId == default)
             {
-                return Task.FromException<bool>(new ArgumentOutOfRangeException(Resource.UserIdNotDefined));
+                return Task.FromException<bool>(new ArgumentOutOfRangeException(Resources.UserIdNotDefined));
             }
             if (roleId == default)
             {
-                return Task.FromException<bool>(new ArgumentOutOfRangeException(Resource.RoleIdNotDefined));
+                return Task.FromException<bool>(new ArgumentOutOfRangeException(Resources.RoleIdNotDefined));
             }
             return Task.FromResult(GetUserRoles(userId).Any(p => p == roleId));
         }
@@ -105,7 +96,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
             if (userId == default)
             {
-                return Task.FromException<IList<Guid>>(new ArgumentOutOfRangeException(Resource.UserIdNotDefined));
+                return Task.FromException<IList<Guid>>(new ArgumentOutOfRangeException(Resources.UserIdNotDefined));
             }
             return Task.FromResult<IList<Guid>>(GetUserRoles(userId).ToList());
         }
@@ -119,9 +110,19 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
             if (roleId == default)
             {
-                return Task.FromException<IList<Guid>>(new ArgumentOutOfRangeException(Resource.RoleIdNotDefined));
+                return Task.FromException<IList<Guid>>(new ArgumentOutOfRangeException(Resources.RoleIdNotDefined));
             }
             return Task.FromResult<IList<Guid>>(State.Where(p => p.Value.Contains(roleId)).Select(p => p.Key).ToList());
+        }
+
+        private HashSet<Guid> GetUserRoles(Guid userId)
+        {
+            if (!State.TryGetValue(userId, out HashSet<Guid>? roles))
+            {
+                roles = new HashSet<Guid>();
+                State.Add(userId, roles);
+            }
+            return roles;
         }
     }
 }

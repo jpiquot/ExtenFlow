@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
+using ExtenFlow.Identity.Properties;
 
 namespace ExtenFlow.Identity.DaprActorsStore
 {
@@ -25,15 +26,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
         public UserTokensActor(ActorService actorService, ActorId actorId, IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
         {
-        }
-
-        private Dictionary<string, string> GetTokens(string loginProvider)
-        {
-            if (!State.TryGetValue(loginProvider, out Dictionary<string, string>? tokens))
-            {
-                tokens = new Dictionary<string, string>();
-            }
-            return tokens;
         }
 
         /// <summary>
@@ -63,37 +55,9 @@ namespace ExtenFlow.Identity.DaprActorsStore
             var tokens = GetTokens(loginProvider);
             if (tokens.ContainsKey(name))
             {
-                return Task.FromException(new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resource.DuplicateToken, Id.GetId(), loginProvider, name)));
+                return Task.FromException(new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.DuplicateToken, Id.GetId(), loginProvider, name)));
             }
             tokens.Add(name, value);
-            SetState();
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// Removes the specified token.
-        /// </summary>
-        /// <param name="loginProvider">The login provider.</param>
-        /// <param name="name">The name.</param>
-        /// <exception cref="ArgumentNullException">loginProvider is null</exception>
-        /// <exception cref="ArgumentNullException">name is null</exception>
-        /// <exception cref="KeyNotFoundException">Token not found</exception>
-        public Task Remove(string loginProvider, string name)
-        {
-            if (string.IsNullOrWhiteSpace(loginProvider))
-            {
-                return Task.FromException(new ArgumentNullException(nameof(loginProvider)));
-            }
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return Task.FromException(new ArgumentNullException(nameof(name)));
-            }
-            var tokens = GetTokens(loginProvider);
-            if (!tokens.ContainsKey(name))
-            {
-                return Task.FromException(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.TokenNotFound, Id.GetId(), loginProvider, name)));
-            }
-            tokens.Remove(name);
             SetState();
             return Task.CompletedTask;
         }
@@ -121,6 +85,43 @@ namespace ExtenFlow.Identity.DaprActorsStore
                 return Task.FromResult<string?>(value);
             }
             return Task.FromResult<string?>(null);
+        }
+
+        /// <summary>
+        /// Removes the specified token.
+        /// </summary>
+        /// <param name="loginProvider">The login provider.</param>
+        /// <param name="name">The name.</param>
+        /// <exception cref="ArgumentNullException">loginProvider is null</exception>
+        /// <exception cref="ArgumentNullException">name is null</exception>
+        /// <exception cref="KeyNotFoundException">Token not found</exception>
+        public Task Remove(string loginProvider, string name)
+        {
+            if (string.IsNullOrWhiteSpace(loginProvider))
+            {
+                return Task.FromException(new ArgumentNullException(nameof(loginProvider)));
+            }
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return Task.FromException(new ArgumentNullException(nameof(name)));
+            }
+            var tokens = GetTokens(loginProvider);
+            if (!tokens.ContainsKey(name))
+            {
+                return Task.FromException(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.TokenNotFound, Id.GetId(), loginProvider, name)));
+            }
+            tokens.Remove(name);
+            SetState();
+            return Task.CompletedTask;
+        }
+
+        private Dictionary<string, string> GetTokens(string loginProvider)
+        {
+            if (!State.TryGetValue(loginProvider, out Dictionary<string, string>? tokens))
+            {
+                tokens = new Dictionary<string, string>();
+            }
+            return tokens;
         }
     }
 }

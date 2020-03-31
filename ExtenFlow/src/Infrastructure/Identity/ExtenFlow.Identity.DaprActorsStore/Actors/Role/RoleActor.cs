@@ -7,7 +7,7 @@ using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Identity.Models;
-
+using ExtenFlow.Identity.Properties;
 using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Identity.DaprActorsStore
@@ -34,6 +34,25 @@ namespace ExtenFlow.Identity.DaprActorsStore
         }
 
         /// <summary>
+        /// Clears the specified concurrency string.
+        /// </summary>
+        /// <param name="concurrencyString">The concurrency string.</param>
+        /// <returns>The identity result object</returns>
+        public async Task<IdentityResult> Clear(string concurrencyString)
+        {
+            if (State.Id == default)
+            {
+                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.RoleNotFound, Id.GetId()));
+            }
+            if (State.ConcurrencyStamp != concurrencyString)
+            {
+                return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
+            }
+            await SetState(null);
+            return IdentityResult.Success;
+        }
+
+        /// <summary>
         /// Gets the role.
         /// </summary>
         /// <returns>The role object</returns>
@@ -53,7 +72,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             }
             if (role.Id == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.RoleIdNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.RoleIdNotDefined);
             }
             if (State.ConcurrencyStamp != null && role.ConcurrencyStamp != State.ConcurrencyStamp)
             {
@@ -61,25 +80,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
             }
             role.ConcurrencyStamp = Guid.NewGuid().ToString();
             await SetState(role);
-            return IdentityResult.Success;
-        }
-
-        /// <summary>
-        /// Clears the specified concurrency string.
-        /// </summary>
-        /// <param name="concurrencyString">The concurrency string.</param>
-        /// <returns>The identity result object</returns>
-        public async Task<IdentityResult> Clear(string concurrencyString)
-        {
-            if (State.Id == default)
-            {
-                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.RoleNotFound, Id.GetId()));
-            }
-            if (State.ConcurrencyStamp != concurrencyString)
-            {
-                return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
-            }
-            await SetState(null);
             return IdentityResult.Success;
         }
     }

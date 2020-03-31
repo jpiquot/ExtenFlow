@@ -8,7 +8,7 @@ using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Identity.Models;
-
+using ExtenFlow.Identity.Properties;
 using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Identity.DaprActorsStore
@@ -45,11 +45,11 @@ namespace ExtenFlow.Identity.DaprActorsStore
             }
             if (role.Id == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.RoleIdNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.RoleIdNotDefined);
             }
             if (State.Ids.Any(p => p == role.Id))
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resource.DuplicateRole, role.Id));
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.DuplicateRole, role.Id));
             }
             if (State.NormalizedNames.Any(p => p.Key == role.NormalizedName))
             {
@@ -77,7 +77,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             }
             if (!State.Ids.Any(p => p == roleId))
             {
-                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.RoleNotFound, roleId));
+                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.RoleNotFound, roleId));
             }
             State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == roleId).Select(p => p.Key).Single());
             State.Ids.Remove(roleId);
@@ -115,6 +115,13 @@ namespace ExtenFlow.Identity.DaprActorsStore
         }
 
         /// <summary>
+        /// Gets the all the role ids.
+        /// </summary>
+        /// <returns>The role ids</returns>
+        public Task<IList<Guid>> GetIds()
+            => Task.FromResult<IList<Guid>>(State.Ids.ToList());
+
+        /// <summary>
         /// Create a new role
         /// </summary>
         /// <param name="role">The new role properties</param>
@@ -127,11 +134,11 @@ namespace ExtenFlow.Identity.DaprActorsStore
             }
             if (role.Id == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.RoleIdNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.RoleIdNotDefined);
             }
             if (!State.Ids.Any(p => p == role.Id))
             {
-                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resource.RoleNotFound, role.Id));
+                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.RoleNotFound, role.Id));
             }
             if (State.NormalizedNames.Any(p => p.Key == role.NormalizedName && p.Value != role.Id))
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using ExtenFlow.Identity.Properties;
 
 namespace ExtenFlow.Identity.DaprActorsStore
 {
@@ -17,16 +18,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <value>The login providers.</value>
         internal Dictionary<string, Dictionary<string, Guid>> LoginProviders => _loginProviders ?? (_loginProviders = new Dictionary<string, Dictionary<string, Guid>>());
 
-        internal Dictionary<string, Guid> GetProviderKeys(string loginProvider)
-        {
-            if (!LoginProviders.TryGetValue(loginProvider, out Dictionary<string, Guid>? values))
-            {
-                values = new Dictionary<string, Guid>();
-                LoginProviders.Add(loginProvider, values);
-            }
-            return values;
-        }
-
         internal void Add(string loginProvider, string providerKey, Guid userId)
         {
             Dictionary<string, Guid> keys = GetProviderKeys(loginProvider);
@@ -39,13 +30,23 @@ namespace ExtenFlow.Identity.DaprActorsStore
                 if (userId != user)
                 {
                     throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
-                                                                      Resource.DuplicateUserForLogin,
+                                                                      Resources.DuplicateUserForLogin,
                                                                       loginProvider,
                                                                       providerKey,
                                                                       user,
                                                                       userId));
                 }
             }
+        }
+
+        internal Dictionary<string, Guid> GetProviderKeys(string loginProvider)
+        {
+            if (!LoginProviders.TryGetValue(loginProvider, out Dictionary<string, Guid>? values))
+            {
+                values = new Dictionary<string, Guid>();
+                LoginProviders.Add(loginProvider, values);
+            }
+            return values;
         }
 
         internal void Remove(string loginProvider, string providerKey, Guid userId)
@@ -58,7 +59,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             if (userId != user)
             {
                 throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
-                                                                  Resource.DuplicateUserForLogin,
+                                                                  Resources.DuplicateUserForLogin,
                                                                   loginProvider,
                                                                   providerKey,
                                                                   user,

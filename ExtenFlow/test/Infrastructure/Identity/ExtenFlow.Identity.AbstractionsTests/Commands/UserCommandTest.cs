@@ -1,6 +1,6 @@
 using System;
 
-using ExtenFlow.Security.Users.Commands;
+using ExtenFlow.Identity.Users.Commands;
 
 using FluentAssertions;
 
@@ -30,24 +30,17 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
     public class UserCommandTest : IClassFixture<UserCommandFixture<FakeUserCommand>>
     {
-        private UserCommandFixture<FakeUserCommand> UserCommandFixture { get; }
-
         public UserCommandTest(UserCommandFixture<FakeUserCommand> userCommandFixture)
         {
             UserCommandFixture = userCommandFixture;
         }
 
-        [Fact]
-        public void CreateUserCommand_EmptyMessageIdShouldThrowException()
-            => Invoking(() => new FakeUserCommand("Aggr. Id", "User Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
-                .Should()
-                .Throw<ArgumentNullException>();
+        private UserCommandFixture<FakeUserCommand> UserCommandFixture { get; }
 
-        [Fact]
-        public void CreateUserCommand_DefaultMessageShouldHaveAMessageId()
-            => new FakeUserCommand().MessageId
-                .Should()
-                .NotBe(Guid.Empty);
+        [Theory]
+        [ClassData(typeof(UserCommandTestData))]
+        public void CreateUserCommand_CheckState(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => UserCommandFixture.CheckMessageState(new FakeUserCommand(aggregateId, userId, correlationId, messageId, dateTime), "User", aggregateId, userId, correlationId, messageId, dateTime);
 
         [Fact]
         public void CreateUserCommand_DefaultMessageShouldHaveACorrelationId()
@@ -56,8 +49,20 @@ namespace ExtenFlow.Messages.AbstractionsTests
                 .NotBe(Guid.Empty);
 
         [Fact]
+        public void CreateUserCommand_DefaultMessageShouldHaveAMessageId()
+            => new FakeUserCommand().MessageId
+                .Should()
+                .NotBe(Guid.Empty);
+
+        [Fact]
         public void CreateUserCommand_EmptyCorrelationIdShouldThrowException()
             => Invoking(() => new FakeUserCommand("Aggr. Id", "User Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
+                .Should()
+                .Throw<ArgumentNullException>();
+
+        [Fact]
+        public void CreateUserCommand_EmptyMessageIdShouldThrowException()
+            => Invoking(() => new FakeUserCommand("Aggr. Id", "User Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
@@ -72,17 +77,12 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(UserCommandTestData))]
-        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => UserCommandFixture.CheckMessageNewtonSoftSerialization(new FakeUserCommand(aggregateId, userId, correlationId, messageId, dateTime));
-
-        [Theory]
-        [ClassData(typeof(UserCommandTestData))]
         public void DotNetJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
             => UserCommandFixture.CheckMessageJsonSerialization(new FakeUserCommand(aggregateId, userId, correlationId, messageId, dateTime));
 
         [Theory]
         [ClassData(typeof(UserCommandTestData))]
-        public void CreateUserCommand_CheckState(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => UserCommandFixture.CheckMessageState(new FakeUserCommand(aggregateId, userId, correlationId, messageId, dateTime), "User", aggregateId, userId, correlationId, messageId, dateTime);
+        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => UserCommandFixture.CheckMessageNewtonSoftSerialization(new FakeUserCommand(aggregateId, userId, correlationId, messageId, dateTime));
     }
 }

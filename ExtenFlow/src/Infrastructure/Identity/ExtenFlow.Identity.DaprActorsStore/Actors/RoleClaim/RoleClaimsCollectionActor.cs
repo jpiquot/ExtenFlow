@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
-using Dapr.Actors.Client;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Identity.Models;
+using ExtenFlow.Identity.Properties;
 
 namespace ExtenFlow.Identity.DaprActorsStore
 {
@@ -43,11 +43,11 @@ namespace ExtenFlow.Identity.DaprActorsStore
             }
             if (roleClaim.RoleId == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.RoleIdNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.RoleIdNotDefined);
             }
             if (roleClaim.ClaimType == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.ClaimTypeNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.ClaimTypeNotDefined);
             }
             if (!State.RoleIds.Contains(roleClaim.RoleId))
             {
@@ -57,7 +57,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 State.ClaimTypes.Add(roleClaim.ClaimType, new HashSet<Guid>() { roleClaim.RoleId });
             }
-            await GetRoleClaimsActor(roleClaim.RoleId).Add(roleClaim.ClaimType, roleClaim.ClaimValue);
+            await IdentityActors.RoleClaims(roleClaim.RoleId).Add(roleClaim.ClaimType, roleClaim.ClaimValue);
             await SetState();
         }
 
@@ -77,14 +77,14 @@ namespace ExtenFlow.Identity.DaprActorsStore
 
             if (roleClaim.RoleId == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.RoleIdNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.RoleIdNotDefined);
             }
 
             if (roleClaim.ClaimType == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.ClaimTypeNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.ClaimTypeNotDefined);
             }
-            await GetRoleClaimsActor(roleClaim.RoleId).Add(roleClaim.ClaimType, roleClaim.ClaimValue);
+            await IdentityActors.RoleClaims(roleClaim.RoleId).Add(roleClaim.ClaimType, roleClaim.ClaimValue);
         }
 
         /// <summary>
@@ -124,12 +124,12 @@ namespace ExtenFlow.Identity.DaprActorsStore
 
             if (roleClaim.RoleId == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.RoleIdNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.RoleIdNotDefined);
             }
 
             if (roleClaim.ClaimType == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.ClaimTypeNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.ClaimTypeNotDefined);
             }
             if (!State.RoleIds.Contains(roleClaim.RoleId))
             {
@@ -139,20 +139,16 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 State.ClaimTypes.Add(roleClaim.ClaimType, new HashSet<Guid>() { roleClaim.RoleId });
             }
-            await GetRoleClaimsActor(roleClaim.RoleId).Add(roleClaim.ClaimType, roleClaim.ClaimValue);
+            await IdentityActors.RoleClaims(roleClaim.RoleId).Add(roleClaim.ClaimType, roleClaim.ClaimValue);
         }
 
         private static async Task<Role?> FindClaimRole(Guid roleId, string claimType, string claimValue)
         {
-            if (await GetRoleClaimsActor(roleId).HasValue(claimType, claimValue))
+            if (await IdentityActors.RoleClaims(roleId).Exist(claimType, claimValue))
             {
-                return await GetRoleActor(roleId).GetRole();
+                return await IdentityActors.Role(roleId).GetRole();
             }
             return null;
         }
-
-        private static IRoleActor GetRoleActor(Guid roleId) => ActorProxy.Create<IRoleActor>(new ActorId(roleId.ToString()), nameof(RoleActor));
-
-        private static IRoleClaimsActor GetRoleClaimsActor(Guid roleId) => ActorProxy.Create<IRoleClaimsActor>(new ActorId(roleId.ToString()), nameof(RoleClaimsActor));
     }
 }

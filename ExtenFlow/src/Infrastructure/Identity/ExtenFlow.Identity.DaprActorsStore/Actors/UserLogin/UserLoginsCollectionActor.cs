@@ -6,7 +6,7 @@ using Dapr.Actors.Client;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Identity.Models;
-
+using ExtenFlow.Identity.Properties;
 using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Identity.DaprActorsStore
@@ -28,8 +28,6 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
         }
 
-        private static IUserLoginsActor GetUserLoginsActor(Guid userId) => ActorProxy.Create<IUserLoginsActor>(new ActorId(userId.ToString()), nameof(UserLoginsActor));
-
         /// <summary>
         /// Creates the specified user login.
         /// </summary>
@@ -44,17 +42,17 @@ namespace ExtenFlow.Identity.DaprActorsStore
             }
             if (userLogin.UserId == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.UserIdNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.UserIdNotDefined);
             }
             if (string.IsNullOrWhiteSpace(userLogin.LoginProvider))
             {
-                throw new ArgumentOutOfRangeException(Resource.LoginProviderNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.LoginProviderNotDefined);
             }
             if (string.IsNullOrWhiteSpace(userLogin.ProviderKey))
             {
-                throw new ArgumentOutOfRangeException(Resource.ProviderKeyNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.ProviderKeyNotDefined);
             }
-            await GetUserLoginsActor(userLogin.UserId).Add(new UserLoginInfo(userLogin.LoginProvider, userLogin.ProviderKey, userLogin.ProviderDisplayName));
+            await IdentityActors.UserLogins(userLogin.UserId).AddLogin(new UserLoginInfo(userLogin.LoginProvider, userLogin.ProviderKey, userLogin.ProviderDisplayName));
             State.Add(userLogin.LoginProvider, userLogin.ProviderKey, userLogin.UserId);
             await SetState();
         }
@@ -70,17 +68,17 @@ namespace ExtenFlow.Identity.DaprActorsStore
         {
             if (userId == default)
             {
-                throw new ArgumentOutOfRangeException(Resource.UserIdNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.UserIdNotDefined);
             }
             if (string.IsNullOrWhiteSpace(loginProvider))
             {
-                throw new ArgumentOutOfRangeException(Resource.LoginProviderNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.LoginProviderNotDefined);
             }
             if (string.IsNullOrWhiteSpace(providerKey))
             {
-                throw new ArgumentOutOfRangeException(Resource.ProviderKeyNotDefined);
+                throw new ArgumentOutOfRangeException(Resources.ProviderKeyNotDefined);
             }
-            await GetUserLoginsActor(userId).Delete(loginProvider, providerKey);
+            await IdentityActors.UserLogins(userId).DeleteLogin(loginProvider, providerKey);
             State.Remove(loginProvider, providerKey, userId);
             await SetState();
         }
@@ -96,7 +94,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             Guid? userId = State.GetProviderKeys(loginProvider)[providerKey];
             if (userId != null)
             {
-                UserLoginInfo? loginInfo = await GetUserLoginsActor(userId.Value).Find(loginProvider, providerKey);
+                UserLoginInfo? loginInfo = await IdentityActors.UserLogins(userId.Value).FindLogin(loginProvider, providerKey);
                 if (loginInfo != null)
                 {
                     return new UserLogin() { LoginProvider = loginInfo.LoginProvider, ProviderKey = loginInfo.ProviderKey, ProviderDisplayName = loginInfo.ProviderDisplayName, UserId = userId.Value };

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 
 using Dapr.Actors;
-using ExtenFlow.Identity.Models;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Identity.DaprActorsStore
@@ -14,12 +14,17 @@ namespace ExtenFlow.Identity.DaprActorsStore
     public interface IUserLoginsActor : IActor
     {
         /// <summary>
-        /// Gets the user login.
+        /// Adds the login.
         /// </summary>
-        /// <param name="providerName">Name of the provider.</param>
+        /// <param name="userLoginInfo">The user login information.</param>
+        Task AddLogin(UserLoginInfo userLoginInfo);
+
+        /// <summary>
+        /// Deletes the login.
+        /// </summary>
+        /// <param name="loginProvider">The login provider.</param>
         /// <param name="providerKey">The provider key.</param>
-        /// <returns>The UserLoginInfo object.</returns>
-        Task<UserLoginInfo> Get(string providerName, string providerKey);
+        Task DeleteLogin(string loginProvider, string providerKey);
 
         /// <summary>
         /// Finds the user login.
@@ -27,12 +32,20 @@ namespace ExtenFlow.Identity.DaprActorsStore
         /// <param name="providerName">Name of the provider.</param>
         /// <param name="providerKey">The provider key.</param>
         /// <returns>The UserLoginInfo object if exists, else null.</returns>
-        Task<UserLoginInfo?> Find(string providerName, string providerKey);
+        Task<UserLoginInfo?> FindLogin(string providerName, string providerKey);
 
+        /// <summary>
+        /// Gets all user logins.
+        /// </summary>
+        /// <returns>User login list</returns>
         Task<IList<UserLoginInfo>> GetAll();
 
-        Task Add(UserLoginInfo userLoginInfo);
-
-        Task Delete(string loginProvider, string providerKey);
+        /// <summary>
+        /// Gets the user login.
+        /// </summary>
+        /// <param name="providerName">Name of the provider.</param>
+        /// <param name="providerKey">The provider key.</param>
+        /// <returns>The UserLoginInfo object.</returns>
+        Task<UserLoginInfo> GetLogin(string providerName, string providerKey);
     }
 }
