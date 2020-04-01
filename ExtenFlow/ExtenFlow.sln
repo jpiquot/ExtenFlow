@@ -47,8 +47,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Build", "_Build", "{08DFBC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{4DBB4614-3603-4AD8-834E-7FA9C70CE404}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.DaprActorsStore", "src\Infrastructure\Identity\ExtenFlow.Identity.DaprActorsStore\ExtenFlow.Identity.DaprActorsStore.csproj", "{A27A4A3F-0547-4A47-86D3-6018C42AB424}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Abstractions", "src\Infrastructure\Identity\ExtenFlow.Identity.Abstractions\ExtenFlow.Identity.Abstractions.csproj", "{37D1FE3F-47C5-4100-AD27-08D3C063652D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7231E4E9-48F9-4A13-BCC5-9047C71E7A0E}"
@@ -59,6 +57,16 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.AbstractionsTests", "test\Infrastructure\Identity\ExtenFlow.Identity.AbstractionsTests\ExtenFlow.Identity.AbstractionsTests.csproj", "{63B36D55-091C-432E-BD2D-40C2B30C7785}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.DaprStoreTests", "test\Infrastructure\Identity\ExtenFlow.Identity.DaprStoreTests\ExtenFlow.Identity.DaprStoreTests.csproj", "{B05D005F-7835-4854-9A2B-DE2E24C3F01B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{D9501120-8225-4C15-A2AB-D0C20F593B22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtenFlow.Identity.StoreActors", "src\Services\ExtenFlow.Identity.StoreActors\ExtenFlow.Identity.StoreActors.csproj", "{E13C34F6-4EA7-462E-AB3E-D10D02772A95}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Stores", "src\Infrastructure\Identity\ExtenFlow.Identity.Stores\ExtenFlow.Identity.Stores.csproj", "{2883457D-9EDB-48B4-9797-AAD4DDB06EDA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Actors.Abstractions", "src\Infrastructure\Identity\ExtenFlow.Identity.Actors.Abstractions\ExtenFlow.Identity.Actors.Abstractions.csproj", "{90409FE4-F51B-4646-A2F1-66FCB78711A5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Actors", "src\Infrastructure\Identity\ExtenFlow.Identity.Actors\ExtenFlow.Identity.Actors.csproj", "{2FD0FAD4-7F3C-45F5-8BBA-B81B0AE65B4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,10 +82,6 @@ Global
 		{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A27A4A3F-0547-4A47-86D3-6018C42AB424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A27A4A3F-0547-4A47-86D3-6018C42AB424}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A27A4A3F-0547-4A47-86D3-6018C42AB424}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A27A4A3F-0547-4A47-86D3-6018C42AB424}.Release|Any CPU.Build.0 = Release|Any CPU
 		{37D1FE3F-47C5-4100-AD27-08D3C063652D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{37D1FE3F-47C5-4100-AD27-08D3C063652D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37D1FE3F-47C5-4100-AD27-08D3C063652D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -90,6 +94,22 @@ Global
 		{B05D005F-7835-4854-9A2B-DE2E24C3F01B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B05D005F-7835-4854-9A2B-DE2E24C3F01B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B05D005F-7835-4854-9A2B-DE2E24C3F01B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E13C34F6-4EA7-462E-AB3E-D10D02772A95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E13C34F6-4EA7-462E-AB3E-D10D02772A95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E13C34F6-4EA7-462E-AB3E-D10D02772A95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E13C34F6-4EA7-462E-AB3E-D10D02772A95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2883457D-9EDB-48B4-9797-AAD4DDB06EDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2883457D-9EDB-48B4-9797-AAD4DDB06EDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2883457D-9EDB-48B4-9797-AAD4DDB06EDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2883457D-9EDB-48B4-9797-AAD4DDB06EDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90409FE4-F51B-4646-A2F1-66FCB78711A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90409FE4-F51B-4646-A2F1-66FCB78711A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90409FE4-F51B-4646-A2F1-66FCB78711A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90409FE4-F51B-4646-A2F1-66FCB78711A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FD0FAD4-7F3C-45F5-8BBA-B81B0AE65B4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FD0FAD4-7F3C-45F5-8BBA-B81B0AE65B4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FD0FAD4-7F3C-45F5-8BBA-B81B0AE65B4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FD0FAD4-7F3C-45F5-8BBA-B81B0AE65B4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,10 +124,13 @@ Global
 		{0A889E74-C7C6-492A-B0F1-BFF824509C59} = {BBF5054D-08B1-4663-8213-C5358F98DB47}
 		{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA} = {EB7CEF1C-7C74-4F33-8BBF-3F4874880145}
 		{4DBB4614-3603-4AD8-834E-7FA9C70CE404} = {6F124834-E622-4CD8-B4C5-A6C73F611F14}
-		{A27A4A3F-0547-4A47-86D3-6018C42AB424} = {4DBB4614-3603-4AD8-834E-7FA9C70CE404}
 		{37D1FE3F-47C5-4100-AD27-08D3C063652D} = {4DBB4614-3603-4AD8-834E-7FA9C70CE404}
 		{63B36D55-091C-432E-BD2D-40C2B30C7785} = {86F38A60-E77B-4002-9A85-8CEDD15C0140}
 		{B05D005F-7835-4854-9A2B-DE2E24C3F01B} = {86F38A60-E77B-4002-9A85-8CEDD15C0140}
+		{E13C34F6-4EA7-462E-AB3E-D10D02772A95} = {D9501120-8225-4C15-A2AB-D0C20F593B22}
+		{2883457D-9EDB-48B4-9797-AAD4DDB06EDA} = {4DBB4614-3603-4AD8-834E-7FA9C70CE404}
+		{90409FE4-F51B-4646-A2F1-66FCB78711A5} = {4DBB4614-3603-4AD8-834E-7FA9C70CE404}
+		{2FD0FAD4-7F3C-45F5-8BBA-B81B0AE65B4C} = {4DBB4614-3603-4AD8-834E-7FA9C70CE404}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B174E5CA-DE64-416A-B7A6-338036C49BF5}

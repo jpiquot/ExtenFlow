@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 using ExtenFlow.Identity.Models;
+using ExtenFlow.Identity.Stores;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Test;

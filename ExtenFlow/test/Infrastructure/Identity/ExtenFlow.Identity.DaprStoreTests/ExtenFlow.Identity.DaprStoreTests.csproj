@@ -27,7 +27,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\src\Infrastructure\Identity\ExtenFlow.Identity.DaprActorsStore\ExtenFlow.Identity.DaprActorsStore.csproj" />
+	  <ProjectReference Include="..\..\..\..\src\Infrastructure\Identity\ExtenFlow.Identity.Actors\ExtenFlow.Identity.Actors.csproj" />
+	  <ProjectReference Include="..\..\..\..\src\Infrastructure\Identity\ExtenFlow.Identity.Stores\ExtenFlow.Identity.Stores.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
