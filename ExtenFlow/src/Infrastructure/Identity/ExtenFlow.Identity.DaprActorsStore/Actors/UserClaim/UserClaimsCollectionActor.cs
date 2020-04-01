@@ -112,7 +112,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 list.Add(FindClaimUser(userId, claimType, claimValue));
             }
-            return (await Task.WhenAll(list)).Where(p => p != null).ToList();
+            return (IList<User>)(await Task.WhenAll(list)).Where(p => p != null).ToList();
         }
 
         private static async Task<User?> FindClaimUser(Guid userId, string claimType, string claimValue)

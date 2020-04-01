@@ -105,7 +105,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
             {
                 list.Add(FindClaimRole(roleId, claimType, claimValue));
             }
-            return (await Task.WhenAll(list)).Where(p => p != null).ToList();
+            return (IList<Role>)(await Task.WhenAll(list)).Where(p => p != null).ToList();
         }
 
         /// <summary>
