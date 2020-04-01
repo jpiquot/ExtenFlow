@@ -38,6 +38,7 @@ stages:
           arguments: '--configuration $(Configuration)'
           projects: 'ExtenFlow/ExtenFlow.sln'
       - task: DotNetCoreCLI@2
+        condition: false
         displayName: 'Test - $(Configuration)'
         inputs:
           command: 'test'
