@@ -8,6 +8,7 @@ using Dapr.Actors.Runtime;
 
 using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Properties;
+
 using Microsoft.AspNetCore.Identity;
 
 #pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
@@ -78,7 +79,7 @@ namespace ExtenFlow.Identity.Actors
             {
                 throw new ArgumentOutOfRangeException(Resources.UserIdNotDefined);
             }
-            if (State.ConcurrencyStamp != null && user.ConcurrencyStamp != State.ConcurrencyStamp)
+            if (State.Id != default && user.ConcurrencyStamp != State.ConcurrencyStamp)
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }

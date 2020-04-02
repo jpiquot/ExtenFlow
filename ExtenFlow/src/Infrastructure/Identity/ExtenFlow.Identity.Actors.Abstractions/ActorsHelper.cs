@@ -30,13 +30,13 @@ namespace ExtenFlow.Identity.Actors
         /// Creates a role claims collection actor.
         /// </summary>
         /// <returns>The actor instance interface</returns>
-        public static IRoleClaimsCollectionActor RoleClaimsCollection() => ActorProxy.Create<IRoleClaimsCollectionActor>(new ActorId(string.Empty), "RoleClaimsCollectionActor");
+        public static IRoleClaimsCollectionActor RoleClaimsCollection() => ActorProxy.Create<IRoleClaimsCollectionActor>(new ActorId("RolesClaims"), "RoleClaimsCollectionActor");
 
         /// <summary>
         /// Creates a roles collection actor.
         /// </summary>
         /// <returns>The actor instance interface</returns>
-        public static IRoleCollectionActor RoleCollection() => ActorProxy.Create<IRoleCollectionActor>(new ActorId(string.Empty), "RoleCollectionActor");
+        public static IRoleCollectionActor RoleCollection() => ActorProxy.Create<IRoleCollectionActor>(new ActorId("Roles"), "RoleCollectionActor");
 
         /// <summary>
         /// Creates the user actor.
@@ -56,13 +56,13 @@ namespace ExtenFlow.Identity.Actors
         /// Creates a user claims collection actor.
         /// </summary>
         /// <returns>The actor instance interface</returns>
-        public static IUserClaimsCollectionActor UserClaimsCollection() => ActorProxy.Create<IUserClaimsCollectionActor>(new ActorId(string.Empty), "UserClaimsCollectionActor");
+        public static IUserClaimsCollectionActor UserClaimsCollection() => ActorProxy.Create<IUserClaimsCollectionActor>(new ActorId("UsersClaims"), "UserClaimsCollectionActor");
 
         /// <summary>
         /// Creates a users collection actor.
         /// </summary>
         /// <returns>The actor instance interface</returns>
-        public static IUserCollectionActor UserCollection() => ActorProxy.Create<IUserCollectionActor>(new ActorId(string.Empty), "UserCollectionActor");
+        public static IUserCollectionActor UserCollection() => ActorProxy.Create<IUserCollectionActor>(new ActorId("Users"), "UserCollectionActor");
 
         /// <summary>
         /// Creates the user login actor.
@@ -75,13 +75,13 @@ namespace ExtenFlow.Identity.Actors
         /// Creates a user logins collection actor.
         /// </summary>
         /// <returns>The actor instance interface</returns>
-        public static IUserLoginsCollectionActor UserLoginsCollection() => ActorProxy.Create<IUserLoginsCollectionActor>(new ActorId(string.Empty), "UserLoginsCollectionActor");
+        public static IUserLoginsCollectionActor UserLoginsCollection() => ActorProxy.Create<IUserLoginsCollectionActor>(new ActorId("UserLogins"), "UserLoginsCollectionActor");
 
         /// <summary>
         /// Creates a user role collection actor.
         /// </summary>
         /// <returns>The actor instance interface</returns>
-        public static IUserRoleCollectionActor UserRoleCollection() => ActorProxy.Create<IUserRoleCollectionActor>(new ActorId(string.Empty), "UserRoleCollectionActor");
+        public static IUserRoleCollectionActor UserRoleCollection() => ActorProxy.Create<IUserRoleCollectionActor>(new ActorId("UsersRole"), "UserRoleCollectionActor");
 
         /// <summary>
         /// Creates the user token actor.

@@ -55,6 +55,10 @@ namespace ExtenFlow.Identity.Models
             SecurityStamp = user.SecurityStamp;
             TwoFactorEnabled = user.TwoFactorEnabled;
             UserName = user.UserName;
+            ConcurrencyStamp = user.ConcurrencyStamp;
+            AccessFailedCount = user.AccessFailedCount;
+            Email = user.Email;
+            EmailConfirmed = user.EmailConfirmed;
         }
     }
 }

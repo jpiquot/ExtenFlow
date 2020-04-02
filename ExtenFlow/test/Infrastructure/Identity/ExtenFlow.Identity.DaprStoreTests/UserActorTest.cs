@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
+
 using ExtenFlow.Identity.Actors;
-using ExtenFlow.Identity.DaprActorsStore;
 using ExtenFlow.Identity.Models;
 
 using FluentAssertions;
@@ -25,25 +25,6 @@ namespace ExtenFlow.Security.DaprStoreTests
 {
     public class UserActorTest
     {
-        [Fact]
-        public async Task CreateExistingUser_ThrowsException()
-        {
-            var stateManager = new Mock<IActorStateManager>();
-            var user = new User { Id = Guid.NewGuid(), UserName = "User name", NormalizedUserName = "username" };
-            stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(user));
-            UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
-
-            IdentityResult result = await testDemoActor.SetUser(user);
-
-            result.Succeeded.Should().BeFalse();
-            result.Errors.Should().HaveCount(1);
-            IdentityError error = new IdentityErrorDescriber().DuplicateUserName(user.Id.ToString());
-            IdentityError resultError = result.Errors.First();
-            resultError.Code.Should().Be(error.Code);
-            resultError.Description.Should().Be(error.Description);
-        }
-
         [Fact]
         public async Task CreateUser_ExpectSetStateAsync()
         {
@@ -91,40 +72,63 @@ namespace ExtenFlow.Security.DaprStoreTests
         }
 
         [Fact]
-        public async Task UpdateUninitializedUser_ThrowsException()
+        public async Task SetExistingUser_ExcectConcurrencyStampChange()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var user = new User { Id = Guid.NewGuid(), UserName = "User name", NormalizedUserName = "username" };
-            stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult<User>(null));
-            UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
+            var concurrencyStamp = Guid.NewGuid().ToString();
+            var existingUser = new User { Id = Guid.NewGuid(), UserName = "User name", NormalizedUserName = "username", ConcurrencyStamp = concurrencyStamp };
+            var newUser = new User { Id = existingUser.Id, UserName = "User name", NormalizedUserName = "username", ConcurrencyStamp = concurrencyStamp };
+            stateManager.Setup(manager => manager
+                .GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(existingUser));
+            stateManager.Setup(manager => manager.SetStateAsync("User", newUser, It.IsAny<CancellationToken>())).Verifiable();
+            UserActor testDemoActor = await CreateUserActor(stateManager.Object, newUser.Id);
 
-            await Invoking(async () => await testDemoActor.SetUser(new User { Id = Guid.NewGuid(), UserName = "User name", NormalizedUserName = "username" }))
-                .Should()
-                .ThrowAsync<KeyNotFoundException>();
+            IdentityResult result = await testDemoActor.SetUser(newUser);
 
-            stateManager.VerifyAll();
-        }
-
-        [Fact]
-        public async Task UpdateUser_ExpectSetStateAsyncNewValue()
-        {
-            var stateManager = new Mock<IActorStateManager>();
-            var user = new User { Id = Guid.NewGuid(), UserName = "User name", NormalizedUserName = "username" };
-            var modifiedUser = new User { Id = Guid.NewGuid(), UserName = "User name modified", NormalizedUserName = "username modified" };
-            stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(user));
-            stateManager.Setup(manager => manager.SetStateAsync("User", modifiedUser, It.IsAny<CancellationToken>())).Verifiable();
-            UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
-
-            IdentityResult result = await testDemoActor.SetUser(modifiedUser);
             result.Succeeded.Should().BeTrue();
-
+            newUser.Should().NotBe(concurrencyStamp);
             stateManager.VerifyAll();
         }
 
         [Fact]
-        public async Task UpdateUserWithInvalidId_ThrowsException()
+        public async Task SetNewUser_ExpectConcurrencyStampChange()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var concurrencyStamp = Guid.NewGuid().ToString();
+            var user = new User { Id = Guid.NewGuid(), UserName = "User name", NormalizedUserName = "username", ConcurrencyStamp = concurrencyStamp };
+            stateManager.Setup(manager => manager.SetStateAsync("User", user, It.IsAny<CancellationToken>())).Verifiable();
+            UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
+
+            IdentityResult result = await testDemoActor.SetUser(user);
+            result.Succeeded.Should().BeTrue();
+            user.Should().NotBe(concurrencyStamp);
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task SetUserWithConcurrencyStampMismatch_ReturnsConcurrencyFailure()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var existingUser = new User { Id = Guid.NewGuid(), UserName = "User name", NormalizedUserName = "username", ConcurrencyStamp = Guid.NewGuid().ToString() };
+            var newUser = new User { Id = existingUser.Id, UserName = "User name", NormalizedUserName = "username", ConcurrencyStamp = Guid.NewGuid().ToString() };
+            stateManager.Setup(manager => manager
+                .GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(existingUser));
+            UserActor testDemoActor = await CreateUserActor(stateManager.Object, newUser.Id);
+
+            IdentityResult result = await testDemoActor.SetUser(newUser);
+
+            result.Succeeded.Should().BeFalse();
+            result.Errors.Should().HaveCount(1);
+            IdentityError error = new IdentityErrorDescriber().ConcurrencyFailure();
+            IdentityError resultError = result.Errors.First();
+            resultError.Code.Should().Be(error.Code);
+            resultError.Description.Should().Be(error.Description);
+        }
+
+        [Fact]
+        public async Task SetUserWithInvalidId_ThrowsException()
         {
             var stateManager = new Mock<IActorStateManager>();
             var user = new User { Id = Guid.NewGuid(), UserName = "User name", NormalizedUserName = "username" };
@@ -132,9 +136,9 @@ namespace ExtenFlow.Security.DaprStoreTests
                 .Returns(Task.FromResult(user));
             UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
 
-            await Invoking(async () => await testDemoActor.SetUser(new User { Id = Guid.NewGuid(), UserName = "User name", NormalizedUserName = "username" }))
+            await Invoking(async () => await testDemoActor.SetUser(new User { Id = default, UserName = "User name", NormalizedUserName = "username" }))
                 .Should()
-                .ThrowAsync<InvalidOperationException>();
+                .ThrowAsync<ArgumentOutOfRangeException>();
 
             stateManager.VerifyAll();
         }

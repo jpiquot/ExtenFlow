@@ -13,6 +13,13 @@ namespace ExtenFlow.Identity.Actors
     public abstract class BaseActor<T> : Actor where T : class, new()
     {
         /// <summary>
+        /// The state
+        /// </summary>
+        private T? _state;
+
+        private string? _stateName;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="BaseActor{T}"/> class.
         /// </summary>
         /// <param name="actorService">
@@ -25,11 +32,10 @@ namespace ExtenFlow.Identity.Actors
         }
 
         /// <summary>
-        /// The state
+        /// Gets the state.
         /// </summary>
-        private T? _state;
-
-        private string? _stateName;
+        /// <value>The state.</value>
+        protected virtual T State => _state ?? (_state = new T());
 
         /// <summary>
         /// Gets the name of the state.By default it's the actor class name without the 'Actor' word.
@@ -38,19 +44,13 @@ namespace ExtenFlow.Identity.Actors
         protected virtual string StateName => _stateName ?? (_stateName = GetType().Name.Replace("Actor", string.Empty, StringComparison.InvariantCulture));
 
         /// <summary>
-        /// Gets the state.
-        /// </summary>
-        /// <value>The state.</value>
-        protected virtual T State => _state ?? (_state = new T());
-
-        /// <summary>
         /// Override this method to initialize the members, initialize state or register timers.
         /// This method is called right after the actor is activated and before any method call or
         /// reminders are dispatched on it.
         /// </summary>
         protected override async Task OnActivateAsync()
         {
-            _state = await StateManager.GetStateAsync<T?>(GetType().Name);
+            _state = await StateManager.GetStateAsync<T?>(StateName);
             await base.OnActivateAsync();
         }
 
