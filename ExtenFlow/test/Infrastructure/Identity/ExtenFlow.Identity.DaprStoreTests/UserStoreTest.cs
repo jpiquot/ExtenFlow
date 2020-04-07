@@ -39,7 +39,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         public async Task ConcurrentRoleUpdatesWillFail()
         {
             var role = new Role(Guid.NewGuid().ToString());
-            var manager = CreateRoleManager();
+            RoleManager<Role> manager = CreateRoleManager();
             IdentityResultAssert.IsSuccess(await manager.CreateAsync(role));
             RoleManager<Role> manager1 = CreateRoleManager();
             RoleManager<Role> manager2 = CreateRoleManager();
@@ -58,11 +58,11 @@ namespace ExtenFlow.Identity.DaprActorsStore
         public async Task ConcurrentRoleUpdatesWillFailWithDetachedRole()
         {
             var role = new Role(Guid.NewGuid().ToString());
-            var manager = CreateRoleManager();
+            RoleManager<Role> manager = CreateRoleManager();
             IdentityResultAssert.IsSuccess(await manager.CreateAsync(role));
-            var manager1 = CreateRoleManager();
-            var manager2 = CreateRoleManager();
-            var role2 = await manager2.FindByIdAsync(role.Name);
+            RoleManager<Role> manager1 = CreateRoleManager();
+            RoleManager<Role> manager2 = CreateRoleManager();
+            Role role2 = await manager2.FindByIdAsync(role.Name);
             Assert.NotNull(role);
             Assert.NotNull(role2);
             Assert.NotSame(role, role2);
@@ -75,13 +75,13 @@ namespace ExtenFlow.Identity.DaprActorsStore
         [Fact]
         public async Task ConcurrentUpdatesWillFail()
         {
-            var user = CreateTestUser();
-            var manager = CreateManager();
+            User user = CreateTestUser();
+            UserManager<User> manager = CreateManager();
             IdentityResultAssert.IsSuccess(await manager.CreateAsync(user));
-            var manager1 = CreateManager();
-            var manager2 = CreateManager();
-            var user1 = await manager1.FindByIdAsync(user.Id.ToString());
-            var user2 = await manager2.FindByIdAsync(user.Id.ToString());
+            UserManager<User> manager1 = CreateManager();
+            UserManager<User> manager2 = CreateManager();
+            User user1 = await manager1.FindByIdAsync(user.Id.ToString());
+            User user2 = await manager2.FindByIdAsync(user.Id.ToString());
             Assert.NotNull(user1);
             Assert.NotNull(user2);
             Assert.NotSame(user1, user2);
@@ -94,12 +94,12 @@ namespace ExtenFlow.Identity.DaprActorsStore
         [Fact]
         public async Task ConcurrentUpdatesWillFailWithDetachedUser()
         {
-            var user = CreateTestUser();
-            var manager = CreateManager();
+            User user = CreateTestUser();
+            UserManager<User> manager = CreateManager();
             IdentityResultAssert.IsSuccess(await manager.CreateAsync(user));
-            var manager1 = CreateManager();
-            var manager2 = CreateManager();
-            var user2 = await manager2.FindByIdAsync(user.Id.ToString());
+            UserManager<User> manager1 = CreateManager();
+            UserManager<User> manager2 = CreateManager();
+            User user2 = await manager2.FindByIdAsync(user.Id.ToString());
             Assert.NotNull(user2);
             Assert.NotSame(user, user2);
             user.UserName = Guid.NewGuid().ToString();
@@ -112,12 +112,12 @@ namespace ExtenFlow.Identity.DaprActorsStore
         public async Task DeleteAModifiedRoleWillFail()
         {
             var role = new Role(Guid.NewGuid().ToString());
-            var manager = CreateRoleManager();
+            RoleManager<Role> manager = CreateRoleManager();
             IdentityResultAssert.IsSuccess(await manager.CreateAsync(role));
-            var manager1 = CreateRoleManager();
-            var manager2 = CreateRoleManager();
-            var role1 = await manager1.FindByIdAsync(role.Id.ToString());
-            var role2 = await manager2.FindByIdAsync(role.Id.ToString());
+            RoleManager<Role> manager1 = CreateRoleManager();
+            RoleManager<Role> manager2 = CreateRoleManager();
+            Role role1 = await manager1.FindByIdAsync(role.Id.ToString());
+            Role role2 = await manager2.FindByIdAsync(role.Id.ToString());
             Assert.NotNull(role1);
             Assert.NotNull(role2);
             Assert.NotSame(role1, role2);
@@ -129,13 +129,13 @@ namespace ExtenFlow.Identity.DaprActorsStore
         [Fact]
         public async Task DeleteAModifiedUserWillFail()
         {
-            var user = CreateTestUser();
-            var manager = CreateManager();
+            User user = CreateTestUser();
+            UserManager<User> manager = CreateManager();
             IdentityResultAssert.IsSuccess(await manager.CreateAsync(user));
-            var manager1 = CreateManager();
-            var manager2 = CreateManager();
-            var user1 = await manager1.FindByIdAsync(user.Id.ToString());
-            var user2 = await manager2.FindByIdAsync(user.Id.ToString());
+            UserManager<User> manager1 = CreateManager();
+            UserManager<User> manager2 = CreateManager();
+            User user1 = await manager1.FindByIdAsync(user.Id.ToString());
+            User user2 = await manager2.FindByIdAsync(user.Id.ToString());
             Assert.NotNull(user1);
             Assert.NotNull(user2);
             Assert.NotSame(user1, user2);
@@ -147,12 +147,16 @@ namespace ExtenFlow.Identity.DaprActorsStore
         [Fact]
         public async Task FindByEmailThrowsWithTwoUsersWithSameEmail()
         {
-            var manager = CreateManager();
-            var userA = new User(Guid.NewGuid().ToString());
-            userA.Email = "dupe@dupe.com";
+            UserManager<User> manager = CreateManager();
+            var userA = new User(Guid.NewGuid().ToString())
+            {
+                Email = "dupe@dupe.com"
+            };
             IdentityResultAssert.IsSuccess(await manager.CreateAsync(userA, "password"));
-            var userB = new User(Guid.NewGuid().ToString());
-            userB.Email = "dupe@dupe.com";
+            var userB = new User(Guid.NewGuid().ToString())
+            {
+                Email = "dupe@dupe.com"
+            };
             IdentityResultAssert.IsSuccess(await manager.CreateAsync(userB, "password"));
             await Assert.ThrowsAsync<InvalidOperationException>(async () => await manager.FindByEmailAsync("dupe@dupe.com"));
         }
@@ -193,7 +197,7 @@ namespace ExtenFlow.Identity.DaprActorsStore
         [Fact]
         public async Task TwoUsersSamePasswordDifferentHash()
         {
-            var manager = CreateManager();
+            UserManager<User> manager = CreateManager();
             var userA = new User(Guid.NewGuid().ToString());
             IdentityResultAssert.IsSuccess(await manager.CreateAsync(userA, "password"));
             var userB = new User(Guid.NewGuid().ToString());
@@ -267,28 +271,21 @@ namespace ExtenFlow.Identity.DaprActorsStore
             await Assert.ThrowsAsync<ArgumentException>("normalizedRoleName", async () => await store.IsInRoleAsync(new User("fake"), ""));
         }
 
-        protected override void AddRoleStore(IServiceCollection services, object context = null)
-        {
-            services.AddSingleton<IRoleStore<Role>>(new RoleStore());
-        }
+        protected override void AddRoleStore(IServiceCollection services, object context = null) => services.AddSingleton<IRoleStore<Role>>(new RoleStore());
 
-        protected override void AddUserStore(IServiceCollection services, object context = null)
-        {
-            services.AddSingleton<IUserStore<User>>(new UserStore());
-        }
+        protected override void AddUserStore(IServiceCollection services, object context = null) => services.AddSingleton<IUserStore<User>>(new UserStore());
 
         protected override object CreateTestContext() => null;
 
         protected override Role CreateTestRole(string roleNamePrefix = "", bool useRoleNamePrefixAsRoleName = false)
         {
-            var roleName = useRoleNamePrefixAsRoleName ? roleNamePrefix : string.Format("{0}{1}", roleNamePrefix, Guid.NewGuid());
+            string roleName = useRoleNamePrefixAsRoleName ? roleNamePrefix : string.Format("{0}{1}", roleNamePrefix, Guid.NewGuid());
             return new Role(roleName);
         }
 
         protected override User CreateTestUser(string namePrefix = "", string email = "", string phoneNumber = "",
-                    bool lockoutEnabled = false, DateTimeOffset? lockoutEnd = default(DateTimeOffset?), bool useNamePrefixAsUserName = false)
-        {
-            return new User
+                    bool lockoutEnabled = false, DateTimeOffset? lockoutEnd = default, bool useNamePrefixAsUserName = false)
+            => new User
             {
                 UserName = useNamePrefixAsUserName ? namePrefix : string.Format("{0}{1}", namePrefix, Guid.NewGuid()),
                 Email = email,
@@ -296,16 +293,12 @@ namespace ExtenFlow.Identity.DaprActorsStore
                 LockoutEnabled = lockoutEnabled,
                 LockoutEnd = lockoutEnd
             };
-        }
 
         protected override Expression<Func<Role, bool>> RoleNameEqualsPredicate(string roleName) => r => r.Name == roleName;
 
         protected override Expression<Func<Role, bool>> RoleNameStartsWithPredicate(string roleName) => r => r.Name.StartsWith(roleName);
 
-        protected override void SetUserPasswordHash(User user, string hashedPassword)
-        {
-            user.PasswordHash = hashedPassword;
-        }
+        protected override void SetUserPasswordHash(User user, string hashedPassword) => user.PasswordHash = hashedPassword;
 
         protected override Expression<Func<User, bool>> UserNameEqualsPredicate(string userName) => u => u.UserName == userName;
 

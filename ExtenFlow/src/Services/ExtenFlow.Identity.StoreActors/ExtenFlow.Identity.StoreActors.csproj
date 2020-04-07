@@ -10,10 +10,14 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Dapr.Actors.AspNetCore" Version="0.5.0-preview02" />
+		<PackageReference Include="Dapr.Actors.AspNetCore" Version="0.6.0-preview01" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Kubernetes.Tools.Targets" Version="1.1.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Infrastructure\Identity\ExtenFlow.Identity.Actors\ExtenFlow.Identity.Actors.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="charts\extenflowidentitystoreactors\charts\" />
 	</ItemGroup>
 </Project>

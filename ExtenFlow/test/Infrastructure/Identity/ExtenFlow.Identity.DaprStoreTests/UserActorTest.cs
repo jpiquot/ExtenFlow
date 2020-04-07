@@ -75,7 +75,7 @@ namespace ExtenFlow.Security.DaprStoreTests
         public async Task SetExistingUser_ExcectConcurrencyStampChange()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var concurrencyStamp = Guid.NewGuid().ToString();
+            string concurrencyStamp = Guid.NewGuid().ToString();
             var existingUser = new User { Id = Guid.NewGuid(), UserName = "User name", NormalizedUserName = "username", ConcurrencyStamp = concurrencyStamp };
             var newUser = new User { Id = existingUser.Id, UserName = "User name", NormalizedUserName = "username", ConcurrencyStamp = concurrencyStamp };
             stateManager.Setup(manager => manager
@@ -95,7 +95,7 @@ namespace ExtenFlow.Security.DaprStoreTests
         public async Task SetNewUser_ExpectConcurrencyStampChange()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var concurrencyStamp = Guid.NewGuid().ToString();
+            string concurrencyStamp = Guid.NewGuid().ToString();
             var user = new User { Id = Guid.NewGuid(), UserName = "User name", NormalizedUserName = "username", ConcurrencyStamp = concurrencyStamp };
             stateManager.Setup(manager => manager.SetStateAsync("User", user, It.IsAny<CancellationToken>())).Verifiable();
             UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -50,7 +51,14 @@ namespace ExtenFlow.Identity.Actors
         /// </summary>
         protected override async Task OnActivateAsync()
         {
-            _state = await StateManager.GetStateAsync<T?>(StateName);
+            try
+            {
+                _state = await StateManager.GetStateAsync<T?>(StateName);
+            }
+            catch (KeyNotFoundException)
+            {
+                _state = null;
+            }
             await base.OnActivateAsync();
         }
 

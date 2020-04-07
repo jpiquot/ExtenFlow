@@ -1,8 +1,10 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
-WORKDIR /app
-EXPOSE 80
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
+ARG BUILD_CONFIGURATION=Debug
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=http://+:5000
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
+EXPOSE 5000
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 COPY ["src/Infrastructure/Identity/ExtenFlow.Identity.Abstractions/ExtenFlow.Identity.Abstractions.csproj", "src/Infrastructure/Identity/ExtenFlow.Identity.Abstractions/"]
 COPY ["src/Infrastructure/Identity/ExtenFlow.Identity.Actors.Abstractions/ExtenFlow.Identity.Actors.Abstractions.csproj", "src/Infrastructure/Identity/ExtenFlow.Identity.Actors.Abstractions/"]
@@ -13,12 +15,8 @@ COPY ["src/Services/ExtenFlow.Identity.StoreActors/ExtenFlow.Identity.StoreActor
 RUN dotnet restore "src/Services/ExtenFlow.Identity.StoreActors/ExtenFlow.Identity.StoreActors.csproj"
 COPY . .
 WORKDIR "/src/src/Services/ExtenFlow.Identity.StoreActors"
-RUN dotnet build "ExtenFlow.Identity.StoreActors.csproj" -c Release -o /app/build
+RUN dotnet build --no-restore "ExtenFlow.Identity.StoreActors.csproj" -c $BUILD_CONFIGURATION
 
-FROM build AS publish
-RUN dotnet publish "ExtenFlow.Identity.StoreActors.csproj" -c Release -o /app/publish
+RUN echo "exec dotnet run --no-build --no-launch-profile -c $BUILD_CONFIGURATION --" > /entrypoint.sh
 
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ExtenFlow.Identity.StoreActors.dll"]
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]

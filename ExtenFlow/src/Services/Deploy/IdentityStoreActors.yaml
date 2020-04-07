@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: extenflow-identity-storeactors
+  labels:
+    app: extenflow-identity-storeactors
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: extenflow-identity-storeactors
+  template:
+    metadata:
+      labels:
+        app: extenflow-identity-storeactors
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/id: "extenflow-identity-storeactors"
+        dapr.io/port: "5500"
+    spec:
+      containers:
+      - name: extenflow-identity-storeactors
+        image: extenflow/identity-storeactors:edge
+        ports:
+        - containerPort: 5000
+        imagePullPolicy: Always
