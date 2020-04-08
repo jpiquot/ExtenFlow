@@ -17,6 +17,7 @@
 		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="3.1.3" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\Actors\ExtenFlow.Actors\ExtenFlow.Actors.csproj" />
 		<ProjectReference Include="..\ExtenFlow.Identity.Actors.Abstractions\ExtenFlow.Identity.Actors.Abstractions.csproj" />
 	</ItemGroup>
 </Project>

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
+using ExtenFlow.Actors;
+
 namespace ExtenFlow.Identity.Actors
 {
     /// <summary>
@@ -13,7 +15,7 @@ namespace ExtenFlow.Identity.Actors
     /// </summary>
     /// <seealso cref="Actor"/>
     /// <seealso cref="IUserClaimsActor"/>
-    public class UserClaimsActor : BaseActor<Dictionary<string, HashSet<string>>>, IUserClaimsActor
+    public class UserClaimsActor : ActorBase<Dictionary<string, HashSet<string>>>, IUserClaimsActor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UserClaimsActor"/> class.
@@ -27,14 +29,20 @@ namespace ExtenFlow.Identity.Actors
         {
         }
 
-        private HashSet<string> ClaimValues(string claimType)
+        /// <summary>
+        /// Adds the user's Claim.
+        /// </summary>
+        /// <param name="claimType">Type of the claim</param>
+        /// <param name="claimValue">Value of the claim</param>
+        /// <exception cref="ArgumentNullException">claimType</exception>
+        public Task Add(string claimType, string claimValue)
         {
-            if (!State.TryGetValue(claimType, out HashSet<string>? values))
+            if (string.IsNullOrWhiteSpace(claimType))
             {
-                values = new HashSet<string>();
-                State.Add(claimType, values);
+                return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
-            return values;
+            ClaimValues(claimType).Add(claimValue);
+            return SetStateData();
         }
 
         /// <summary>
@@ -54,19 +62,20 @@ namespace ExtenFlow.Identity.Actors
         }
 
         /// <summary>
-        /// Adds the user's Claim.
+        /// Gets the all the user's Claims.
         /// </summary>
-        /// <param name="claimType">Type of the claim</param>
-        /// <param name="claimValue">Value of the claim</param>
-        /// <exception cref="ArgumentNullException">claimType</exception>
-        public Task Add(string claimType, string claimValue)
+        /// <returns>A list of all Claims</returns>
+        public Task<IList<Tuple<string, string>>> GetAll()
         {
-            if (string.IsNullOrWhiteSpace(claimType))
+            var list = new List<Tuple<string, string>>();
+            foreach (KeyValuePair<string, HashSet<string>> entry in State)
             {
-                return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
+                foreach (string value in entry.Value)
+                {
+                    list.Add(new Tuple<string, string>(entry.Key, value));
+                }
             }
-            ClaimValues(claimType).Add(claimValue);
-            return SetState();
+            return Task.FromResult<IList<Tuple<string, string>>>(list);
         }
 
         /// <summary>
@@ -82,24 +91,17 @@ namespace ExtenFlow.Identity.Actors
                 return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
             ClaimValues(claimType).Remove(claimValue);
-            return SetState();
+            return SetStateData();
         }
 
-        /// <summary>
-        /// Gets the all the user's Claims.
-        /// </summary>
-        /// <returns>A list of all Claims</returns>
-        public Task<IList<Tuple<string, string>>> GetAll()
+        private HashSet<string> ClaimValues(string claimType)
         {
-            var list = new List<Tuple<string, string>>();
-            foreach (KeyValuePair<string, HashSet<string>> entry in State)
+            if (!State.TryGetValue(claimType, out HashSet<string>? values))
             {
-                foreach (string value in entry.Value)
-                {
-                    list.Add(new Tuple<string, string>(entry.Key, value));
-                }
+                values = new HashSet<string>();
+                State.Add(claimType, values);
             }
-            return Task.FromResult<IList<Tuple<string, string>>>(list);
+            return values;
         }
     }
 }

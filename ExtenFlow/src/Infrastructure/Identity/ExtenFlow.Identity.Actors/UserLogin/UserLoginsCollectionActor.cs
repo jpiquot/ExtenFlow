@@ -2,11 +2,12 @@
 using System.Threading.Tasks;
 
 using Dapr.Actors;
-using Dapr.Actors.Client;
 using Dapr.Actors.Runtime;
 
+using ExtenFlow.Actors;
 using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Properties;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Identity.Actors
@@ -14,7 +15,7 @@ namespace ExtenFlow.Identity.Actors
     /// <summary>
     /// The user collection actor class
     /// </summary>
-    public class UserLoginsCollectionActor : BaseActor<UserLoginsCollectionState>, IUserLoginsCollectionActor
+    public class UserLoginsCollectionActor : ActorBase<UserLoginsCollectionState>, IUserLoginsCollectionActor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UserLoginsCollectionActor"/> class.
@@ -54,7 +55,7 @@ namespace ExtenFlow.Identity.Actors
             }
             await IdentityActors.UserLogins(userLogin.UserId).AddLogin(new UserLoginInfo(userLogin.LoginProvider, userLogin.ProviderKey, userLogin.ProviderDisplayName));
             State.Add(userLogin.LoginProvider, userLogin.ProviderKey, userLogin.UserId);
-            await SetState();
+            await SetStateData();
         }
 
         /// <summary>
@@ -80,7 +81,7 @@ namespace ExtenFlow.Identity.Actors
             }
             await IdentityActors.UserLogins(userId).DeleteLogin(loginProvider, providerKey);
             State.Remove(loginProvider, providerKey, userId);
-            await SetState();
+            await SetStateData();
         }
 
         /// <summary>

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
+using ExtenFlow.Actors;
 using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Properties;
 
@@ -18,8 +19,9 @@ namespace ExtenFlow.Identity.Actors
     /// </summary>
     /// <seealso cref="Actor"/>
     /// <seealso cref="IRoleActor"/>
-    public class RoleActor : BaseActor<Role>, IRoleActor
+    public class RoleActor : ActorBase<Role>, IRoleActor
     {
+        private readonly IIndexService _indexService;
         private IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
 
         /// <summary>
@@ -29,19 +31,21 @@ namespace ExtenFlow.Identity.Actors
         /// The <see cref="ActorService"/> that will host this actor instance.
         /// </param>
         /// <param name="actorId">The Id of the actor.</param>
+        /// <param name="indexService"></param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
-        public RoleActor(ActorService actorService, ActorId actorId, IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
+        public RoleActor(ActorService actorService, ActorId actorId, IIndexService indexService, IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
         {
+            _indexService = indexService;
         }
 
         /// <summary>
-        /// Clears the specified concurrency string.
+        /// Clears the role.
         /// </summary>
         /// <param name="concurrencyString">The concurrency string.</param>
         /// <returns>The identity result object</returns>
         public async Task<IdentityResult> Clear(string concurrencyString)
         {
-            if (State.Id == default)
+            if (State == null || State.Id == default)
             {
                 throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.RoleNotFound, Id.GetId()));
             }
@@ -49,7 +53,9 @@ namespace ExtenFlow.Identity.Actors
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
-            await SetState(null);
+            await _indexService.Remove(Id.GetId());
+            State = null;
+            await SetStateData();
             return IdentityResult.Success;
         }
 
@@ -57,7 +63,14 @@ namespace ExtenFlow.Identity.Actors
         /// Gets the role.
         /// </summary>
         /// <returns>The role object</returns>
-        public Task<Role> GetRole() => Task.FromResult(State);
+        public Task<Role> GetRole()
+        {
+            if (State == null || State.Id == default)
+            {
+                return Task.FromException<Role>(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.RoleNotFound, Id.GetId())));
+            }
+            return Task.FromResult<Role>(State);
+        }
 
         /// <summary>
         /// Updates the specified role.
@@ -75,12 +88,12 @@ namespace ExtenFlow.Identity.Actors
             {
                 throw new ArgumentOutOfRangeException(Resources.RoleIdNotDefined);
             }
-            if (State.ConcurrencyStamp != null && role.ConcurrencyStamp != State.ConcurrencyStamp)
+            if (State?.ConcurrencyStamp != null && role.ConcurrencyStamp != State.ConcurrencyStamp)
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
             role.ConcurrencyStamp = Guid.NewGuid().ToString();
-            await SetState(role);
+            await SetStateData();
             return IdentityResult.Success;
         }
     }

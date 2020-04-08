@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
-
+using ExtenFlow.Actors;
 using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Properties;
 using Microsoft.AspNetCore.Identity;
@@ -16,7 +16,7 @@ namespace ExtenFlow.Identity.Actors
     /// <summary>
     /// The role collection actor class
     /// </summary>
-    public class RoleCollectionActor : BaseActor<RoleCollectionState>, IRoleCollectionActor
+    public class RoleCollectionActor : ActorBase<RoleCollectionState>, IRoleCollectionActor
     {
         private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
 
@@ -60,7 +60,7 @@ namespace ExtenFlow.Identity.Actors
             {
                 State.Ids.Add(role.Id);
                 State.NormalizedNames.Add(role.NormalizedName, role.Id);
-                await SetState();
+                await SetStateData();
             }
             return result;
         }
@@ -81,7 +81,7 @@ namespace ExtenFlow.Identity.Actors
             }
             State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == roleId).Select(p => p.Key).Single());
             State.Ids.Remove(roleId);
-            await SetState();
+            await SetStateData();
             await IdentityActors.Role(roleId).Clear(concurrencyString);
             return IdentityResult.Success;
         }
@@ -153,7 +153,7 @@ namespace ExtenFlow.Identity.Actors
                     State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == role.Id).Select(p => p.Key).Single());
                     State.NormalizedNames.Add(role.NormalizedName, role.Id);
                 }
-                await SetState();
+                await SetStateData();
             }
             return result;
         }

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
+using ExtenFlow.Actors;
+
 namespace ExtenFlow.Identity.Actors
 {
     /// <summary>
@@ -13,7 +15,7 @@ namespace ExtenFlow.Identity.Actors
     /// </summary>
     /// <seealso cref="Actor"/>
     /// <seealso cref="IRoleClaimsActor"/>
-    public class RoleClaimsActor : BaseActor<Dictionary<string, HashSet<string>>>, IRoleClaimsActor
+    public class RoleClaimsActor : ActorBase<Dictionary<string, HashSet<string>>>, IRoleClaimsActor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleClaimsActor"/> class.
@@ -40,7 +42,7 @@ namespace ExtenFlow.Identity.Actors
                 return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
             ClaimValues(claimType).Add(claimValue);
-            return SetState();
+            return SetStateData();
         }
 
         /// <summary>
@@ -66,11 +68,14 @@ namespace ExtenFlow.Identity.Actors
         public Task<IList<Tuple<string, string>>> GetAll()
         {
             var list = new List<Tuple<string, string>>();
-            foreach (KeyValuePair<string, HashSet<string>> entry in State)
+            if (State != null)
             {
-                foreach (string value in entry.Value)
+                foreach (KeyValuePair<string, HashSet<string>> entry in State)
                 {
-                    list.Add(new Tuple<string, string>(entry.Key, value));
+                    foreach (string value in entry.Value)
+                    {
+                        list.Add(new Tuple<string, string>(entry.Key, value));
+                    }
                 }
             }
             return Task.FromResult<IList<Tuple<string, string>>>(list);
@@ -89,7 +94,7 @@ namespace ExtenFlow.Identity.Actors
                 return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
             ClaimValues(claimType).Remove(claimValue);
-            return SetState();
+            return SetStateData();
         }
 
         private HashSet<string> ClaimValues(string claimType)

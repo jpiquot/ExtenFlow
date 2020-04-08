@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
+using ExtenFlow.Actors;
 using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Properties;
 
@@ -20,7 +21,7 @@ namespace ExtenFlow.Identity.Actors
     /// </summary>
     /// <seealso cref="Actor"/>
     /// <seealso cref="IUserActor"/>
-    public class UserActor : BaseActor<User>, IUserActor
+    public class UserActor : ActorBase<User>, IUserActor
     {
         private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
 
@@ -43,15 +44,15 @@ namespace ExtenFlow.Identity.Actors
         /// <exception cref="KeyNotFoundException">The user Id ({Id.GetId()}) already exist.</exception>
         public async Task<IdentityResult> ClearUser(string concurrencyStamp)
         {
-            if (State.Id == default)
+            if (State?.Id == default)
             {
                 throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.UserNotFound, Id.GetId()));
             }
-            if (State.ConcurrencyStamp != concurrencyStamp)
+            if (State?.ConcurrencyStamp != concurrencyStamp)
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
-            await SetState(null);
+            await SetStateData();
             return IdentityResult.Success;
         }
 
@@ -59,7 +60,7 @@ namespace ExtenFlow.Identity.Actors
         /// Getthe user
         /// </summary>
         /// <returns>The user object</returns>
-        public Task<User> GetUser() => State.Id == default ? Task.FromException<User>(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.UserNotFound, Id.GetId()))) : Task.FromResult(State);
+        public Task<User> GetUser() => State?.Id == default ? Task.FromException<User>(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.UserNotFound, Id.GetId()))) : Task.FromResult(State);
 
         /// <summary>
         /// Update user properties
@@ -79,12 +80,12 @@ namespace ExtenFlow.Identity.Actors
             {
                 throw new ArgumentOutOfRangeException(Resources.UserIdNotDefined);
             }
-            if (State.Id != default && user.ConcurrencyStamp != State.ConcurrencyStamp)
+            if (State?.Id != default && user.ConcurrencyStamp != State.ConcurrencyStamp)
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
             user.ConcurrencyStamp = Guid.NewGuid().ToString();
-            await SetState(user);
+            await SetStateData();
             return IdentityResult.Success;
         }
     }

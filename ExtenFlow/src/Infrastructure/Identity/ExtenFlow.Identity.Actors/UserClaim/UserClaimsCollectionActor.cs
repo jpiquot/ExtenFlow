@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
+using ExtenFlow.Actors;
 using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Properties;
 
@@ -14,7 +15,7 @@ namespace ExtenFlow.Identity.Actors
     /// <summary>
     /// The user collection actor class
     /// </summary>
-    public class UserClaimsCollectionActor : BaseActor<UserClaimsCollectionState>, IUserClaimsCollectionActor
+    public class UserClaimsCollectionActor : ActorBase<UserClaimsCollectionState>, IUserClaimsCollectionActor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UserClaimsCollectionActor"/> class.
@@ -58,7 +59,7 @@ namespace ExtenFlow.Identity.Actors
                 State.ClaimTypes.Add(userClaim.ClaimType, new HashSet<Guid>() { userClaim.UserId });
             }
             await IdentityActors.UserClaims(userClaim.UserId).Add(userClaim.ClaimType, userClaim.ClaimValue);
-            await SetState();
+            await SetStateData();
         }
 
         /// <summary>
@@ -91,7 +92,7 @@ namespace ExtenFlow.Identity.Actors
                 State.ClaimTypes.Add(userClaim.ClaimType, new HashSet<Guid>() { userClaim.UserId });
             }
             await IdentityActors.UserClaims(userClaim.UserId).Add(userClaim.ClaimType, userClaim.ClaimValue);
-            await SetState();
+            await SetStateData();
         }
 
         /// <summary>

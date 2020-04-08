@@ -60,13 +60,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.DaprStor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{D9501120-8225-4C15-A2AB-D0C20F593B22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtenFlow.Identity.StoreActors", "src\Services\ExtenFlow.Identity.StoreActors\ExtenFlow.Identity.StoreActors.csproj", "{E13C34F6-4EA7-462E-AB3E-D10D02772A95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.StoreActors", "src\Services\ExtenFlow.Identity.StoreActors\ExtenFlow.Identity.StoreActors.csproj", "{E13C34F6-4EA7-462E-AB3E-D10D02772A95}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Stores", "src\Infrastructure\Identity\ExtenFlow.Identity.Stores\ExtenFlow.Identity.Stores.csproj", "{2883457D-9EDB-48B4-9797-AAD4DDB06EDA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Actors.Abstractions", "src\Infrastructure\Identity\ExtenFlow.Identity.Actors.Abstractions\ExtenFlow.Identity.Actors.Abstractions.csproj", "{90409FE4-F51B-4646-A2F1-66FCB78711A5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Actors", "src\Infrastructure\Identity\ExtenFlow.Identity.Actors\ExtenFlow.Identity.Actors.csproj", "{2FD0FAD4-7F3C-45F5-8BBA-B81B0AE65B4C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actors", "Actors", "{CE105CB0-C593-45D2-B372-5C7624FD01EC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Actors.Abstractions", "src\Infrastructure\Actors\ExtenFlow.Actors.Abstractions\ExtenFlow.Actors.Abstractions.csproj", "{D29D074C-3A04-4BDC-AEE7-726776687F3E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Actors", "src\Infrastructure\Actors\ExtenFlow.Actors\ExtenFlow.Actors.csproj", "{2C7EBE4A-1E01-4632-A0FD-ECD86380383B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -110,6 +116,14 @@ Global
 		{2FD0FAD4-7F3C-45F5-8BBA-B81B0AE65B4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FD0FAD4-7F3C-45F5-8BBA-B81B0AE65B4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FD0FAD4-7F3C-45F5-8BBA-B81B0AE65B4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D29D074C-3A04-4BDC-AEE7-726776687F3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D29D074C-3A04-4BDC-AEE7-726776687F3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D29D074C-3A04-4BDC-AEE7-726776687F3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D29D074C-3A04-4BDC-AEE7-726776687F3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C7EBE4A-1E01-4632-A0FD-ECD86380383B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C7EBE4A-1E01-4632-A0FD-ECD86380383B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C7EBE4A-1E01-4632-A0FD-ECD86380383B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C7EBE4A-1E01-4632-A0FD-ECD86380383B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -131,6 +145,9 @@ Global
 		{2883457D-9EDB-48B4-9797-AAD4DDB06EDA} = {4DBB4614-3603-4AD8-834E-7FA9C70CE404}
 		{90409FE4-F51B-4646-A2F1-66FCB78711A5} = {4DBB4614-3603-4AD8-834E-7FA9C70CE404}
 		{2FD0FAD4-7F3C-45F5-8BBA-B81B0AE65B4C} = {4DBB4614-3603-4AD8-834E-7FA9C70CE404}
+		{CE105CB0-C593-45D2-B372-5C7624FD01EC} = {6F124834-E622-4CD8-B4C5-A6C73F611F14}
+		{D29D074C-3A04-4BDC-AEE7-726776687F3E} = {CE105CB0-C593-45D2-B372-5C7624FD01EC}
+		{2C7EBE4A-1E01-4632-A0FD-ECD86380383B} = {CE105CB0-C593-45D2-B372-5C7624FD01EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B174E5CA-DE64-416A-B7A6-338036C49BF5}

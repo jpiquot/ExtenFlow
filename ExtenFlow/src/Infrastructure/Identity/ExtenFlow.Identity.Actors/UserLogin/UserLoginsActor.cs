@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
+
+using ExtenFlow.Actors;
 using ExtenFlow.Identity.Properties;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Identity.Actors
@@ -16,7 +19,7 @@ namespace ExtenFlow.Identity.Actors
     /// </summary>
     /// <seealso cref="Actor"/>
     /// <seealso cref="IRoleActor"/>
-    public class UserLoginsActor : BaseActor<HashSet<UserLoginInfo>>, IUserLoginsActor
+    public class UserLoginsActor : ActorBase<HashSet<UserLoginInfo>>, IUserLoginsActor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UserLoginsActor"/> class.

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
+using ExtenFlow.Actors;
 using ExtenFlow.Identity.Properties;
 
 namespace ExtenFlow.Identity.Actors
@@ -14,7 +15,7 @@ namespace ExtenFlow.Identity.Actors
     /// </summary>
     /// <seealso cref="Actor"/>
     /// <seealso cref="IUserTokensActor"/>
-    public class UserTokensActor : BaseActor<Dictionary<string, Dictionary<string, string>>>, IUserTokensActor
+    public class UserTokensActor : ActorBase<Dictionary<string, Dictionary<string, string>>>, IUserTokensActor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UserTokensActor"/> class.
@@ -58,7 +59,7 @@ namespace ExtenFlow.Identity.Actors
                 return Task.FromException(new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.DuplicateToken, Id.GetId(), loginProvider, name)));
             }
             tokens.Add(name, value);
-            SetState();
+            SetStateData();
             return Task.CompletedTask;
         }
 
@@ -111,7 +112,7 @@ namespace ExtenFlow.Identity.Actors
                 return Task.FromException(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.TokenNotFound, Id.GetId(), loginProvider, name)));
             }
             tokens.Remove(name);
-            SetState();
+            SetStateData();
             return Task.CompletedTask;
         }
 

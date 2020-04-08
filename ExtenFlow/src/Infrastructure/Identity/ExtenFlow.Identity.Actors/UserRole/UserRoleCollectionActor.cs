@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
+using ExtenFlow.Actors;
 using ExtenFlow.Identity.Properties;
 
 namespace ExtenFlow.Identity.Actors
@@ -14,7 +15,7 @@ namespace ExtenFlow.Identity.Actors
     /// </summary>
     /// <seealso cref="Actor"/>
     /// <seealso cref="IUserRoleCollectionActor"/>
-    public class UserRoleCollectionActor : BaseActor<Dictionary<Guid, HashSet<Guid>>>, IUserRoleCollectionActor
+    public class UserRoleCollectionActor : ActorBase<Dictionary<Guid, HashSet<Guid>>>, IUserRoleCollectionActor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UserRoleCollectionActor"/> class.
@@ -45,7 +46,7 @@ namespace ExtenFlow.Identity.Actors
                 return Task.FromException<bool>(new ArgumentOutOfRangeException(Resources.RoleIdNotDefined));
             }
             GetUserRoles(userId).Add(roleId);
-            return SetState();
+            return SetStateData();
         }
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace ExtenFlow.Identity.Actors
                 return Task.FromException<bool>(new ArgumentOutOfRangeException(Resources.RoleIdNotDefined));
             }
             GetUserRoles(userId).Remove(roleId);
-            return SetState();
+            return SetStateData();
         }
 
         /// <summary>

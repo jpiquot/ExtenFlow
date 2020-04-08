@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
+using ExtenFlow.Actors;
 using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Properties;
 
@@ -14,7 +15,7 @@ namespace ExtenFlow.Identity.Actors
     /// <summary>
     /// The role collection actor class
     /// </summary>
-    public class RoleClaimsCollectionActor : BaseActor<RoleClaimsCollectionState>, IRoleClaimsCollectionActor
+    public class RoleClaimsCollectionActor : ActorBase<RoleClaimsCollectionState>, IRoleClaimsCollectionActor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleClaimsCollectionActor"/> class.
@@ -58,7 +59,7 @@ namespace ExtenFlow.Identity.Actors
                 State.ClaimTypes.Add(roleClaim.ClaimType, new HashSet<Guid>() { roleClaim.RoleId });
             }
             await IdentityActors.RoleClaims(roleClaim.RoleId).Add(roleClaim.ClaimType, roleClaim.ClaimValue);
-            await SetState();
+            await SetStateData();
         }
 
         /// <summary>

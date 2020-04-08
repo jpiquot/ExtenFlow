@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
+using ExtenFlow.Actors;
 using ExtenFlow.Identity.Models;
+using ExtenFlow.Identity.Properties;
 
 using Microsoft.AspNetCore.Identity;
-
-using ExtenFlow.Identity.Properties;
 
 namespace ExtenFlow.Identity.Actors
 {
     /// <summary>
     /// The user collection actor class
     /// </summary>
-    public class UserCollectionActor : BaseActor<UserCollectionState>, IUserCollectionActor
+    public class UserCollectionActor : ActorBase<UserCollectionState>, IUserCollectionActor
     {
         private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
 
@@ -62,7 +62,7 @@ namespace ExtenFlow.Identity.Actors
             {
                 State.Ids.Add(user.Id);
                 State.NormalizedNames.Add(user.NormalizedUserName, user.Id);
-                await SetState();
+                await SetStateData();
             }
             return result;
         }
@@ -83,7 +83,7 @@ namespace ExtenFlow.Identity.Actors
             }
             State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == userId).Select(p => p.Key).Single());
             State.Ids.Remove(userId);
-            await SetState();
+            await SetStateData();
             await IdentityActors.User(userId).ClearUser(concurrencyString);
             return IdentityResult.Success;
         }
@@ -155,7 +155,7 @@ namespace ExtenFlow.Identity.Actors
                     State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == user.Id).Select(p => p.Key).Single());
                     State.NormalizedNames.Add(user.NormalizedUserName, user.Id);
                 }
-                await SetState();
+                await SetStateData();
             }
             return result;
         }
