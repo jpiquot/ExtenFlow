@@ -117,22 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ActorStateNotInitialized" xml:space="preserve">
-    <value>The actor state has not been initialized for actor {0} with Id '{1}'.</value>
+  <data name="MinimimValueForArgument" xml:space="preserve">
+    <value>Minimum value is {0} for argument {1}.</value>
   </data>
-  <data name="ActorTypeNotInterface" xml:space="preserve">
-    <value>The actor type is not an interface.</value>
-  </data>
-  <data name="ArgumentIsNullEmptyOrWhiteSpace" xml:space="preserve">
-    <value>Argument '{0}' is null, empty or white spaces.</value>
-  </data>
-  <data name="IdIsNullEmptyOrWhiteSpace" xml:space="preserve">
-    <value>Id is null, empty or white spaces.</value>
-  </data>
-  <data name="ItemExistInCollection" xml:space="preserve">
-    <value>Item with Id='{0}' already exist in collection {1}.</value>
-  </data>
-  <data name="ItemExistInIndex" xml:space="preserve">
-    <value>Item with Key='{0}' already exist in unique index {1} with another Id='{2}'.</value>
+  <data name="Test" xml:space="preserve">
+    <value />
   </data>
 </root>

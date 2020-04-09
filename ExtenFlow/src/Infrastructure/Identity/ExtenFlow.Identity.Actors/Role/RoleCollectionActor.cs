@@ -1,132 +1,100 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
+
 using ExtenFlow.Actors;
 using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Properties;
+using ExtenFlow.Identity.Services;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Identity.Actors
 {
     /// <summary>
-    /// The role collection actor class
+    /// The User Actor class
     /// </summary>
-    public class RoleCollectionActor : ActorBase<RoleCollectionState>, IRoleCollectionActor
+    /// <seealso cref="Actor"/>
+    /// <seealso cref="IRoleActor"/>
+    public class RoleCollectionActor : CollectionActorBase, IRoleCollectionActor
     {
+        private readonly IRoleCollectionService _collectionService;
         private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
+        private readonly IRoleNameIndexService _nameService;
+        private readonly IRoleNormalizedNameIndexService _normalizedNameService;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleCollectionActor"/> class.
+        /// Initializes a new instance of the <see cref="RoleActor"/> class.
         /// </summary>
         /// <param name="actorService">
         /// The <see cref="ActorService"/> that will host this actor instance.
         /// </param>
         /// <param name="actorId">The Id of the actor.</param>
+        /// <param name="collectionService">The collection service to maintain the list of roles</param>
+        /// <param name="nameService">Name indexer service</param>
+        /// <param name="normalizedNameService">Normalized name indexer</param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
-        public RoleCollectionActor(ActorService actorService, ActorId actorId, IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
+        public RoleActor(
+            ActorService actorService,
+            ActorId actorId,
+            IRoleCollectionService collectionService,
+            IRoleNameIndexService nameService,
+            IRoleNormalizedNameIndexService normalizedNameService,
+            IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
         {
+            _collectionService = collectionService;
+            _nameService = nameService;
+            _normalizedNameService = normalizedNameService;
         }
 
         /// <summary>
-        /// Create a new role
+        /// Delete the role.
         /// </summary>
-        /// <param name="role">The new role properties</param>
-        /// <returns>The operation result</returns>
-        public async Task<IdentityResult> Create(Role role)
+        /// <param name="concurrencyString">The concurrency string.</param>
+        /// <returns>The identity result object</returns>
+        public async Task<IdentityResult> DeleteRole(string concurrencyString)
         {
-            if (role == null)
+            if (State == null)
             {
-                throw new ArgumentNullException(nameof(role));
+                return IdentityResult.Success;
             }
-            if (role.Id == default)
+            if (State.ConcurrencyStamp != concurrencyString)
             {
-                throw new ArgumentOutOfRangeException(Resources.RoleIdNotDefined);
+                return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
-            if (State.Ids.Any(p => p == role.Id))
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.DuplicateRole, role.Id));
-            }
-            if (State.NormalizedNames.Any(p => p.Key == role.NormalizedName))
-            {
-                return IdentityResult.Failed(_errorDescriber.DuplicateRoleName(role.NormalizedName));
-            }
-            IdentityResult result = await IdentityActors.Role(role.Id).SetRole(role);
-            if (result.Succeeded)
-            {
-                State.Ids.Add(role.Id);
-                State.NormalizedNames.Add(role.NormalizedName, role.Id);
-                await SetStateData();
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Delete the role
-        /// </summary>
-        /// <returns>The operation result</returns>
-        public async Task<IdentityResult> Delete(Guid roleId, string concurrencyString)
-        {
-            if (roleId == default)
-            {
-                throw new ArgumentNullException(nameof(roleId));
-            }
-            if (!State.Ids.Any(p => p == roleId))
-            {
-                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.RoleNotFound, roleId));
-            }
-            State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == roleId).Select(p => p.Key).Single());
-            State.Ids.Remove(roleId);
+            var state = State;
+            State = null;
             await SetStateData();
-            await IdentityActors.Role(roleId).Clear(concurrencyString);
+            await _nameService.Remove(state.Name);
+            await _normalizedNameService.Remove(state.NormalizedName);
+            await _collectionService.Remove(Id.GetId());
             return IdentityResult.Success;
         }
 
         /// <summary>
-        /// Checks if a role with the given identifier exists.
+        /// Gets the role.
         /// </summary>
-        /// <param name="roleId">The role identifier.</param>
-        /// <returns>true if the role exists, else false.</returns>
-        public Task<bool> Exist(Guid roleId)
+        /// <returns>The role object</returns>
+        public Task<Role> GetRole()
         {
-            if (roleId == default)
+            if (State == null || State.Id == default)
             {
-                return Task.FromException<bool>(new ArgumentNullException(nameof(roleId)));
+                return Task.FromException<Role>(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.RoleNotFound, Id.GetId())));
             }
-            return Task.FromResult(State.Ids.Any(p => p == roleId));
+            return Task.FromResult<Role>(State);
         }
 
         /// <summary>
-        /// Finds the name of the by normalized.
+        /// Updates the specified role.
         /// </summary>
-        /// <param name="normalizedRoleName">Name of the normalized role.</param>
-        /// <returns>The id of the role if exists, else null.</returns>
-        public Task<Guid?> FindByNormalizedName(string normalizedRoleName)
-        {
-            if (string.IsNullOrWhiteSpace(normalizedRoleName))
-            {
-                return Task.FromException<Guid?>(new ArgumentNullException(nameof(normalizedRoleName)));
-            }
-            return Task.FromResult<Guid?>(State.NormalizedNames.Where(p => p.Key == normalizedRoleName).Select(p => p.Value).FirstOrDefault());
-        }
-
-        /// <summary>
-        /// Gets the all the role ids.
-        /// </summary>
-        /// <returns>The role ids</returns>
-        public Task<IList<Guid>> GetIds()
-            => Task.FromResult<IList<Guid>>(State.Ids.ToList());
-
-        /// <summary>
-        /// Create a new role
-        /// </summary>
-        /// <param name="role">The new role properties</param>
-        /// <returns>The operation result</returns>
-        public async Task<IdentityResult> Update(Role role)
+        /// <param name="role">The role.</param>
+        /// <exception cref="ArgumentNullException">Role.Id</exception>
+        /// <returns>The identity result object</returns>
+        public async Task<IdentityResult> SetRole(Role role)
         {
             if (role == null)
             {
@@ -136,26 +104,19 @@ namespace ExtenFlow.Identity.Actors
             {
                 throw new ArgumentOutOfRangeException(Resources.RoleIdNotDefined);
             }
-            if (!State.Ids.Any(p => p == role.Id))
+            if (State?.ConcurrencyStamp != null && role.ConcurrencyStamp != State.ConcurrencyStamp)
             {
-                throw new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.RoleNotFound, role.Id));
+                return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }
-            if (State.NormalizedNames.Any(p => p.Key == role.NormalizedName && p.Value != role.Id))
+            role.ConcurrencyStamp = Guid.NewGuid().ToString();
+            if (State == null || State.Id == default)
             {
-                return IdentityResult.Failed(_errorDescriber.DuplicateRoleName(role.NormalizedName));
+                // Create an new role
+                await _collectionService.Add(Id.GetId());
             }
-            IdentityResult result = await IdentityActors.Role(role.Id).SetRole(role);
-            if (result.Succeeded)
-            {
-                if (!State.NormalizedNames.Any(p => p.Key == role.NormalizedName))
-                {
-                    // The normalized name hase been changed.
-                    State.NormalizedNames.Remove(State.NormalizedNames.Where(p => p.Value == role.Id).Select(p => p.Key).Single());
-                    State.NormalizedNames.Add(role.NormalizedName, role.Id);
-                }
-                await SetStateData();
-            }
-            return result;
+            State = role;
+            await SetStateData();
+            return IdentityResult.Success;
         }
     }
 }

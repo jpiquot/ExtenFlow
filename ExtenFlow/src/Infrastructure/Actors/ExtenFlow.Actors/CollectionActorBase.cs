@@ -6,21 +6,23 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
+using ExtenFlow.Services;
+
 namespace ExtenFlow.Actors
 {
     /// <summary>
     /// The index actor base class
     /// </summary>
     /// <seealso cref="Actor"/>
-    public abstract class IndexActorBase : ActorBase<HashSet<string>>, IIndexService
+    public abstract class CollectionActorBase : ActorBase<HashSet<string>>, ICollectionService
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="IndexActorBase"/> class.
+        /// Initializes a new instance of the <see cref="CollectionActorBase"/> class.
         /// </summary>
         /// <param name="actorService">The actor service.</param>
         /// <param name="actorId">The actor identifier.</param>
         /// <param name="stateManager">The state manager.</param>
-        protected IndexActorBase(ActorService actorService, ActorId actorId, IActorStateManager? stateManager) : base(actorService, actorId, stateManager)
+        protected CollectionActorBase(ActorService actorService, ActorId actorId, IActorStateManager? stateManager) : base(actorService, actorId, stateManager)
         {
         }
 

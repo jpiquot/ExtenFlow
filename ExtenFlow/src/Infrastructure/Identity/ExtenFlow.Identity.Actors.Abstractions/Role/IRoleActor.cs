@@ -19,7 +19,7 @@ namespace ExtenFlow.Identity.Actors
         /// </summary>
         /// <param name="concurrencyStamp">The concurrency stamp.</param>
         /// <returns>The identity result object</returns>
-        Task<IdentityResult> Clear(string concurrencyStamp);
+        Task<IdentityResult> DeleteRole(string concurrencyStamp);
 
         /// <summary>
         /// Gets the role.

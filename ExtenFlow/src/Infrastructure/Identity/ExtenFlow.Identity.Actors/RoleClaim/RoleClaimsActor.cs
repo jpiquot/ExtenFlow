@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,6 +42,10 @@ namespace ExtenFlow.Identity.Actors
             {
                 return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
+            if (State == null)
+            {
+                State = new Dictionary<string, HashSet<string>>();
+            }
             ClaimValues(claimType).Add(claimValue);
             return SetStateData();
         }
@@ -57,6 +62,10 @@ namespace ExtenFlow.Identity.Actors
             if (string.IsNullOrWhiteSpace(claimType))
             {
                 return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
+            }
+            if (State == null)
+            {
+                return Task.FromResult(false);
             }
             return Task.FromResult(ClaimValues(claimType).Any(p => p == claimValue));
         }
@@ -93,12 +102,21 @@ namespace ExtenFlow.Identity.Actors
             {
                 return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
+            if (State == null)
+            {
+                return Task.CompletedTask;
+            }
             ClaimValues(claimType).Remove(claimValue);
             return SetStateData();
         }
 
         private HashSet<string> ClaimValues(string claimType)
         {
+            if (State == null)
+            {
+                // The actor state has not been initialized for actor {0} with Id '{1}'.
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, ExtenFlow.Actors.Properties.Resources.ActorStateNotInitialized, this.ActorName(), Id.GetId()));
+            }
             if (!State.TryGetValue(claimType, out HashSet<string>? values))
             {
                 values = new HashSet<string>();

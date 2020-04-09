@@ -16,6 +16,7 @@
 		<PackageReference Include="Dapr.Actors" Version="0.6.0-preview01" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\Actors\ExtenFlow.Actors.Abstractions\ExtenFlow.Actors.Abstractions.csproj" />
 		<ProjectReference Include="..\ExtenFlow.Identity.Abstractions\ExtenFlow.Identity.Abstractions.csproj" />
 	</ItemGroup>
 </Project>

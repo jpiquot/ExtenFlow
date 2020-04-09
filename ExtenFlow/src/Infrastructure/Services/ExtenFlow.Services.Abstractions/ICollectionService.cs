@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ExtenFlow.Actors
+namespace ExtenFlow.Services
 {
     /// <summary>
     /// Service to manage collection of ids.

@@ -33,12 +33,6 @@ namespace ExtenFlow.Identity.Actors
         public static IRoleClaimsCollectionActor RoleClaimsCollection() => ActorProxy.Create<IRoleClaimsCollectionActor>(new ActorId("RolesClaims"), "RoleClaimsCollectionActor");
 
         /// <summary>
-        /// Creates a roles collection actor.
-        /// </summary>
-        /// <returns>The actor instance interface</returns>
-        public static IRoleCollectionActor RoleCollection() => ActorProxy.Create<IRoleCollectionActor>(new ActorId("Roles"), "RoleCollectionActor");
-
-        /// <summary>
         /// Creates the user actor.
         /// </summary>
         /// <param name="userId">The user identifier.</param>

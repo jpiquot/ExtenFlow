@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ExtenFlow.Actors.Properties {
+namespace ExtenFlow.Messages.BrighterBroker.Properties {
     using System;
     
     
@@ -22,7 +22,7 @@ namespace ExtenFlow.Actors.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace ExtenFlow.Actors.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ExtenFlow.Actors.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ExtenFlow.Messages.BrighterBroker.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace ExtenFlow.Actors.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,56 +61,20 @@ namespace ExtenFlow.Actors.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The actor state has not been initialized for actor {0} with Id &apos;{1}&apos;..
+        ///   Looks up a localized string similar to Minimum value is {0} for argument {1}..
         /// </summary>
-        public static string ActorStateNotInitialized {
+        internal static string MinimimValueForArgument {
             get {
-                return ResourceManager.GetString("ActorStateNotInitialized", resourceCulture);
+                return ResourceManager.GetString("MinimimValueForArgument", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The actor type is not an interface..
+        ///   Looks up a localized string similar to .
         /// </summary>
-        public static string ActorTypeNotInterface {
+        internal static string Test {
             get {
-                return ResourceManager.GetString("ActorTypeNotInterface", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Argument &apos;{0}&apos; is null, empty or white spaces..
-        /// </summary>
-        public static string ArgumentIsNullEmptyOrWhiteSpace {
-            get {
-                return ResourceManager.GetString("ArgumentIsNullEmptyOrWhiteSpace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Id is null, empty or white spaces..
-        /// </summary>
-        public static string IdIsNullEmptyOrWhiteSpace {
-            get {
-                return ResourceManager.GetString("IdIsNullEmptyOrWhiteSpace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Item with Id=&apos;{0}&apos; already exist in collection {1}..
-        /// </summary>
-        public static string ItemExistInCollection {
-            get {
-                return ResourceManager.GetString("ItemExistInCollection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Item with Key=&apos;{0}&apos; already exist in unique index {1} with another Id=&apos;{2}&apos;..
-        /// </summary>
-        public static string ItemExistInIndex {
-            get {
-                return ResourceManager.GetString("ItemExistInIndex", resourceCulture);
+                return ResourceManager.GetString("Test", resourceCulture);
             }
         }
     }

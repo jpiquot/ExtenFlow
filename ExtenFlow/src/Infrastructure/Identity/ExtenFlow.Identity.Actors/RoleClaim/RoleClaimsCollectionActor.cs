@@ -50,6 +50,10 @@ namespace ExtenFlow.Identity.Actors
             {
                 throw new ArgumentOutOfRangeException(Resources.ClaimTypeNotDefined);
             }
+            if (State == null)
+            {
+                State = new RoleClaimsCollectionState();
+            }
             if (!State.RoleIds.Contains(roleClaim.RoleId))
             {
                 State.RoleIds.Add(roleClaim.RoleId);
@@ -102,9 +106,12 @@ namespace ExtenFlow.Identity.Actors
                 throw new ArgumentNullException(claimType);
             }
             var list = new List<Task<Role?>>();
-            foreach (Guid roleId in State.ClaimTypes.Where(p => p.Key == claimType).SelectMany(p => p.Value))
+            if (State != null)
             {
-                list.Add(FindClaimRole(roleId, claimType, claimValue));
+                foreach (Guid roleId in State.ClaimTypes.Where(p => p.Key == claimType).SelectMany(p => p.Value))
+                {
+                    list.Add(FindClaimRole(roleId, claimType, claimValue));
+                }
             }
             return (IList<Role>)(await Task.WhenAll(list)).Where(p => p != null).ToList();
         }
@@ -131,6 +138,10 @@ namespace ExtenFlow.Identity.Actors
             if (roleClaim.ClaimType == default)
             {
                 throw new ArgumentOutOfRangeException(Resources.ClaimTypeNotDefined);
+            }
+            if (State == null)
+            {
+                State = new RoleClaimsCollectionState();
             }
             if (!State.RoleIds.Contains(roleClaim.RoleId))
             {
