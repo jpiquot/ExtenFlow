@@ -29,7 +29,8 @@ namespace ExtenFlow.Messages
         /// <param name="correlationId">The correlation id that links all the messages together</param>
         /// <param name="messageId">The is of this event</param>
         /// <param name="dateTime">The date and time of the event</param>
-        protected Event(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
+        protected Event(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
         {
         }
     }

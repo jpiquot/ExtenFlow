@@ -113,5 +113,23 @@ namespace ExtenFlow.Actors.Properties {
                 return ResourceManager.GetString("ItemExistInIndex", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The message is not a command..
+        /// </summary>
+        public static string MessageNotCommand {
+            get {
+                return ResourceManager.GetString("MessageNotCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The message is not a query..
+        /// </summary>
+        public static string MessageNotQuery {
+            get {
+                return ResourceManager.GetString("MessageNotQuery", resourceCulture);
+            }
+        }
     }
 }

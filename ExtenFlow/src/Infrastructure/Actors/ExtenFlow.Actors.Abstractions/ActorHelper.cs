@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Globalization;
 using System.Resources;
+using System.Threading.Tasks;
 
 using Dapr.Actors.Runtime;
+
+using ExtenFlow.Messages;
 
 [assembly: NeutralResourcesLanguage("en")]
 
@@ -50,6 +53,47 @@ namespace ExtenFlow.Actors
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.ArgumentIsNullEmptyOrWhiteSpace, nameof(typeName)));
             }
             return typeName.Replace(nameof(Actor), string.Empty, StringComparison.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Send a query and returns the result.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="actor">The actor.</param>
+        /// <param name="message">The message.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentNullException">actor or message</exception>
+        public static async Task<T> Ask<T>(this IDispatchActor actor, IQuery<T> message)
+        {
+            if (actor == null)
+            {
+                throw new ArgumentNullException(nameof(actor));
+            }
+            if (message == null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+            return (T)await actor.Ask(new Envelope(message));
+        }
+
+        /// <summary>
+        /// Sends a command and wait for the execution ends.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="message">The message.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentNullException">actor or message</exception>
+        public static Task Tell(this IDispatchActor actor, ICommand message)
+        {
+            if (actor == null)
+            {
+                throw new ArgumentNullException(nameof(actor));
+            }
+            if (message == null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+            return actor.Tell(new Envelope(message));
         }
     }
 }

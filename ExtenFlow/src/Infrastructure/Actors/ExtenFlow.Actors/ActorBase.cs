@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -11,7 +12,7 @@ namespace ExtenFlow.Actors
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <seealso cref="Actor"/>
-    public abstract class ActorBase<TState> : Actor
+    public abstract class ActorBase<TState> : Actor, IRemindable
         where TState : class
     {
         private string? _stateName;
@@ -39,6 +40,19 @@ namespace ExtenFlow.Actors
         /// </summary>
         /// <value>The name of the state.</value>
         protected string StateName => _stateName ?? (_stateName = this.ActorName());
+
+        /// <inheriteddoc/>
+        public virtual Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
+            => Task.CompletedTask;
+
+        /// <summary>
+        /// Registers the reminder.
+        /// </summary>
+        /// <param name="dueTime">The due time.</param>
+        /// <param name="period">The period.</param>
+        /// <returns></returns>
+        public virtual Task RegisterReminder(TimeSpan dueTime, TimeSpan period)
+            => RegisterReminderAsync(this.ActorName(), null, dueTime, period);
 
         /// <summary>
         /// Override this method to initialize the members, initialize state or register timers.

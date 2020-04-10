@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Reflection;
 
 using Dapr.Actors;
 using Dapr.Actors.Client;
@@ -14,20 +15,17 @@ namespace ExtenFlow.Messages.BrighterBroker
     /// <seealso cref="Paramore.Brighter.IAmAHandlerFactoryAsync"/>
     public class DaprActorHandlerFactory : IAmAHandlerFactoryAsync
     {
-        private readonly IActorProxy _actorProxy;
         private readonly int _maxHandlers;
         private readonly Random _random;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DaprActorHandlerFactory"/> class.
         /// </summary>
-        /// <param name="actorProxy">Actor proxy instance</param>
         /// <param name="maxHandlers">The maximum handlers.</param>
         /// <exception cref="System.ArgumentOutOfRangeException"></exception>
-        public DaprActorHandlerFactory(IActorProxy actorProxy, int maxHandlers = 100)
+        public DaprActorHandlerFactory(int maxHandlers = 100)
         {
             _random = new Random();
-            _actorProxy = actorProxy;
             _maxHandlers = maxHandlers;
             if (maxHandlers < 1)
             {
@@ -47,8 +45,22 @@ namespace ExtenFlow.Messages.BrighterBroker
             {
                 throw new ArgumentNullException(nameof(handlerType));
             }
+            MethodInfo? method = typeof(ActorProxy).GetMethod("Create", BindingFlags.Static);
+            if (method == null)
+            {
+#pragma warning disable CA1303 // Do not pass literals as localized parameters
+                throw new Exception("Static method create not found on ActorProxy class.");
+            }
+            MethodInfo generic = method.MakeGenericMethod(handlerType);
+            var handler = (IHandleRequestsAsync?)generic.Invoke(this, new object[] { new ActorId(_random.Next(1, _maxHandlers).ToString(CultureInfo.InvariantCulture)), handlerType, handlerType.Name.Substring(1) });
+            if (handler == null)
+            {
+                throw new Exception("The actor proxy create method returned a null value.");
+#pragma warning restore CA1303 // Do not pass literals as localized parameters
+            }
             // TODO: Change create signature
-            return (IHandleRequestsAsync)_actorProxy.Create(new ActorId(_random.Next(1, _maxHandlers).ToString(CultureInfo.InvariantCulture)), handlerType, handlerType.Name.Substring(1));
+            //return (IHandleRequestsAsync)_actorProxy.Create(new ActorId(_random.Next(1, _maxHandlers).ToString(CultureInfo.InvariantCulture)), handlerType, handlerType.Name.Substring(1));
+            return handler;
         }
 
         /// <summary>
