@@ -29,7 +29,7 @@ namespace ExtenFlow.Actors
         /// <param name="actorId">Id for the actor.</param>
         /// <param name="messageQueue">The message queue.</param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
-        public DispatchActorBase(
+        protected DispatchActorBase(
             ActorService actorService,
             ActorId actorId,
             IMessageQueue messageQueue,

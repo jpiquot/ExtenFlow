@@ -15,8 +15,18 @@ namespace ExtenFlow.Messages.Dispatcher
         /// <returns>The message one is present in the queue, else null.</returns>
         Task<IMessage?> ReadNext();
 
+        /// <summary>
+        /// Removes the message.
+        /// </summary>
+        /// <param name="messageId">The message identifier.</param>
+        /// <returns></returns>
         Task RemoveMessage(Guid messageId);
 
+        /// <summary>
+        /// Sends the specified events.
+        /// </summary>
+        /// <param name="events">The events.</param>
+        /// <returns></returns>
         Task Send(IList<IEvent> events);
     }
 }

@@ -7,9 +7,9 @@ using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
-using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Properties;
 using ExtenFlow.Identity.Services;
+using ExtenFlow.Messages;
 
 using Microsoft.AspNetCore.Identity;
 
@@ -20,7 +20,7 @@ namespace ExtenFlow.Identity.Actors
     /// </summary>
     /// <seealso cref="Actor"/>
     /// <seealso cref="IRoleActor"/>
-    public class RoleActor : ActorBase<Role>, IRoleActor
+    public class RoleActor : DispatchActorBase<Role>, IRoleActor
     {
         private readonly IRoleCollectionService _collectionService;
         private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
@@ -118,5 +118,11 @@ namespace ExtenFlow.Identity.Actors
             await SetStateData();
             return IdentityResult.Success;
         }
+
+        protected override Task<IList<IEvent>> Execute(ICommand command) => throw new NotImplementedException();
+
+        protected override Task<object> Execute(IQuery query) => throw new NotImplementedException();
+
+        protected override Task<IList<IEvent>> Handle(IMessage message) => throw new NotImplementedException();
     }
 }
