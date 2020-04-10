@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 #pragma warning disable CA1041 // Provide ObsoleteAttribute message
 #pragma warning disable CS0612 // Type or member is obsolete
@@ -8,6 +9,7 @@ namespace ExtenFlow.Messages
     /// <summary>
     /// The base class for all messages
     /// </summary>
+    [DebuggerDisplay("{AggregateType}:{AggregateId}")]
     public abstract class Message : IMessage
     {
         /// <summary>
@@ -61,9 +63,15 @@ namespace ExtenFlow.Messages
         }
 
         /// <summary>
-        /// The message unique identifier
+        /// The aggregate id
         /// </summary>
-        public Guid MessageId { get; [Obsolete]set; }
+        public string? AggregateId { get; [Obsolete]set; }
+
+        /// <summary>
+        /// The type of the aggragate that will handle the message. Or the aggregate that created
+        /// the message.
+        /// </summary>
+        public string AggregateType { get; [Obsolete]set; }
 
         /// <summary>
         /// The correlation id that links all the related messages together. Can be assimilated to a
@@ -77,19 +85,13 @@ namespace ExtenFlow.Messages
         public DateTimeOffset DateTime { get; [Obsolete]set; }
 
         /// <summary>
+        /// The message unique identifier
+        /// </summary>
+        public Guid MessageId { get; [Obsolete]set; }
+
+        /// <summary>
         /// The id of the message creator
         /// </summary>
         public string UserId { get; [Obsolete]set; }
-
-        /// <summary>
-        /// The type of the aggragate that will handle the message. Or the aggregate that created
-        /// the message.
-        /// </summary>
-        public string AggregateType { get; [Obsolete]set; }
-
-        /// <summary>
-        /// The aggregate id
-        /// </summary>
-        public string? AggregateId { get; [Obsolete]set; }
     }
 }
