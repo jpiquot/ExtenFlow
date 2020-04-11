@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -12,7 +13,7 @@ namespace ExtenFlow.Actors
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <seealso cref="Actor"/>
-    public abstract class ActorBase<TState> : Actor, IRemindable
+    public abstract class ActorBase<TState> : Actor, IRemindable, IBaseActor<TState>
         where TState : class
     {
         private string? _stateName;
@@ -41,6 +42,16 @@ namespace ExtenFlow.Actors
         /// <value>The name of the state.</value>
         protected string StateName => _stateName ?? (_stateName = this.ActorName());
 
+        /// <summary>
+        /// Gets the state.
+        /// </summary>
+        /// <returns></returns>
+        public Task<TState> GetStateValue()
+            // The actor state has not been initialized for actor {0} with Id '{1}'.
+            => (State != null) ?
+                    Task.FromResult(State) :
+                    Task.FromException<TState>(new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.ActorStateNotInitialized, this.ActorName(), Id.GetId())));
+
         /// <inheriteddoc/>
         public virtual Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
             => Task.CompletedTask;
@@ -50,9 +61,10 @@ namespace ExtenFlow.Actors
         /// </summary>
         /// <param name="dueTime">The due time.</param>
         /// <param name="period">The period.</param>
-        /// <returns></returns>
-        public virtual Task RegisterReminder(TimeSpan dueTime, TimeSpan period)
-            => RegisterReminderAsync(this.ActorName(), null, dueTime, period);
+        /// <param name="state">The reminder state</param>
+        /// <param name="reminderName">The reminder name</param>
+        public virtual Task RegisterReminder(TimeSpan dueTime, TimeSpan period, byte[]? state = null, string? reminderName = null)
+            => RegisterReminderAsync(reminderName ?? this.ActorName(), state, dueTime, period);
 
         /// <summary>
         /// Override this method to initialize the members, initialize state or register timers.

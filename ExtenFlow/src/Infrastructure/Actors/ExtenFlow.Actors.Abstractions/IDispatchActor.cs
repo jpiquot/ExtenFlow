@@ -10,14 +10,21 @@ namespace ExtenFlow.Actors
     public interface IDispatchActor
     {
         /// <summary>
-        /// Asks the specified envelope.
+        /// Ask for a response to the query contained in the spécified envelope.
         /// </summary>
         /// <param name="envelope">The envelope.</param>
         /// <returns></returns>
         Task<object> Ask(Envelope envelope);
 
         /// <summary>
-        /// Tells the specified envelope.
+        /// Notifies with the message contained in the spécified envelope.
+        /// </summary>
+        /// <param name="envelope">The envelope.</param>
+        /// <returns></returns>
+        Task Notify(Envelope envelope);
+
+        /// <summary>
+        /// Tells to execute the command contained in the spécified envelope.
         /// </summary>
         /// <param name="envelope">The envelope.</param>
         /// <returns></returns>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -55,7 +56,7 @@ namespace ExtenFlow.Actors
                 throw new ArgumentOutOfRangeException(nameof(envelope), Properties.Resources.MessageNotQuery);
             }
             await ReceiveAndProcessMessages();
-            return ReceiveQuery(query);
+            return await ReceiveQuery(query);
         }
 
         /// <summary>
@@ -70,7 +71,7 @@ namespace ExtenFlow.Actors
             }
             if (!(envelope.Message is IMessage message))
             {
-                throw new ArgumentOutOfRangeException(nameof(envelope), Properties.Resources.MessageNotCommand);
+                throw new ArgumentOutOfRangeException(nameof(envelope), Properties.Resources.ObjectNotMessage);
             }
             await ReceiveAndProcessMessages();
             await ReceiveMessage(message);
@@ -152,15 +153,21 @@ namespace ExtenFlow.Actors
         /// time any of its methods are invoked.
         /// </summary>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        protected override Task OnActivateAsync() =>
-            ReceiveNotification(new ActorActivation(this));
+        protected override async Task OnActivateAsync()
+        {
+            await base.OnActivateAsync();
+            await ReceiveNotification(new ActorActivation(this));
+        }
 
         /// <summary>
         /// This method is called whenever an actor is deactivated after a period of inactivity.
         /// </summary>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        protected override Task OnDeactivateAsync() =>
-            ReceiveNotification(new ActorDesactivation(this));
+        protected override async Task OnDeactivateAsync()
+        {
+            await base.OnDeactivateAsync();
+            await ReceiveNotification(new ActorDesactivation(this));
+        }
 
         /// <summary>
         /// Executes the specified command.
@@ -168,14 +175,15 @@ namespace ExtenFlow.Actors
         /// <param name="command">The command.</param>
         /// <returns></returns>
         protected virtual Task<IList<IEvent>> ReceiveCommand(ICommand command)
-            => Task.FromException<IList<IEvent>>(new ArgumentOutOfRangeException(nameof(command)));
+            // The command '{0}' is not supported by '{1}'.
+            => Task.FromException<IList<IEvent>>(new NotSupportedException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.CommandNotSupported, command?.GetType().Name, this.ActorName())));
 
         /// <summary>
         /// Receive an event.
         /// </summary>
         /// <returns>List of generated events.</returns>
         protected virtual Task<IList<IEvent>> ReceiveEvent(IEvent eventMessage)
-            => Task.FromException<IList<IEvent>>(new ArgumentOutOfRangeException(nameof(eventMessage)));
+            => Task.FromResult<IList<IEvent>>(Array.Empty<IEvent>());
 
         /// <summary>
         /// Receive a notification message.
@@ -189,7 +197,7 @@ namespace ExtenFlow.Actors
                 ActorDesactivation desactivation => Handle(desactivation),
                 ActorReminderCallback reminder => Handle(reminder),
                 ActorTimerCallback timer => Handle(timer),
-                _ => Task.FromException(new ArgumentOutOfRangeException(nameof(message)))
+                _ => Task.CompletedTask
             };
 
         /// <summary>
@@ -198,7 +206,7 @@ namespace ExtenFlow.Actors
         /// <param name="query">The query.</param>
         /// <returns>The query result.</returns>
         protected virtual Task<object> ReceiveQuery(IQuery query)
-            => Task.FromException<object>(new ArgumentOutOfRangeException(nameof(query)));
+            => Task.FromException<object>(new NotSupportedException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.QueryNotSupported, query?.GetType().Name, this.ActorName())));
 
         private async Task<IList<IEvent>> ReceiveMessage(IMessage message)
         {

@@ -60,10 +60,30 @@ namespace ExtenFlow.Actors
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="actor">The actor.</param>
+        /// <param name="query">The message.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentNullException">actor or message</exception>
+        public static async Task<T> Ask<T>(this IDispatchActor actor, IQuery<T> query)
+        {
+            if (actor == null)
+            {
+                throw new ArgumentNullException(nameof(actor));
+            }
+            if (query == null)
+            {
+                throw new ArgumentNullException(nameof(query));
+            }
+            return (T)await actor.Ask(new Envelope(query));
+        }
+
+        /// <summary>
+        /// Sends a notification message.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
         /// <param name="message">The message.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">actor or message</exception>
-        public static async Task<T> Ask<T>(this IDispatchActor actor, IQuery<T> message)
+        public static Task Notify(this IDispatchActor actor, IMessage message)
         {
             if (actor == null)
             {
@@ -73,27 +93,27 @@ namespace ExtenFlow.Actors
             {
                 throw new ArgumentNullException(nameof(message));
             }
-            return (T)await actor.Ask(new Envelope(message));
+            return actor.Notify(new Envelope(message));
         }
 
         /// <summary>
         /// Sends a command and wait for the execution ends.
         /// </summary>
         /// <param name="actor">The actor.</param>
-        /// <param name="message">The message.</param>
+        /// <param name="command">The message.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">actor or message</exception>
-        public static Task Tell(this IDispatchActor actor, ICommand message)
+        public static Task Tell(this IDispatchActor actor, ICommand command)
         {
             if (actor == null)
             {
                 throw new ArgumentNullException(nameof(actor));
             }
-            if (message == null)
+            if (command == null)
             {
-                throw new ArgumentNullException(nameof(message));
+                throw new ArgumentNullException(nameof(command));
             }
-            return actor.Tell(new Envelope(message));
+            return actor.Tell(new Envelope(command));
         }
     }
 }

@@ -126,6 +126,9 @@
   <data name="ArgumentIsNullEmptyOrWhiteSpace" xml:space="preserve">
     <value>Argument '{0}' is null, empty or white spaces.</value>
   </data>
+  <data name="CommandNotSupported" xml:space="preserve">
+    <value>The command '{0}' is not supported by '{1}'.</value>
+  </data>
   <data name="IdIsNullEmptyOrWhiteSpace" xml:space="preserve">
     <value>Id is null, empty or white spaces.</value>
   </data>
@@ -140,5 +143,11 @@
   </data>
   <data name="MessageNotQuery" xml:space="preserve">
     <value>The message is not a query.</value>
+  </data>
+  <data name="ObjectNotMessage" xml:space="preserve">
+    <value>The object is not a message.</value>
+  </data>
+  <data name="QueryNotSupported" xml:space="preserve">
+    <value>The query '{0}' is not supported by '{1}'.</value>
   </data>
 </root>
