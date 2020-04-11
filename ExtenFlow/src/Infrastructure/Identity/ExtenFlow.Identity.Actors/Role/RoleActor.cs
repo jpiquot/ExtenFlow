@@ -7,25 +7,23 @@ using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
+using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Properties;
-using ExtenFlow.Identity.Services;
 using ExtenFlow.Messages;
+using ExtenFlow.Messages.Dispatcher;
 
 using Microsoft.AspNetCore.Identity;
 
 namespace ExtenFlow.Identity.Actors
 {
     /// <summary>
-    /// The User Actor class
+    /// The Role Actor class
     /// </summary>
     /// <seealso cref="Actor"/>
     /// <seealso cref="IRoleActor"/>
     public class RoleActor : DispatchActorBase<Role>, IRoleActor
     {
-        private readonly IRoleCollectionService _collectionService;
         private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
-        private readonly IRoleNameIndexService _nameService;
-        private readonly IRoleNormalizedNameIndexService _normalizedNameService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleActor"/> class.
@@ -34,21 +32,14 @@ namespace ExtenFlow.Identity.Actors
         /// The <see cref="ActorService"/> that will host this actor instance.
         /// </param>
         /// <param name="actorId">The Id of the actor.</param>
-        /// <param name="collectionService">The collection service to maintain the list of roles</param>
-        /// <param name="nameService">Name indexer service</param>
-        /// <param name="normalizedNameService">Normalized name indexer</param>
+        /// <param name="messageQueue"></param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
         public RoleActor(
             ActorService actorService,
             ActorId actorId,
-            IRoleCollectionService collectionService,
-            IRoleNameIndexService nameService,
-            IRoleNormalizedNameIndexService normalizedNameService,
-            IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
+            IMessageQueue messageQueue,
+            IActorStateManager? actorStateManager = null) : base(actorService, actorId, messageQueue, actorStateManager)
         {
-            _collectionService = collectionService;
-            _nameService = nameService;
-            _normalizedNameService = normalizedNameService;
         }
 
         /// <summary>
@@ -69,9 +60,6 @@ namespace ExtenFlow.Identity.Actors
             var state = State;
             State = null;
             await SetStateData();
-            await _nameService.Remove(state.Name);
-            await _normalizedNameService.Remove(state.NormalizedName);
-            await _collectionService.Remove(Id.GetId());
             return IdentityResult.Success;
         }
 
@@ -119,10 +107,28 @@ namespace ExtenFlow.Identity.Actors
             return IdentityResult.Success;
         }
 
-        protected override Task<IList<IEvent>> Execute(ICommand command) => throw new NotImplementedException();
+        protected override Task<IList<IEvent>> Execute(ICommand command)
+            => command switch
+            {
+                CreateNewRole create => Handle(create),
+                DeleteRole delete => Handle(delete),
+                RenameRole rename => Handle(rename),
+                ChangeRoleNormalizedName changeNormalizedName => Handle(changeNormalizedName),
+                _ => Task.FromException<IList<IEvent>>(new ArgumentOutOfRangeException(nameof(command)))
+            };
 
-        protected override Task<object> Execute(IQuery query) => throw new NotImplementedException();
+        protected override Task<object> Execute(IQuery query)
+            => query switch
+            {
+                RoleCreated create => Handle(create),
+                RoleDeleted delete => Handle(delete),
+                RoleRenamed rename => Handle(rename),
+                RoleNormalizedNameChanged changeNormalizedName => Handle(changeNormalizedName),
+                _ => Task.FromException<object>(new ArgumentOutOfRangeException(nameof(query)))
+            };
 
-        protected override Task<IList<IEvent>> Handle(IMessage message) => throw new NotImplementedException();
+        protected override Task<IList<IEvent>> Handle(IMessage message)
+        {
+        }
     }
 }
