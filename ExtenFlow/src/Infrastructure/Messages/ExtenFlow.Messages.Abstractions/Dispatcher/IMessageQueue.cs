@@ -10,6 +10,13 @@ namespace ExtenFlow.Messages.Dispatcher
     public interface IMessageQueue
     {
         /// <summary>
+        /// Confirms the event send=t in the batch.
+        /// </summary>
+        /// <param name="batchId">The batch identifier.</param>
+        /// <returns></returns>
+        Task ConfirmSend(Guid batchId);
+
+        /// <summary>
         /// Reads the next message.
         /// </summary>
         /// <returns>The message one is present in the queue, else null.</returns>
@@ -26,7 +33,7 @@ namespace ExtenFlow.Messages.Dispatcher
         /// Sends the specified events.
         /// </summary>
         /// <param name="events">The events.</param>
-        /// <returns></returns>
-        Task Send(IList<IEvent> events);
+        /// <returns>The batchId needed to confirm events.</returns>
+        Task<Guid> Send(IList<IEvent> events);
     }
 }

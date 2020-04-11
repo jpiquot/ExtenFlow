@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -11,6 +12,21 @@ namespace ExtenFlow.Actors.Tests
 {
     public interface IFakeDispatchActor : IActor
     {
+    }
+
+    public class ChangeFakeIntDispatch : Command
+    {
+        [Obsolete]
+        public ChangeFakeIntDispatch()
+        {
+        }
+
+        public ChangeFakeIntDispatch(Guid fakeGuid, int fakeInt) : base("FakeDispatch", fakeGuid.ToString(), "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        {
+            FakeInt = fakeInt;
+        }
+
+        public int FakeInt { get; set; }
     }
 
     public class CreateFakeDispatch : Command
@@ -97,16 +113,49 @@ namespace ExtenFlow.Actors.Tests
         {
         }
 
-        protected override async Task<object> ReceiveQuery(IQuery query)
-            => query switch
+        protected override async Task<IList<IEvent>> ReceiveCommand(ICommand command)
+             => command switch
+             {
+                 CreateFakeDispatch create => await Handle(create),
+                 _ => await base.ReceiveCommand(command)
+             };
+
+        protected override Task ReceiveEvent(IEvent eventMessage, bool batchSave = false)
+            => eventMessage switch
             {
-                GetFakeDispatchInt getFakeInt => await Handle(getFakeInt),
-                _ => await base.ReceiveQuery(query)
+                FakeDispatchCreated created => On(created, batchSave),
+                _ => base.ReceiveEvent(eventMessage, batchSave)
             };
 
-        private Task<int> Handle(GetFakeDispatchInt getFakeInt)
+        protected override async Task<object> ReceiveQuery(IQuery query)
+                            => query switch
+                            {
+                                GetFakeDispatchInt getFakeInt => await Handle(getFakeInt),
+                                _ => await base.ReceiveQuery(query)
+                            };
+
+        private Task<IList<IEvent>> Handle(CreateFakeDispatch create)
+            => Task.FromResult<IList<IEvent>>(new[] { new FakeDispatchCreated(create.FakeGuid, create.FakeInt, create.FakeString) });
+
+        private Task<int> Handle(GetFakeDispatchInt _)
             => (State == null) ?
                 Task.FromException<int>(new NotSupportedException("State not initialized.")) :
                 Task.FromResult(State.FakeInt);
+
+        private Task On(FakeDispatchCreated create, bool batchSave)
+        {
+            if (State == null)
+            {
+                State = new FakeState();
+            }
+            State.FakeGuid = create.FakeGuid;
+            State.FakeInt = create.FakeInt;
+            State.FakeString = create.FakeString;
+            if (!batchSave)
+            {
+                return SetStateData();
+            }
+            return Task.CompletedTask;
+        }
     }
 }

@@ -29,5 +29,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\src\Infrastructure\Actors\ExtenFlow.Actors.Abstractions\ExtenFlow.Actors.Abstractions.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Infrastructure\Actors\ExtenFlow.Actors\ExtenFlow.Actors.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Infrastructure\Infrastructure\ExtenFlow.Infrastructure.Abstractions\ExtenFlow.Infrastructure.Abstractions.csproj" />
 	</ItemGroup>
 </Project>

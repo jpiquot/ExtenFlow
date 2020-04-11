@@ -1,7 +1,8 @@
 using System;
-
+using System.Collections.Generic;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
+using ExtenFlow.Infrastructure;
 
 namespace ExtenFlow.Actors.Tests
 {
@@ -16,10 +17,17 @@ namespace ExtenFlow.Actors.Tests
         }
     }
 
-    internal class FakeState
+    internal class FakeState : ValueObject
     {
         public Guid FakeGuid { get; set; }
         public int FakeInt { get; set; }
         public string FakeString { get; set; }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return FakeGuid;
+            yield return FakeInt;
+            yield return FakeString;
+        }
     }
 }

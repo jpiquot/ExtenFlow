@@ -19,8 +19,6 @@ namespace ExtenFlow.Actors
     public abstract class DispatchActorBase<T> : ActorBase<T>, IDispatchActor, IRemindable
         where T : class
     {
-        private readonly IMessageQueue _messageQueue;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="DispatchActorBase{T}"/> class.
         /// </summary>
@@ -37,8 +35,14 @@ namespace ExtenFlow.Actors
             IActorStateManager? actorStateManager)
             : base(actorService, actorId, actorStateManager)
         {
-            _messageQueue = messageQueue;
+            MessageQueue = messageQueue;
         }
+
+        /// <summary>
+        /// Gets the message queue.
+        /// </summary>
+        /// <value>The message queue.</value>
+        public IMessageQueue MessageQueue { get; }
 
         /// <summary>
         /// Asks to execute a query.
@@ -55,7 +59,7 @@ namespace ExtenFlow.Actors
             {
                 throw new ArgumentOutOfRangeException(nameof(envelope), Properties.Resources.MessageNotQuery);
             }
-            await ReceiveAndProcessMessages();
+            await ReceiveAndProcessQueueMessages();
             return await ReceiveQuery(query);
         }
 
@@ -73,21 +77,20 @@ namespace ExtenFlow.Actors
             {
                 throw new ArgumentOutOfRangeException(nameof(envelope), Properties.Resources.ObjectNotMessage);
             }
-            await ReceiveAndProcessMessages();
-            await ReceiveMessage(message);
+            await ReceiveAndProcessQueueMessages();
+            await ReceiveQueueMessage(message);
         }
 
         /// <summary>
         /// Receives the and process messages.
         /// </summary>
-        public async Task ReceiveAndProcessMessages()
+        public async Task ReceiveAndProcessQueueMessages()
         {
             IMessage? message;
-            while ((message = await _messageQueue.ReadNext()) != null)
+            while ((message = await MessageQueue.ReadNext()) != null)
             {
-                IList<IEvent> events = await ReceiveMessage(message);
-                await _messageQueue.Send(events);
-                await _messageQueue.RemoveMessage(message.MessageId);
+                await ReceiveQueueMessage(message);
+                await MessageQueue.RemoveMessage(message.MessageId);
             }
         }
 
@@ -112,8 +115,8 @@ namespace ExtenFlow.Actors
             {
                 throw new ArgumentOutOfRangeException(nameof(envelope), Properties.Resources.MessageNotCommand);
             }
-            await ReceiveAndProcessMessages();
-            await _messageQueue.Send(await ReceiveCommand(command));
+            await ReceiveAndProcessQueueMessages();
+            await HandleCommand(command);
         }
 
         /// <summary>
@@ -122,7 +125,7 @@ namespace ExtenFlow.Actors
         /// <param name="timer">The timer.</param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        protected virtual Task Handle(ActorTimerCallback timer) => ReceiveAndProcessMessages();
+        protected virtual Task Handle(ActorTimerCallback timer) => ReceiveAndProcessQueueMessages();
 
         /// <summary>
         /// Handles a reminder callback.
@@ -130,7 +133,7 @@ namespace ExtenFlow.Actors
         /// <param name="reminder">The reminder.</param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        protected virtual Task Handle(ActorReminderCallback reminder) => ReceiveAndProcessMessages();
+        protected virtual Task Handle(ActorReminderCallback reminder) => ReceiveAndProcessQueueMessages();
 
         /// <summary>
         /// Handles the actor desactivation.
@@ -181,8 +184,7 @@ namespace ExtenFlow.Actors
         /// <summary>
         /// Receive an event.
         /// </summary>
-        /// <returns>List of generated events.</returns>
-        protected virtual Task<IList<IEvent>> ReceiveEvent(IEvent eventMessage)
+        protected virtual Task ReceiveEvent(IEvent eventMessage, bool batchSave = false)
             => Task.FromResult<IList<IEvent>>(Array.Empty<IEvent>());
 
         /// <summary>
@@ -208,22 +210,26 @@ namespace ExtenFlow.Actors
         protected virtual Task<object> ReceiveQuery(IQuery query)
             => Task.FromException<object>(new NotSupportedException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.QueryNotSupported, query?.GetType().Name, this.ActorName())));
 
-        private async Task<IList<IEvent>> ReceiveMessage(IMessage message)
+        private async Task HandleCommand(ICommand command)
         {
-            if (message is IQuery query)
+            var events = await ReceiveCommand(command);
+            Guid batchId = await MessageQueue.Send(events);
+            foreach (IEvent anEvent in events)
             {
-                return new List<IEvent>(new[] { new QueryResultEvent(query, await ReceiveQuery(query)) });
+                await ReceiveEvent(anEvent, true);
             }
-            if (message is ICommand command)
-            {
-                return await ReceiveCommand(command);
-            }
-            if (message is IEvent @event)
-            {
-                return await ReceiveEvent(@event);
-            }
-            await ReceiveNotification(message);
-            return new List<IEvent>();
+            await SetStateData();
+            await MessageQueue.ConfirmSend(batchId);
+            return;
         }
+
+        private Task ReceiveQueueMessage(IMessage message)
+            => message switch
+            {
+                IQuery query => ReceiveQuery(query),
+                ICommand command => HandleCommand(command),
+                IEvent @event => ReceiveEvent(@event, false),
+                _ => ReceiveNotification(message)
+            };
     }
 }

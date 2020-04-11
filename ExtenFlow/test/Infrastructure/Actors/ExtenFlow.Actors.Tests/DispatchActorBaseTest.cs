@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
+using ExtenFlow.Messages;
 using ExtenFlow.Messages.Dispatcher;
 
 using FluentAssertions;
@@ -21,6 +23,38 @@ namespace ExtenFlow.Actors.Tests
     public class DispatchActorBaseTest
     {
         private const string _stateName = "FakeDispatch";
+
+        [Fact]
+        public async Task CreateCommand_CheckValue()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var messageQueue = new Mock<IMessageQueue>();
+            var state = new FakeState { FakeGuid = Guid.NewGuid(), FakeString = "hello world", FakeInt = 2000 };
+            stateManager.Setup(manager => manager.SetStateAsync(_stateName, state, It.IsAny<CancellationToken>())).Verifiable();
+            FakeDispatchActor testDemoActor = await CreateActor(stateManager.Object, messageQueue.Object, Guid.NewGuid());
+
+            await testDemoActor.Tell(new CreateFakeDispatch(state.FakeGuid, state.FakeInt, state.FakeString));
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task CreateCommand_ExpectCreatedEvent()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var messageQueue = new Mock<IMessageQueue>();
+            var state = new FakeState { FakeGuid = Guid.NewGuid(), FakeString = "hello world", FakeInt = 2000 };
+            var events = new List<IEvent>(new[] { new FakeDispatchCreated(state.FakeGuid, state.FakeInt, state.FakeString) });
+            messageQueue
+                .Setup(messageQueue => messageQueue.Send(events))
+                .Verifiable();
+            messageQueue
+                .Setup(messageQueue => messageQueue.ConfirmSend(It.IsAny<Guid>()))
+                .Verifiable();
+            FakeDispatchActor testDemoActor = await CreateActor(stateManager.Object, messageQueue.Object, Guid.NewGuid());
+
+            await testDemoActor.Tell(new CreateFakeDispatch(state.FakeGuid, state.FakeInt, state.FakeString));
+            stateManager.VerifyAll();
+        }
 
         [Fact]
         public async Task GetFakeInt_CheckValue()

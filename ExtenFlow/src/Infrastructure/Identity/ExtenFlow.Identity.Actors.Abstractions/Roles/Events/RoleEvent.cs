@@ -1,5 +1,5 @@
 ﻿using System;
-
+using ExtenFlow.Identity.Models;
 using ExtenFlow.Messages;
 
 namespace ExtenFlow.Identity.Actors

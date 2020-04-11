@@ -28,7 +28,7 @@ namespace ExtenFlow.Identity.Actors
         /// <param name="messageId">The message identifier.</param>
         /// <param name="dateTime">The date time.</param>
         public RenameRole(string aggregateId, string name, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
-            : base(string.Empty, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+            : base(aggregateId, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
         {
             Name = name;
         }

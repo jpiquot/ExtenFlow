@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Globalization;
 using System.Reflection;
-
+using System.Resources;
 using Dapr.Actors;
 using Dapr.Actors.Client;
 
 using Paramore.Brighter;
+
+[assembly: NeutralResourcesLanguage("en")]
 
 namespace ExtenFlow.Messages.BrighterBroker
 {
