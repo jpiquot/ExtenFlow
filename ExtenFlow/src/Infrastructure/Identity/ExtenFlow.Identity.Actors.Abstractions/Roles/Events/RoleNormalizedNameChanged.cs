@@ -1,46 +1,37 @@
 ﻿using System;
 
-namespace ExtenFlow.Identity.Actors.Role.Command
+namespace ExtenFlow.Identity.Actors
 {
     /// <summary>
-    /// New role created
+    /// Role normilized name changed
     /// </summary>
     /// <seealso cref="ExtenFlow.Identity.Actors.RoleEvent"/>
-    public class RoleCreated : RoleEvent
+    public class RoleNormilizedNameChanged : RoleEvent
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleCreated"/> class.
+        /// Initializes a new instance of the <see cref="RoleNormilizedNameChanged"/> class.
         /// </summary>
         /// <remarks>This constructor must not be used. It has been added for serializers</remarks>
         [Obsolete("Can only be used by serializers")]
-        public RoleCreated()
+        public RoleNormilizedNameChanged()
         {
-            Name = string.Empty;
             NormalizedName = string.Empty;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleCreated"/> class.
+        /// Initializes a new instance of the <see cref="RoleNormilizedNameChanged"/> class.
         /// </summary>
         /// <param name="aggregateId">The role id</param>
-        /// <param name="name">The role name.</param>
         /// <param name="normalizedName">The role normalized name.</param>
         /// <param name="userId">The user identifier.</param>
         /// <param name="correlationId">The correlation identifier.</param>
         /// <param name="messageId">The message identifier.</param>
         /// <param name="dateTime">The date and time.</param>
-        public RoleCreated(string aggregateId, string name, string normalizedName, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
+        public RoleNormilizedNameChanged(string aggregateId, string normalizedName, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
             : base(aggregateId, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
         {
-            Name = name;
             NormalizedName = normalizedName;
         }
-
-        /// <summary>
-        /// Gets the new role name.
-        /// </summary>
-        /// <value>The name.</value>
-        public string Name { get; }
 
         /// <summary>
         /// Gets the new role normalized name.

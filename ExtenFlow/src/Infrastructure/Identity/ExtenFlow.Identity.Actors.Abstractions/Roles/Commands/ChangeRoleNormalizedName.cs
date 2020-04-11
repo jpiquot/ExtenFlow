@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ExtenFlow.Identity.Actors.Role.Command
+namespace ExtenFlow.Identity.Actors
 {
     /// <summary>
     /// Change role normalized name
