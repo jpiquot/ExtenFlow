@@ -124,6 +124,15 @@ namespace ExtenFlow.Actors.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Message aggregate identifier mismatch. Expected=&apos;{0}; Message=&apos;{1}&apos;..
+        /// </summary>
+        public static string MessageAggregateIdMismatch {
+            get {
+                return ResourceManager.GetString("MessageAggregateIdMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The message is not a command..
         /// </summary>
         public static string MessageNotCommand {

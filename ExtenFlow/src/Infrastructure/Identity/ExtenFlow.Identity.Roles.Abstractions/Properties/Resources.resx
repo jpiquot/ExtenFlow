@@ -117,40 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ActorStateNotInitialized" xml:space="preserve">
-    <value>The actor state has not been initialized for actor {0} with Id '{1}'.</value>
+  <data name="DuplicateRole" xml:space="preserve">
+    <value>Duplicate role with '{0}'='{1}'.</value>
   </data>
-  <data name="ActorTypeNotInterface" xml:space="preserve">
-    <value>The actor type is not an interface.</value>
+  <data name="DuplicateToken" xml:space="preserve">
+    <value>Duplicate Token : UserId='{0}'; LoginProvider='{1}'; TokenName='{2}'</value>
   </data>
-  <data name="ArgumentIsNullEmptyOrWhiteSpace" xml:space="preserve">
-    <value>Argument '{0}' is null, empty or white spaces.</value>
+  <data name="RoleConcurrencyFailure" xml:space="preserve">
+    <value>Concurrency check failure when updating the database. Expected stamp : '{0}'; Actual stamp : '{1}'.</value>
   </data>
-  <data name="CommandNotSupported" xml:space="preserve">
-    <value>The command '{0}' is not supported by '{1}'.</value>
+  <data name="RoleIdNotDefined" xml:space="preserve">
+    <value>The role id is not defined</value>
   </data>
-  <data name="IdIsNullEmptyOrWhiteSpace" xml:space="preserve">
-    <value>Id is null, empty or white spaces.</value>
-  </data>
-  <data name="ItemExistInCollection" xml:space="preserve">
-    <value>Item with Id='{0}' already exist in collection {1}.</value>
-  </data>
-  <data name="ItemExistInIndex" xml:space="preserve">
-    <value>Item with Key='{0}' already exist in unique index {1} with another Id='{2}'.</value>
-  </data>
-  <data name="MessageAggregateIdMismatch" xml:space="preserve">
-    <value>Message aggregate identifier mismatch. Expected='{0}; Message='{1}'.</value>
-  </data>
-  <data name="MessageNotCommand" xml:space="preserve">
-    <value>The message is not a command.</value>
-  </data>
-  <data name="MessageNotQuery" xml:space="preserve">
-    <value>The message is not a query.</value>
-  </data>
-  <data name="ObjectNotMessage" xml:space="preserve">
-    <value>The object is not a message.</value>
-  </data>
-  <data name="QueryNotSupported" xml:space="preserve">
-    <value>The query '{0}' is not supported by '{1}'.</value>
+  <data name="RoleNotFound" xml:space="preserve">
+    <value>Role with '{0}'='{1}' not found.</value>
   </data>
 </root>

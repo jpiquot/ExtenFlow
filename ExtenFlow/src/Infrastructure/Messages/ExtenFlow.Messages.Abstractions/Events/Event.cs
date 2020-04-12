@@ -21,14 +21,14 @@ namespace ExtenFlow.Messages
         }
 
         /// <summary>
-        /// The event base class constrcutor
+        /// Initializes a new instance of the <see cref="Event"/> class.
         /// </summary>
-        /// <param name="aggregateType">The type of the aggregate</param>
-        /// <param name="aggregateId">The id of the aggregate</param>
-        /// <param name="userId">The user that submitted the event</param>
-        /// <param name="correlationId">The correlation id that links all the messages together</param>
-        /// <param name="messageId">The is of this event</param>
-        /// <param name="dateTime">The date and time of the event</param>
+        /// <param name="aggregateType">The aggregate that will handle or has handled the message.</param>
+        /// <param name="aggregateId">The aggregate identifier.</param>
+        /// <param name="userId">The identifier of the user that created the message.</param>
+        /// <param name="correlationId">The correlation identifier. Used to link messages together.</param>
+        /// <param name="messageId">The message unique identifier.</param>
+        /// <param name="dateTime">The date time, the message was created.</param>
         protected Event(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
             : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
         {

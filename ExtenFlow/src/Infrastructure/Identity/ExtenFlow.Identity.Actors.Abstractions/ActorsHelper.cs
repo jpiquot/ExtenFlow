@@ -13,13 +13,6 @@ namespace ExtenFlow.Identity.Actors
     public static class IdentityActors
     {
         /// <summary>
-        /// Creates the role actor.
-        /// </summary>
-        /// <param name="roleId">The role identifier.</param>
-        /// <returns>The actor instance interface</returns>
-        public static IRoleActor Role(Guid roleId) => ActorProxy.Create<IRoleActor>(new ActorId(roleId.ToString()), "RoleActor");
-
-        /// <summary>
         /// Creates the role claims actor.
         /// </summary>
         /// <param name="roleId">The role identifier.</param>

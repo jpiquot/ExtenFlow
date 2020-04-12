@@ -22,14 +22,14 @@ namespace ExtenFlow.Messages
         }
 
         /// <summary>
-        /// The base request constructor
+        /// Initializes a new instance of the <see cref="Request"/> class.
         /// </summary>
-        /// <param name="aggregateType">Type of the aggregate that will handle the request</param>
-        /// <param name="aggregateId">The id of the aggregate</param>
-        /// <param name="userId">The id of the user submitting the request</param>
-        /// <param name="correlationId">The correlation id used to link requests and messages</param>
-        /// <param name="messageId">The id of the request</param>
-        /// <param name="dateTime">The date and time of the submission</param>
+        /// <param name="aggregateType">The aggregate that will handle or has handled the message.</param>
+        /// <param name="aggregateId">The aggregate identifier.</param>
+        /// <param name="userId">The identifier of the user that created the message.</param>
+        /// <param name="correlationId">The correlation identifier. Used to link messages together.</param>
+        /// <param name="messageId">The message unique identifier.</param>
+        /// <param name="dateTime">The date time, the message was created.</param>
         protected Request(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
         {
         }

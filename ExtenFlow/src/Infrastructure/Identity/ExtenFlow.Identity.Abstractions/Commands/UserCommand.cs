@@ -1,7 +1,7 @@
 ﻿using System;
 
-using ExtenFlow.Messages;
 using ExtenFlow.Identity.Users.Aggregates;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Identity.Users.Commands
 {
@@ -21,15 +21,18 @@ namespace ExtenFlow.Identity.Users.Commands
         }
 
         /// <summary>
-        /// A command for the user aggregate constructor
+        /// Initializes a new instance of the <see cref="UserCommand"/> class.
         /// </summary>
-        /// <param name="aggregateId">The id of the user</param>
-        /// <param name="userId">The id of the user submitting this command</param>
-        /// <param name="correlationId">The correlation id</param>
-        /// <param name="messageId">The id of this command</param>
-        /// <param name="dateTime">The created date and time of the command</param>
-        protected UserCommand(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            : base(UserAggregateDefinition.Name, aggregateId, userId, correlationId, messageId, dateTime)
+        /// <param name="aggregateId">Aggragate Id</param>
+        /// <param name="concurrencyStamp">Concurrency stamp used for optimistic concurrency check.</param>
+        /// <param name="userId">The user submitting the command</param>
+        /// <param name="correlationId">
+        /// The correlation id used to chain messages, queries, commands and events
+        /// </param>
+        /// <param name="messageId">The Id of this command</param>
+        /// <param name="dateTime">The date time of the command submission</param>
+        protected UserCommand(string aggregateId, string? concurrencyStamp, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            : base(UserAggregateDefinition.Name, aggregateId, concurrencyStamp, userId, correlationId, messageId, dateTime)
         {
         }
     }

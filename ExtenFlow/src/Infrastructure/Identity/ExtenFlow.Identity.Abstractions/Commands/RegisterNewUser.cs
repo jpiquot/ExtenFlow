@@ -16,16 +16,6 @@ namespace ExtenFlow.Identity.Users.Commands
         /// <summary>
         /// Register new user command constructor
         /// </summary>
-        /// <remarks>Do not use. Defined to be used by serializers</remarks>
-        [Obsolete("Can only be used by serializers", true)]
-        protected RegisterNewUser()
-        {
-            Password = string.Empty;
-        }
-
-        /// <summary>
-        /// Register new user command constructor
-        /// </summary>
         /// <param name="aggregateId">The id of the new user</param>
         /// <param name="password">The user password</param>
         public RegisterNewUser(string aggregateId, string password) : this(aggregateId, password, aggregateId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
@@ -52,7 +42,7 @@ namespace ExtenFlow.Identity.Users.Commands
         /// <param name="messageId">The id of this command</param>
         /// <param name="dateTime">The created date and time of the command</param>
         [JsonConstructor]
-        public RegisterNewUser(string aggregateId, string password, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateId, userId, correlationId, messageId, dateTime)
+        public RegisterNewUser(string aggregateId, string password, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateId, null, userId, correlationId, messageId, dateTime)
         {
             if (string.IsNullOrWhiteSpace(password))
             {
@@ -63,6 +53,16 @@ namespace ExtenFlow.Identity.Users.Commands
                 throw new ArgumentNullException(nameof(aggregateId));
             }
             Password = password;
+        }
+
+        /// <summary>
+        /// Register new user command constructor
+        /// </summary>
+        /// <remarks>Do not use. Defined to be used by serializers</remarks>
+        [Obsolete("Can only be used by serializers", true)]
+        protected RegisterNewUser()
+        {
+            Password = string.Empty;
         }
 
         /// <summary>

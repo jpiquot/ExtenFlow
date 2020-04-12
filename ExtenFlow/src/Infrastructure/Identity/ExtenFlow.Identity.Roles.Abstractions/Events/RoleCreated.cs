@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace ExtenFlow.Identity.Actors
+namespace ExtenFlow.Identity.Roles
 {
     /// <summary>
     /// New role created
     /// </summary>
-    /// <seealso cref="ExtenFlow.Identity.Actors.RoleEvent"/>
+    /// <seealso cref="RoleEvent"/>
     public class RoleCreated : RoleEvent
     {
         /// <summary>
@@ -22,13 +22,15 @@ namespace ExtenFlow.Identity.Actors
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleCreated"/> class.
         /// </summary>
-        /// <param name="aggregateId">The role id</param>
-        /// <param name="name">The role name.</param>
-        /// <param name="normalizedName">The role normalized name.</param>
-        /// <param name="userId">The user identifier.</param>
-        /// <param name="correlationId">The correlation identifier.</param>
-        /// <param name="messageId">The message identifier.</param>
-        /// <param name="dateTime">The date and time.</param>
+        /// <param name="aggregateId">Aggragate Id.</param>
+        /// <param name="name">The role new name.</param>
+        /// <param name="normalizedName">The role new normalized name.</param>
+        /// <param name="userId">The user submitting the command.</param>
+        /// <param name="correlationId">
+        /// The correlation id used to chain messages, queries, commands and events.
+        /// </param>
+        /// <param name="messageId">The Id of this command.</param>
+        /// <param name="dateTime">The date time of the command submission.</param>
         public RoleCreated(string aggregateId, string name, string normalizedName, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
             : base(aggregateId, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
         {

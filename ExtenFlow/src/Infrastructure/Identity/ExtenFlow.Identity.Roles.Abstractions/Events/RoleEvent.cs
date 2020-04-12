@@ -2,7 +2,7 @@
 using ExtenFlow.Identity.Models;
 using ExtenFlow.Messages;
 
-namespace ExtenFlow.Identity.Actors
+namespace ExtenFlow.Identity.Roles
 {
     /// <summary>
     /// Base Role event class
@@ -23,11 +23,13 @@ namespace ExtenFlow.Identity.Actors
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleEvent"/> class.
         /// </summary>
-        /// <param name="aggregateId">The aggregate identifier.</param>
-        /// <param name="userId">The user identifier.</param>
-        /// <param name="correlationId">The correlation identifier.</param>
-        /// <param name="messageId">The message identifier.</param>
-        /// <param name="dateTime">The date time.</param>
+        /// <param name="aggregateId">Aggragate Id.</param>
+        /// <param name="userId">The user submitting the command.</param>
+        /// <param name="correlationId">
+        /// The correlation id used to chain messages, queries, commands and events.
+        /// </param>
+        /// <param name="messageId">The Id of this command.</param>
+        /// <param name="dateTime">The date time of the command submission.</param>
         protected RoleEvent(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(nameof(Role), aggregateId, userId, correlationId, messageId, dateTime)
         {
         }

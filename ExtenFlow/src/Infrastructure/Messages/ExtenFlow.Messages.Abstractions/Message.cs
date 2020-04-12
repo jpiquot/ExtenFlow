@@ -7,13 +7,13 @@ using System.Diagnostics;
 namespace ExtenFlow.Messages
 {
     /// <summary>
-    /// The base class for all messages
+    /// The base class for all messages.
     /// </summary>
     [DebuggerDisplay("{AggregateType}:{AggregateId}")]
     public abstract class Message : IMessage
     {
         /// <summary>
-        /// The message default constructor
+        /// The message default constructor.
         /// </summary>
         /// <remarks>Do not use this constructor. For serializer usage only.</remarks>
         [Obsolete("Can only be used by serializers")]
@@ -28,14 +28,18 @@ namespace ExtenFlow.Messages
         }
 
         /// <summary>
-        /// The base message constructor
+        /// Initializes a new instance of the <see cref="Message"/> class.
         /// </summary>
-        /// <param name="aggregateType">The aggregate that will handle or has handled the message</param>
-        /// <param name="aggregateId">The aggregate id</param>
-        /// <param name="userId">The user that created the message</param>
-        /// <param name="correlationId">The correlation id to link messages</param>
-        /// <param name="messageId">The id of the message</param>
-        /// <param name="dateTime">The date and time the message was created</param>
+        /// <param name="aggregateType">The aggregate that will handle or has handled the message.</param>
+        /// <param name="aggregateId">The aggregate identifier.</param>
+        /// <param name="userId">The identifier of the user that created the message.</param>
+        /// <param name="correlationId">The correlation identifier. Used to link messages together.</param>
+        /// <param name="messageId">The message unique identifier.</param>
+        /// <param name="dateTime">The date time, the message was created.</param>
+        /// <exception cref="ArgumentNullException">userId</exception>
+        /// <exception cref="ArgumentNullException">aggregateType</exception>
+        /// <exception cref="ArgumentNullException">correlationId</exception>
+        /// <exception cref="ArgumentNullException">messageId</exception>
         protected Message(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
         {
             if (string.IsNullOrWhiteSpace(userId))
@@ -63,7 +67,7 @@ namespace ExtenFlow.Messages
         }
 
         /// <summary>
-        /// The aggregate id
+        /// The aggregate that will handle or has handled the message.
         /// </summary>
         public string? AggregateId { get; [Obsolete]set; }
 
@@ -80,17 +84,17 @@ namespace ExtenFlow.Messages
         public Guid CorrelationId { get; [Obsolete]set; }
 
         /// <summary>
-        /// Message created date and time
+        /// Message created date and time.
         /// </summary>
         public DateTimeOffset DateTime { get; [Obsolete]set; }
 
         /// <summary>
-        /// The message unique identifier
+        /// The message unique identifier.
         /// </summary>
         public Guid MessageId { get; [Obsolete]set; }
 
         /// <summary>
-        /// The id of the message creator
+        /// The id of the message creator.
         /// </summary>
         public string UserId { get; [Obsolete]set; }
     }

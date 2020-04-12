@@ -182,8 +182,12 @@ namespace ExtenFlow.Actors
             => Task.FromException<IList<IEvent>>(new NotSupportedException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.CommandNotSupported, command?.GetType().Name, this.ActorName())));
 
         /// <summary>
-        /// Receive an event.
+        /// Receives the specified event.
         /// </summary>
+        /// <param name="eventMessage">The event</param>
+        /// <param name="batchSave">
+        /// if set to <c>true</c> do not save data. It will be done at the end of the batch.
+        /// </param>
         protected virtual Task ReceiveEvent(IEvent eventMessage, bool batchSave = false)
             => Task.FromResult<IList<IEvent>>(Array.Empty<IEvent>());
 
@@ -212,6 +216,11 @@ namespace ExtenFlow.Actors
 
         private async Task HandleCommand(ICommand command)
         {
+            if (Id.GetId() != command.AggregateId)
+            {
+                // Message aggregate identifier mismatch. Expected='{0}; Message='{1}'.
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.MessageAggregateIdMismatch, Id.GetId(), command.AggregateId));
+            }
             var events = await ReceiveCommand(command);
             Guid batchId = await MessageQueue.Send(events);
             foreach (IEvent anEvent in events)
