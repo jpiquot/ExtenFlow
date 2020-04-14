@@ -80,7 +80,7 @@ namespace ExtenFlow.Identity.Actors
             {
                 throw new ArgumentOutOfRangeException(Resources.UserIdNotDefined);
             }
-            if (State?.Id != default && user.ConcurrencyStamp != State.ConcurrencyStamp)
+            if (State.Id != default && user.ConcurrencyStamp != State.ConcurrencyStamp)
             {
                 return IdentityResult.Failed(_errorDescriber.ConcurrencyFailure());
             }

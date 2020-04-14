@@ -42,10 +42,6 @@ namespace ExtenFlow.Identity.Actors
             {
                 return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
-            if (State == null)
-            {
-                State = new Dictionary<string, HashSet<string>>();
-            }
             ClaimValues(claimType).Add(claimValue);
             return SetStateData();
         }

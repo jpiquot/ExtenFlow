@@ -23,7 +23,7 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [JsonConstructor]
         public FakeUserCommand(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            : base(aggregateId, userId, correlationId, messageId, dateTime)
+            : base(aggregateId, null, userId, correlationId, messageId, dateTime)
         {
         }
     }

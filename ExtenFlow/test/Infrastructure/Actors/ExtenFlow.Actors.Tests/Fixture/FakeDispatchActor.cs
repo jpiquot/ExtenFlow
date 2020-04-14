@@ -21,7 +21,7 @@ namespace ExtenFlow.Actors.Tests
         {
         }
 
-        public ChangeFakeIntDispatch(Guid fakeGuid, int fakeInt) : base("FakeDispatch", fakeGuid.ToString(), "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        public ChangeFakeIntDispatch(Guid fakeGuid, int fakeInt) : base("FakeDispatch", fakeGuid.ToString(), null, "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
         {
             FakeInt = fakeInt;
         }
@@ -36,7 +36,7 @@ namespace ExtenFlow.Actors.Tests
         {
         }
 
-        public CreateFakeDispatch(Guid fakeGuid, int fakeInt, string fakeString) : base("FakeDispatch", fakeGuid.ToString(), "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        public CreateFakeDispatch(Guid fakeGuid, int fakeInt, string fakeString) : base("FakeDispatch", fakeGuid.ToString(), null, "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
         {
             FakeGuid = fakeGuid;
             FakeInt = fakeInt;
@@ -69,7 +69,7 @@ namespace ExtenFlow.Actors.Tests
 
     public class FakeDispatchUnknownCommand : Command
     {
-        public FakeDispatchUnknownCommand() : base("FakeDispatch", null, "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        public FakeDispatchUnknownCommand() : base("FakeDispatch", null, null, "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
         {
         }
     }
@@ -144,10 +144,6 @@ namespace ExtenFlow.Actors.Tests
 
         private Task On(FakeDispatchCreated create, bool batchSave)
         {
-            if (State == null)
-            {
-                State = new FakeState();
-            }
             State.FakeGuid = create.FakeGuid;
             State.FakeInt = create.FakeInt;
             State.FakeString = create.FakeString;

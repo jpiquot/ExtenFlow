@@ -1,6 +1,7 @@
 ﻿using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
+using ExtenFlow.EventStorage;
 using ExtenFlow.Messages.Dispatcher;
 
 namespace ExtenFlow.Actors
@@ -13,6 +14,8 @@ namespace ExtenFlow.Actors
     public abstract class EventSourceActorBase<T> : DispatchActorBase<T>
         where T : class, new()
     {
+        private readonly IEventStore _eventStore;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EventSourceActorBase{T}"/> class.
         /// </summary>
@@ -32,6 +35,7 @@ namespace ExtenFlow.Actors
             IActorStateManager? actorStateManager)
             : base(actorService, actorId, messageQueue, actorStateManager)
         {
+            _eventStore = eventStore;
         }
     }
 }

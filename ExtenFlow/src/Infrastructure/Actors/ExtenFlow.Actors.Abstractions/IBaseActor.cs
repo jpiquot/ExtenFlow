@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+using Dapr.Actors;
+
 namespace ExtenFlow.Actors
 {
     /// <summary>
     /// Message dispatcher Actor
     /// </summary>
-    public interface IBaseActor<T>
+    public interface IBaseActor<T> : IActor
     {
         /// <summary>
         /// Gets the state.

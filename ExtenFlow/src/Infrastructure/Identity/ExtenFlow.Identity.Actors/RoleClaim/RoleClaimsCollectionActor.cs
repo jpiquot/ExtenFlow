@@ -50,10 +50,6 @@ namespace ExtenFlow.Identity.Actors
             {
                 throw new ArgumentOutOfRangeException(Resources.ClaimTypeNotDefined);
             }
-            if (State == null)
-            {
-                State = new RoleClaimsCollectionState();
-            }
             if (!State.RoleIds.Contains(roleClaim.RoleId))
             {
                 State.RoleIds.Add(roleClaim.RoleId);
@@ -138,10 +134,6 @@ namespace ExtenFlow.Identity.Actors
             if (roleClaim.ClaimType == default)
             {
                 throw new ArgumentOutOfRangeException(Resources.ClaimTypeNotDefined);
-            }
-            if (State == null)
-            {
-                State = new RoleClaimsCollectionState();
             }
             if (!State.RoleIds.Contains(roleClaim.RoleId))
             {
