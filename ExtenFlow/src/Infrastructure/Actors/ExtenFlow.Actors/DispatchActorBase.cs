@@ -17,7 +17,7 @@ namespace ExtenFlow.Actors
     /// <typeparam name="T"></typeparam>
     /// <seealso cref="ExtenFlow.Actors.ActorBase{T}"/>
     public abstract class DispatchActorBase<T> : ActorBase<T>, IDispatchActor, IRemindable
-        where T : class
+        where T : class, new()
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DispatchActorBase{T}"/> class.
@@ -31,7 +31,7 @@ namespace ExtenFlow.Actors
         protected DispatchActorBase(
             ActorService actorService,
             ActorId actorId,
-            IMessageQueue messageQueue,
+            IEventBus messageQueue,
             IActorStateManager? actorStateManager)
             : base(actorService, actorId, actorStateManager)
         {
@@ -42,7 +42,7 @@ namespace ExtenFlow.Actors
         /// Gets the message queue.
         /// </summary>
         /// <value>The message queue.</value>
-        public IMessageQueue MessageQueue { get; }
+        public IEventBus MessageQueue { get; }
 
         /// <summary>
         /// Asks to execute a query.

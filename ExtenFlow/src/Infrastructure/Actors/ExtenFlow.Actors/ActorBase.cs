@@ -14,8 +14,9 @@ namespace ExtenFlow.Actors
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <seealso cref="Actor"/>
     public abstract class ActorBase<TState> : Actor, IRemindable, IBaseActor<TState>
-        where TState : class
+        where TState : class, new()
     {
+        private TState? _state;
         private string? _stateName;
 
         /// <summary>
@@ -34,7 +35,8 @@ namespace ExtenFlow.Actors
         /// Gets or sets the state.
         /// </summary>
         /// <value>The state.</value>
-        protected TState? State { get; set; }
+        protected TState State
+            => _state ?? (_state = new TState());
 
         /// <summary>
         /// Gets the name of the state.
@@ -48,7 +50,7 @@ namespace ExtenFlow.Actors
         /// <returns></returns>
         public Task<TState> GetStateValue()
             // The actor state has not been initialized for actor {0} with Id '{1}'.
-            => (State != null) ?
+            => (_state != null) ?
                     Task.FromResult(State) :
                     Task.FromException<TState>(new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.ActorStateNotInitialized, this.ActorName(), Id.GetId())));
 
@@ -65,6 +67,11 @@ namespace ExtenFlow.Actors
         /// <param name="reminderName">The reminder name</param>
         public virtual Task RegisterReminder(TimeSpan dueTime, TimeSpan period, byte[]? state = null, string? reminderName = null)
             => RegisterReminderAsync(reminderName ?? this.ActorName(), state, dueTime, period);
+
+        /// <summary>
+        /// Clears the state.
+        /// </summary>
+        protected void ClearState() => _state = null;
 
         /// <summary>
         /// Override this method to initialize the members, initialize state or register timers.
@@ -84,12 +91,12 @@ namespace ExtenFlow.Actors
         {
             try
             {
-                State = await StateManager.GetStateAsync<TState>(this.ActorName());
+                _state = await StateManager.GetStateAsync<TState>(this.ActorName());
             }
 #pragma warning disable CA1031 // Do not catch general exception types
             catch (KeyNotFoundException)
             {
-                State = null;
+                _state = null;
             }
 #pragma warning restore CA1031 // Do not catch general exception types
         }
@@ -99,6 +106,11 @@ namespace ExtenFlow.Actors
         /// </summary>
         /// <returns></returns>
         protected virtual Task SetStateData()
-            => (State == null) ? StateManager.RemoveStateAsync(StateName) : StateManager.SetStateAsync(StateName, State);
+            => (_state == null) ? StateManager.RemoveStateAsync(StateName) : StateManager.SetStateAsync(StateName, State);
+
+        /// <summary>
+        /// Clears the state.
+        /// </summary>
+        protected bool StateIsNull() => _state == null;
     }
 }

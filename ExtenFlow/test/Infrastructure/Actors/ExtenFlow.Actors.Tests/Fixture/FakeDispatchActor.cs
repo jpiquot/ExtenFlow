@@ -109,7 +109,7 @@ namespace ExtenFlow.Actors.Tests
 
     internal class FakeDispatchActor : DispatchActorBase<FakeState>, IFakeDispatchActor
     {
-        public FakeDispatchActor(ActorService actorService, ActorId actorId, IMessageQueue messageQueue, IActorStateManager actorStateManager = null) : base(actorService, actorId, messageQueue, actorStateManager)
+        public FakeDispatchActor(ActorService actorService, ActorId actorId, IEventBus messageQueue, IActorStateManager actorStateManager = null) : base(actorService, actorId, messageQueue, actorStateManager)
         {
         }
 

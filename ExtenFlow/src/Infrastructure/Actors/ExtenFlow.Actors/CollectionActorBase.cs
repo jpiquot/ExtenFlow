@@ -37,10 +37,6 @@ namespace ExtenFlow.Actors
             {
                 return Task.FromException(new ArgumentException(Properties.Resources.IdIsNullEmptyOrWhiteSpace));
             }
-            if (State == null)
-            {
-                State = new HashSet<string>();
-            }
             else if (State.Contains(id))
             {
                 // Item with Id='{0}' already exist in collection {1}.
@@ -86,7 +82,7 @@ namespace ExtenFlow.Actors
             State.Remove(id);
             if (State.Count == 0)
             {
-                State = null;
+                ClearState();
             }
             return SetStateData();
         }

@@ -37,7 +37,7 @@ namespace ExtenFlow.Identity.Roles
         public RoleActor(
             ActorService actorService,
             ActorId actorId,
-            IMessageQueue messageQueue,
+            IEventBus messageQueue,
             IActorStateManager? actorStateManager = null) : base(actorService, actorId, messageQueue, actorStateManager)
         {
         }
@@ -107,14 +107,14 @@ namespace ExtenFlow.Identity.Roles
         /// <param name="event">The event.</param>
         /// <param name="batcheSave">if set to <c>true</c> [batche save].</param>
         /// <returns></returns>
-        protected override Task ReceiveEvent(IEvent @event, bool batcheSave = false)
+        protected override async Task ReceiveEvent(IEvent @event, bool batcheSave = false)
             => @event switch
             {
-                RoleCreated create => Handle(create),
-                RoleDeleted delete => Handle(delete),
-                RoleRenamed rename => Handle(rename),
-                RoleNormalizedNameChanged changeNormalizedName => Handle(changeNormalizedName),
-                _ => base.ReceiveEvent(@event)
+                RoleCreated create => Apply(create),
+                RoleDeleted delete => Apply(delete),
+                RoleRenamed rename => Apply(rename),
+                RoleNormalizedNameChanged changeNormalizedName => Apply(changeNormalizedName),
+                _ => await base.ReceiveEvent(@event)
             };
 
         /// <summary>
@@ -131,6 +131,25 @@ namespace ExtenFlow.Identity.Roles
                         RoleNormalizedNameChanged changeNormalizedName => Handle(changeNormalizedName),
                         _ => Task.FromException<object>(new ArgumentOutOfRangeException(nameof(query)))
                     };
+
+        private void Apply(RoleNormalizedNameChanged changeNormalizedName)
+        {
+            if (State != null)
+            {
+            }
+        }
+
+        private void Apply(RoleRenamed rename)
+        {
+        }
+
+        private void Apply(RoleDeleted delete)
+        {
+        }
+
+        private void Apply(RoleCreated create)
+        {
+        }
 
         /// <summary>
         /// Delete the role.

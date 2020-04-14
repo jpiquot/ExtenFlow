@@ -7,7 +7,7 @@ namespace ExtenFlow.Messages.Dispatcher
     /// <summary>
     /// Message receiver
     /// </summary>
-    public interface IMessageQueue
+    public interface IEventBus
     {
         /// <summary>
         /// Confirms the event send=t in the batch.

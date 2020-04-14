@@ -36,10 +36,6 @@ namespace ExtenFlow.Actors
             {
                 return Task.FromException(new ArgumentException(Properties.Resources.IdIsNullEmptyOrWhiteSpace));
             }
-            if (State == null)
-            {
-                State = new Dictionary<string, string>();
-            }
             if (State.TryGetValue(key, out string? currentId))
             {
                 if (!id.Equals(currentId, StringComparison.InvariantCulture))
@@ -132,7 +128,7 @@ namespace ExtenFlow.Actors
             State.Remove(key);
             if (State.Count == 0)
             {
-                State = null;
+                ClearState();
             }
             return SetStateData();
         }
