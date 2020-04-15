@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;+
-
-254+
-
-25*%O§§§§§§§§
+using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
@@ -29,7 +26,7 @@ namespace ExtenFlow.EventStorage.DaprActors.Tests
         public async Task EventStoreStreamActor_GetState_ExpectGetStateAsync()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var events = new[] { new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent() };
+            FakeEvent[] events = new[] { new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent() };
             var state = new EventStoreStreamState();
             state.Append(events);
             stateManager.Setup(manager => manager.GetStateAsync<EventStoreStreamState>(_stateName, It.IsAny<CancellationToken>()))
@@ -59,6 +56,24 @@ namespace ExtenFlow.EventStorage.DaprActors.Tests
             CheckValues(state.Read(), result);
 
             stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task EventStoreStreamActor_ReadAfterFive_ExpectFiveAfterEvents()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            FakeEvent[] testEvents1 = new[] { new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent() };
+            FakeEvent[] testEvents2 = new[] { new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent(), new FakeEvent() };
+            var state = new EventStoreStreamState();
+            state.Append(testEvents1);
+            state.Append(testEvents2);
+            stateManager.Setup(manager => manager.GetStateAsync<EventStoreStreamState>(_stateName, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(state))
+                .Verifiable();
+
+            EventStoreStreamActor testDemoActor = await CreateActor(stateManager.Object, EventStoreStreamActor.CreateStreamId(testEvents1[0].AggregateType, testEvents1[0].AggregateId));
+            IList<IEvent> result = await testDemoActor.Read(testEvents1.Last().MessageId, 5);
+            CheckValues(testEvents2.Take(5).ToList<IEvent>(), result);
         }
 
         private static void CheckValues(IList<IEvent> expected, IList<IEvent> actual)

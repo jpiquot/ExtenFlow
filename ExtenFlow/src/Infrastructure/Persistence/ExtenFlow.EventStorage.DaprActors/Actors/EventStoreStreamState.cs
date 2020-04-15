@@ -63,15 +63,21 @@ namespace ExtenFlow.EventStorage.DaprActors
             }
             var result = new List<IEvent>((take == 0) ? _events.Count : Math.Min(take, _events.Count));
             bool afterIdFound = false;
+            int count = 0;
             foreach (IEvent @event in _events)
             {
                 if (afterIdFound || afterId == null)
                 {
                     result.Add(@event);
+                    count++;
                 }
                 if (afterId != null && @event.MessageId == afterId)
                 {
                     afterIdFound = true;
+                }
+                if (take > 0 && count == take)
+                {
+                    break;
                 }
             }
             if (afterId != null && !afterIdFound)
@@ -79,7 +85,7 @@ namespace ExtenFlow.EventStorage.DaprActors
                 // The event with Id='{0}' not found in the event store.
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.EventNotFoundInStore, afterId), nameof(afterId));
             }
-            return _events;
+            return result;
         }
     }
 }
