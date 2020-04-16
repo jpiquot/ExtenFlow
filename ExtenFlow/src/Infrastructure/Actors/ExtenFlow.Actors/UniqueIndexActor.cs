@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
+
 using ExtenFlow.Services;
 
 namespace ExtenFlow.Actors
@@ -13,15 +14,15 @@ namespace ExtenFlow.Actors
     /// The index actor base class
     /// </summary>
     /// <seealso cref="Actor"/>
-    public abstract class UniqueIndexActorBase : ActorBase<Dictionary<string, string>>, IUniqueIndexService
+    public class UniqueIndexActor : ActorBase<Dictionary<string, string>>, IUniqueIndexActor, IUniqueIndexService
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UniqueIndexActorBase"/> class.
+        /// Initializes a new instance of the <see cref="UniqueIndexActor"/> class.
         /// </summary>
         /// <param name="actorService">The actor service.</param>
         /// <param name="actorId">The actor identifier.</param>
         /// <param name="stateManager">The state manager.</param>
-        protected UniqueIndexActorBase(ActorService actorService, ActorId actorId, IActorStateManager? stateManager) : base(actorService, actorId, stateManager)
+        public UniqueIndexActor(ActorService actorService, ActorId actorId, IActorStateManager? stateManager) : base(actorService, actorId, stateManager)
         {
         }
 

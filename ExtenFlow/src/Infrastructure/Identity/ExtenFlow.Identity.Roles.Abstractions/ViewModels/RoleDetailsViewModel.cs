@@ -10,8 +10,6 @@
 // ***********************************************************************
 using System;
 
-using ExtenFlow.Identity.Models;
-
 namespace ExtenFlow.Identity.Roles
 {
     /// <summary>
@@ -32,25 +30,30 @@ namespace ExtenFlow.Identity.Roles
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleDetailsViewModel"/> class.
         /// </summary>
-        /// <param name="role">The role.</param>
-        /// <exception cref="ArgumentNullException">role</exception>
-        public RoleDetailsViewModel(Role role)
+        /// <param name="id">The identifier.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="normalizedName">Name of the normalized.</param>
+        /// <param name="concurrencyStamp">The concurrency stamp.</param>
+        /// <exception cref="ArgumentException">Id is not defined</exception>
+        /// <exception cref="ArgumentNullException">name</exception>
+        /// <exception cref="ArgumentNullException">normalizedName</exception>
+        public RoleDetailsViewModel(Guid id, string name, string normalizedName, string? concurrencyStamp)
         {
-            if (role == null)
+            if (id == default)
             {
-                throw new ArgumentNullException(nameof(role));
+                throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(id));
             }
-            Id = role.Id;
-            Name = role.Name;
-            NormalizedName = role.NormalizedName;
-            ConcurrencyStamp = role.ConcurrencyStamp;
+            Id = id;
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            NormalizedName = normalizedName ?? throw new ArgumentNullException(nameof(normalizedName));
+            ConcurrencyStamp = concurrencyStamp;
         }
 
         /// <summary>
         /// Gets the concurrency stamp.
         /// </summary>
         /// <value>The concurrency stamp.</value>
-        public string ConcurrencyStamp { get; }
+        public string? ConcurrencyStamp { get; }
 
         /// <summary>
         /// Gets the identifier.

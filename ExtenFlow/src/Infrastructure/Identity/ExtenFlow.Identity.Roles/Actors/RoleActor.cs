@@ -14,8 +14,6 @@ using ExtenFlow.Messages;
 using ExtenFlow.Messages.Dispatcher;
 using ExtenFlow.Services;
 
-using Microsoft.AspNetCore.Identity;
-
 namespace ExtenFlow.Identity.Roles
 {
     /// <summary>
@@ -25,8 +23,6 @@ namespace ExtenFlow.Identity.Roles
     /// <seealso cref="IRoleActor"/>
     public class RoleActor : EventSourcedActorBase<RoleState>, IRoleActor
     {
-        private readonly ICollectionService _collectionService;
-        private readonly IdentityErrorDescriber _errorDescriber = new IdentityErrorDescriber();
         private readonly IUniqueIndexService _nameService;
         private readonly IUniqueIndexService _normalizedNameService;
 
@@ -37,9 +33,6 @@ namespace ExtenFlow.Identity.Roles
         /// The <see cref="ActorService"/> that will host this actor instance.
         /// </param>
         /// <param name="actorId">The Id of the actor.</param>
-        /// <param name="collectionService">
-        /// The collection service that will maintain the role id list.
-        /// </param>
         /// <param name="nameService"></param>
         /// <param name="normalizedNameService"></param>
         /// <param name="messageQueue">The message queue used to publish events.</param>
@@ -48,16 +41,14 @@ namespace ExtenFlow.Identity.Roles
         public RoleActor(
             ActorService actorService,
             ActorId actorId,
-            ICollectionService collectionService,
             IUniqueIndexService nameService,
             IUniqueIndexService normalizedNameService,
             IEventBus messageQueue,
             IEventStore eventStore,
             IActorStateManager? actorStateManager = null) : base(actorService, actorId, messageQueue, eventStore, actorStateManager)
         {
-            _collectionService = collectionService ?? throw new ArgumentNullException(nameof(collectionService));
-            _nameService = nameService ?? throw new ArgumentNullException(nameof(collectionService));
-            _normalizedNameService = normalizedNameService ?? throw new ArgumentNullException(nameof(collectionService));
+            _nameService = nameService ?? throw new ArgumentNullException(nameof(nameService));
+            _normalizedNameService = normalizedNameService ?? throw new ArgumentNullException(nameof(normalizedNameService));
         }
 
         /// <summary>
@@ -85,14 +76,14 @@ namespace ExtenFlow.Identity.Roles
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns></returns>
-        protected override async Task<IList<IEvent>> ReceiveCommand(ICommand command)
+        protected override Task<IList<IEvent>> ReceiveCommand(ICommand command)
             => command switch
             {
                 CreateNewRole create => Handle(create),
                 DeleteRole delete => Handle(delete),
                 RenameRole rename => Handle(rename),
                 ChangeRoleNormalizedName changeNormalizedName => Handle(changeNormalizedName),
-                _ => await base.ReceiveCommand(command)
+                _ => base.ReceiveCommand(command)
             };
 
         /// <summary>
@@ -154,7 +145,14 @@ namespace ExtenFlow.Identity.Roles
             State.NormalizedName = create.NormalizedName;
         }
 
-        private Task<RoleDetailsViewModel> Handle(GetRoleDetails create) => throw new NotImplementedException();
+        private Task<RoleDetailsViewModel> Handle(GetRoleDetails _)
+        {
+            if (StateIsNull())
+            {
+                throw new RoleNotFoundException(CultureInfo.CurrentCulture, nameof(Id), Id.GetId());
+            }
+            return Task.FromResult(new RoleDetailsViewModel(new Guid(Id.GetId()), State.Name ?? string.Empty, State.NormalizedName ?? string.Empty, State.ConcurrencyStamp));
+        }
 
         /// <summary>
         /// Delete the role.
@@ -163,7 +161,7 @@ namespace ExtenFlow.Identity.Roles
         /// <returns>IList&lt;IEvent&gt;.</returns>
         /// <exception cref="ExtenFlow.Identity.Roles.RoleNotFoundException">Id</exception>
         /// <exception cref="ExtenFlow.Identity.Roles.RoleConcurrencyFailureException"></exception>
-        private IList<IEvent> Handle(DeleteRole command)
+        private Task<IList<IEvent>> Handle(DeleteRole command)
         {
             if (StateIsNull())
             {
@@ -173,10 +171,10 @@ namespace ExtenFlow.Identity.Roles
             {
                 throw new RoleConcurrencyFailureException(CultureInfo.CurrentCulture, command.ConcurrencyStamp, State.ConcurrencyStamp);
             }
-            return new[] { new RoleDeleted(Id.GetId(), command.UserId, command.CorrelationId) };
+            return Task.FromResult<IList<IEvent>>(new[] { new RoleDeleted(Id.GetId(), command.UserId, command.CorrelationId) });
         }
 
-        private IList<IEvent> Handle(RenameRole command)
+        private async Task<IList<IEvent>> Handle(RenameRole command)
         {
             if (StateIsNull())
             {
@@ -185,11 +183,15 @@ namespace ExtenFlow.Identity.Roles
             if (State.ConcurrencyStamp != command.ConcurrencyStamp)
             {
                 throw new RoleConcurrencyFailureException(CultureInfo.CurrentCulture, command.ConcurrencyStamp, State.ConcurrencyStamp);
+            }
+            if (await _nameService.Exist(command.Name))
+            {
+                throw new DuplicateRoleException(CultureInfo.CurrentCulture, nameof(RoleState.Name), command.Name);
             }
             return new[] { new RoleRenamed(Id.GetId(), command.Name, command.UserId, command.CorrelationId) };
         }
 
-        private IList<IEvent> Handle(ChangeRoleNormalizedName command)
+        private async Task<IList<IEvent>> Handle(ChangeRoleNormalizedName command)
         {
             if (StateIsNull())
             {
@@ -198,6 +200,10 @@ namespace ExtenFlow.Identity.Roles
             if (State.ConcurrencyStamp != command.ConcurrencyStamp)
             {
                 throw new RoleConcurrencyFailureException(CultureInfo.CurrentCulture, command.ConcurrencyStamp, State.ConcurrencyStamp);
+            }
+            if (await _normalizedNameService.Exist(command.NormalizedName))
+            {
+                throw new DuplicateRoleException(CultureInfo.CurrentCulture, nameof(RoleState.NormalizedName), command.NormalizedName);
             }
             return new[] { new RoleRenamed(Id.GetId(), command.NormalizedName, command.UserId, command.CorrelationId) };
         }
@@ -208,11 +214,19 @@ namespace ExtenFlow.Identity.Roles
         /// <param name="command">The command.</param>
         /// <returns>IList&lt;IEvent&gt;.</returns>
         /// <exception cref="DuplicateRoleException">Id</exception>
-        private IList<IEvent> Handle(CreateNewRole command)
+        private async Task<IList<IEvent>> Handle(CreateNewRole command)
         {
             if (!StateIsNull())
             {
                 throw new DuplicateRoleException(CultureInfo.CurrentCulture, nameof(Id), Id.GetId());
+            }
+            if (await _nameService.Exist(command.Name))
+            {
+                throw new DuplicateRoleException(CultureInfo.CurrentCulture, nameof(RoleState.Name), command.Name);
+            }
+            if (await _normalizedNameService.Exist(command.NormalizedName))
+            {
+                throw new DuplicateRoleException(CultureInfo.CurrentCulture, nameof(RoleState.NormalizedName), command.NormalizedName);
             }
             return new[] { new RoleCreated(Id.GetId(), command.Name, command.NormalizedName, command.UserId, command.CorrelationId) };
         }
