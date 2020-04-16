@@ -14,15 +14,15 @@ namespace ExtenFlow.Actors
     /// The index actor base class
     /// </summary>
     /// <seealso cref="Actor"/>
-    public abstract class CollectionActorBase : ActorBase<HashSet<string>>, ICollectionService
+    public class CollectionActor : ActorBase<HashSet<string>>, ICollectionActor, ICollectionService
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CollectionActorBase"/> class.
+        /// Initializes a new instance of the <see cref="CollectionActor"/> class.
         /// </summary>
         /// <param name="actorService">The actor service.</param>
         /// <param name="actorId">The actor identifier.</param>
         /// <param name="stateManager">The state manager.</param>
-        protected CollectionActorBase(ActorService actorService, ActorId actorId, IActorStateManager? stateManager) : base(actorService, actorId, stateManager)
+        public CollectionActor(ActorService actorService, ActorId actorId, IActorStateManager? stateManager) : base(actorService, actorId, stateManager)
         {
         }
 

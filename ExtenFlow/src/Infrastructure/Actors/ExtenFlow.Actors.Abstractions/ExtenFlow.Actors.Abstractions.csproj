@@ -20,6 +20,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Messages\ExtenFlow.Messages.Abstractions\ExtenFlow.Messages.Abstractions.csproj" />
+		<ProjectReference Include="..\..\Services\ExtenFlow.Services.Abstractions\ExtenFlow.Services.Abstractions.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -123,6 +123,12 @@
   <data name="DuplicateToken" xml:space="preserve">
     <value>Duplicate Token : UserId='{0}'; LoginProvider='{1}'; TokenName='{2}'</value>
   </data>
+  <data name="InvalidRoleName" xml:space="preserve">
+    <value>Invalid role name : '{0}'.</value>
+  </data>
+  <data name="InvalidRoleNormalizedName" xml:space="preserve">
+    <value>Invalid role normalized name : '{0}'.</value>
+  </data>
   <data name="RoleConcurrencyFailure" xml:space="preserve">
     <value>Concurrency check failure when updating the database. Expected stamp : '{0}'; Actual stamp : '{1}'.</value>
   </data>

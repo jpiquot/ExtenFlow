@@ -26,7 +26,7 @@ namespace ExtenFlow.Actors
         /// The <see cref="ActorService"/> that will host this actor instance.
         /// </param>
         /// <param name="actorId">Id for the actor.</param>
-        /// <param name="messageQueue">The message queue.</param>
+        /// <param name="messageQueue">The message queue used to publish events.</param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
         protected DispatchActorBase(
             ActorService actorService,

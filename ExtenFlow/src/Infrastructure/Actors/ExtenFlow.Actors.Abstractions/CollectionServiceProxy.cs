@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using Dapr.Actors;
 using Dapr.Actors.Client;
+
 using ExtenFlow.Services;
 
 namespace ExtenFlow.Actors
@@ -10,15 +10,14 @@ namespace ExtenFlow.Actors
     /// <summary>
     /// The collection proxy
     /// </summary>
-    /// <typeparam name="T">The collection actor type</typeparam>
     /// <seealso cref="ICollectionService"/>
-    public class CollectionServiceProxy<T> : ICollectionService where T : IActor, ICollectionService
+    public class CollectionServiceProxy : ICollectionService
     {
         private readonly string _collectionName;
-        private ICollectionService? _actor;
+        private ICollectionActor? _actor;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CollectionServiceProxy{T}"/> class.
+        /// Initializes a new instance of the <see cref="CollectionServiceProxy"/> class.
         /// </summary>
         /// <param name="collectionName">Name of the collection.</param>
         public CollectionServiceProxy(string collectionName) => _collectionName = collectionName;
@@ -27,7 +26,7 @@ namespace ExtenFlow.Actors
         /// Gets the proxy service.
         /// </summary>
         /// <value>The proxy service.</value>
-        protected ICollectionService ProxyService => _actor ?? (_actor = ActorProxy.Create<T>(new ActorId(_collectionName), GetActorName()));
+        protected ICollectionActor ProxyService => _actor ?? (_actor = ActorProxy.Create<ICollectionActor>(new ActorId(_collectionName), "CollectionActor"));
 
         /// <summary>
         /// Adds a new item with the specified identifier.
@@ -49,15 +48,5 @@ namespace ExtenFlow.Actors
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
         public Task Remove(string id) => ProxyService.Remove(id);
-
-        private static string GetActorName()
-        {
-            string name = typeof(T).Name;
-            if (name?[0] != 'I')
-            {
-                throw new InvalidOperationException(Properties.Resources.ActorTypeNotInterface);
-            }
-            return name.Substring(1);
-        }
     }
 }

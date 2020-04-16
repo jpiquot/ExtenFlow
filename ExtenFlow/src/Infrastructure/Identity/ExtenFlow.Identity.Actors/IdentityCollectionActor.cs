@@ -8,9 +8,9 @@ namespace ExtenFlow.Identity.Actors
     /// <summary>
     /// Collection service actor for the identity module
     /// </summary>
-    /// <seealso cref="ExtenFlow.Actors.CollectionActorBase"/>
+    /// <seealso cref="ExtenFlow.Actors.CollectionActor"/>
     /// <seealso cref="ExtenFlow.Identity.Actors.IIdentityCollectionActor"/>
-    public class IdentityCollectionActor : CollectionActorBase, IIdentityCollectionActor
+    public class IdentityCollectionActor : CollectionActor, IIdentityCollectionActor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="IdentityCollectionActor"/> class.

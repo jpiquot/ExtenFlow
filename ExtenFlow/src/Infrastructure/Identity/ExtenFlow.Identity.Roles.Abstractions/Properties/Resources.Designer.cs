@@ -79,6 +79,24 @@ namespace ExtenFlow.Identity.Roles.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid role name : &apos;{0}&apos;..
+        /// </summary>
+        public static string InvalidRoleName {
+            get {
+                return ResourceManager.GetString("InvalidRoleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid role normalized name : &apos;{0}&apos;..
+        /// </summary>
+        public static string InvalidRoleNormalizedName {
+            get {
+                return ResourceManager.GetString("InvalidRoleNormalizedName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Concurrency check failure when updating the database. Expected stamp : &apos;{0}&apos;; Actual stamp : &apos;{1}&apos;..
         /// </summary>
         public static string RoleConcurrencyFailure {
