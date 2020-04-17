@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ExtenFlow.Identity.Roles
+namespace ExtenFlow.Identity.Roles.Commands
 {
     /// <summary>
     /// Delete role command

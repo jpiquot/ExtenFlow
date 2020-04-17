@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Dapr.Actors;
 
-namespace ExtenFlow.Services
+namespace ExtenFlow.Actors
 {
     /// <summary>
     /// Actor to manage collection of ids.
@@ -14,6 +15,12 @@ namespace ExtenFlow.Services
         /// </summary>
         /// <param name="id">The identifier.</param>
         Task Add(string id);
+
+        /// <summary>
+        /// Gets the ids of all roles.
+        /// </summary>
+        /// <returns>IList&lt;System.String&gt;.</returns>
+        Task<IList<string>> All();
 
         /// <summary>
         /// Check if an item with the specified identifier exists.

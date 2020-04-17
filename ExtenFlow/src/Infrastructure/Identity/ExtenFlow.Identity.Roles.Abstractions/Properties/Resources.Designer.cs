@@ -61,6 +61,15 @@ namespace ExtenFlow.Identity.Roles.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The claim type is not defined..
+        /// </summary>
+        public static string ClaimTypeNotDefined {
+            get {
+                return ResourceManager.GetString("ClaimTypeNotDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate role with &apos;{0}&apos;=&apos;{1}&apos;..
         /// </summary>
         public static string DuplicateRole {

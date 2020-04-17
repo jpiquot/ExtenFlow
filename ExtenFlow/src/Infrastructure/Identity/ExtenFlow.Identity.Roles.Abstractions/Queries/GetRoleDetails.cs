@@ -10,13 +10,13 @@
 // ***********************************************************************
 using System;
 
-namespace ExtenFlow.Identity.Roles
+namespace ExtenFlow.Identity.Roles.Queries
 {
     /// <summary>
     /// Class GetRoleDetails. Implements the <see cref="RoleQuery{RoleDetailsViewModel}"/>
     /// </summary>
     /// <seealso cref="RoleQuery{RoleDetailsViewModel}"/>
-    public class GetRoleDetails : RoleQuery<RoleDetailsViewModel>
+    public class GetRoleDetails : RoleQuery<RoleDetailsModel>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GetRoleDetails"/> class.

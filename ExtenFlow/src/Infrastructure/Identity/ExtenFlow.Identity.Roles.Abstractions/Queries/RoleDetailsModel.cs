@@ -10,25 +10,25 @@
 // ***********************************************************************
 using System;
 
-namespace ExtenFlow.Identity.Roles
+namespace ExtenFlow.Identity.Roles.Queries
 {
     /// <summary>
     /// Role Details view model class.
     /// </summary>
-    public class RoleDetailsViewModel
+    public class RoleDetailsModel
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleDetailsViewModel"/> class.
+        /// Initializes a new instance of the <see cref="RoleDetailsModel"/> class.
         /// </summary>
         [Obsolete("Can only be used by serializers")]
-        public RoleDetailsViewModel()
+        public RoleDetailsModel()
         {
             Name = NormalizedName = ConcurrencyStamp = string.Empty;
             Id = Guid.Empty;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleDetailsViewModel"/> class.
+        /// Initializes a new instance of the <see cref="RoleDetailsModel"/> class.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="name">The name.</param>
@@ -37,7 +37,7 @@ namespace ExtenFlow.Identity.Roles
         /// <exception cref="ArgumentException">Id is not defined</exception>
         /// <exception cref="ArgumentNullException">name</exception>
         /// <exception cref="ArgumentNullException">normalizedName</exception>
-        public RoleDetailsViewModel(Guid id, string name, string normalizedName, string? concurrencyStamp)
+        public RoleDetailsModel(Guid id, string name, string normalizedName, string? concurrencyStamp)
         {
             if (id == default)
             {

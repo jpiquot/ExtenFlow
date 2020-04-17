@@ -3,7 +3,7 @@
 using ExtenFlow.Identity.Models;
 using ExtenFlow.Messages;
 
-namespace ExtenFlow.Identity.Roles
+namespace ExtenFlow.Identity.Roles.Commands
 {
     /// <summary>
     /// Base Role command class

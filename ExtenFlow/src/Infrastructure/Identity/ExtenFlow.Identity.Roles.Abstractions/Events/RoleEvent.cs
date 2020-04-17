@@ -1,8 +1,9 @@
 ﻿using System;
+
 using ExtenFlow.Identity.Models;
 using ExtenFlow.Messages;
 
-namespace ExtenFlow.Identity.Roles
+namespace ExtenFlow.Identity.Roles.Events
 {
     /// <summary>
     /// Base Role event class

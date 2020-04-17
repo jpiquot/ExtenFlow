@@ -1,49 +1,74 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
 using ExtenFlow.Actors;
 using ExtenFlow.Identity.Models;
-using ExtenFlow.Identity.Roles.Stores;
+using ExtenFlow.Identity.Roles.Actors;
+using ExtenFlow.Identity.Roles.Commands;
+using ExtenFlow.Identity.Roles.Exceptions;
+using ExtenFlow.Identity.Roles.Queries;
 using ExtenFlow.Infrastructure;
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
-namespace ExtenFlow.Identity.Roles
+namespace ExtenFlow.Identity.Roles.Stores
 {
     /// <summary>
     /// The Dapr role store
     /// </summary>
     public sealed class ActorRoleStore : IRoleStore
     {
+        private readonly ICollectionActor _collection;
         private readonly IdentityErrorDescriber _describer;
-        private readonly Func<IUniqueIndexActor> _getNameIndex;
-        private readonly Func<IUniqueIndexActor> _getNormaliedNameIndex;
+        private readonly Func<Guid, IRoleActor> _getRoleActor;
+        private readonly Func<Guid, IRoleClaimsActor> _getRoleClaimsActor;
+        private readonly ILogger<ActorRoleStore> _log;
+        private readonly IUniqueIndexActor _normaliedNameIndex;
         private readonly IUser _user;
 
-        private Func<Guid, IRoleActor> _getRoleActor;
+        private bool _disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActorRoleStore"/> class.
         /// </summary>
         /// <param name="user"></param>
         /// <param name="getRoleActor"></param>
-        /// <param name="getNameIndex"></param>
-        /// <param name="getNormaliedNameIndex"></param>
+        /// <param name="collection"></param>
+        /// <param name="normalizedNameIndex"></param>
+        /// <param name="getRoleClaimsActor"></param>
+        /// <param name="logger"></param>
         /// <param name="describer">The describer.</param>
         public ActorRoleStore(
             IUser user,
             Func<Guid, IRoleActor> getRoleActor,
-            Func<IUniqueIndexActor> getNameIndex,
-            Func<IUniqueIndexActor> getNormaliedNameIndex,
-            IdentityErrorDescriber? describer = null)
+            ICollectionActor collection,
+            IUniqueIndexActor normalizedNameIndex,
+            Func<Guid, IRoleClaimsActor> getRoleClaimsActor,
+            ILogger<ActorRoleStore> logger,
+            IdentityErrorDescriber? describer = null
+            )
         {
             _user = user ?? throw new ArgumentNullException(nameof(user));
             _getRoleActor = getRoleActor;
-            _getNameIndex = getNameIndex;
-            _getNormaliedNameIndex = getNormaliedNameIndex;
+            _collection = collection;
+            _normaliedNameIndex = normalizedNameIndex;
+            _getRoleClaimsActor = getRoleClaimsActor;
+            _log = logger;
             _describer = describer ?? new IdentityErrorDescriber();
         }
+
+        /// <summary>
+        /// Gets the roles.
+        /// </summary>
+        /// <value>The roles.</value>
+        public IQueryable<Role> Roles => GetAllRoles().GetAwaiter().GetResult().AsQueryable();
+
+        public Task AddClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
         /// <summary>
         /// Creates the asynchronous.
@@ -53,28 +78,36 @@ namespace ExtenFlow.Identity.Roles
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;IdentityResult&gt;.</returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<IdentityResult> CreateAsync(Role role, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
             _ = role ?? throw new ArgumentNullException(nameof(role));
+            if (role.Id == default)
+            {
+                throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
+            }
             IRoleActor actor = _getRoleActor(role.Id);
             try
             {
                 await actor.Tell(new CreateNewRole(role, _user.Name));
             }
-            catch (RoleConcurrencyFailureException)
+            catch (RoleConcurrencyFailureException e)
             {
+                _log.LogWarning(e.Message);
                 return IdentityResult.Failed(_describer.ConcurrencyFailure());
             }
             catch (DuplicateRoleException e)
             {
+                _log.LogWarning(e.Message);
                 return IdentityResult.Failed(_describer.DuplicateRoleName(e.Message));
             }
             catch (InvalidRoleNameException e)
             {
+                _log.LogWarning(e.Message);
                 return IdentityResult.Failed(_describer.InvalidRoleName(e.Message));
             }
-            RoleDetailsViewModel details = await actor.Ask(new GetRoleDetails(role.Id.ToString(), _user.Name));
+            RoleDetailsModel details = await actor.Ask(new GetRoleDetails(role.Id.ToString(), _user.Name));
             SetRoleValues(role, details);
             return IdentityResult.Success;
         }
@@ -87,27 +120,32 @@ namespace ExtenFlow.Identity.Roles
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;IdentityResult&gt;.</returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<IdentityResult> DeleteAsync(Role role, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
             _ = role ?? throw new ArgumentNullException(nameof(role));
+            if (role.Id == default)
+            {
+                throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
+            }
             IRoleActor actor = _getRoleActor(role.Id);
             try
             {
                 await actor.Tell(new DeleteRole(role.Id.ToString(), role.ConcurrencyStamp, _user.Name));
             }
-            catch (RoleConcurrencyFailureException)
+            catch (RoleConcurrencyFailureException e)
             {
+                _log.LogWarning(e.Message);
                 return IdentityResult.Failed(_describer.ConcurrencyFailure());
             }
             return IdentityResult.Success;
         }
 
         /// <summary>
-        /// Disposes this instance.
+        /// Dispose the store
         /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
-        public void Dispose() { }
+        public void Dispose() => _disposed = true;
 
         /// <summary>
         /// Finds the by identifier asynchronous.
@@ -117,9 +155,10 @@ namespace ExtenFlow.Identity.Roles
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;Role&gt;.</returns>
-        /// <exception cref="NotImplementedException"></exception>
         public async Task<Role> FindByIdAsync(string roleId, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
             if (string.IsNullOrWhiteSpace(roleId))
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(roleId));
@@ -138,12 +177,13 @@ namespace ExtenFlow.Identity.Roles
         /// <returns>Task&lt;Role&gt;.</returns>
         public async Task<Role> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
             if (string.IsNullOrWhiteSpace(normalizedRoleName))
             {
                 throw new ArgumentException(Properties.Resources.InvalidRoleNormalizedName, nameof(normalizedRoleName));
             }
-            IUniqueIndexActor index = _getNormaliedNameIndex();
-            var id = await index.GetIdentifier(normalizedRoleName);
+            string? id = await _normaliedNameIndex.GetIdentifier(normalizedRoleName);
             if (id == null)
             {
 #pragma warning disable CS8603 // Possible null reference return.
@@ -154,6 +194,29 @@ namespace ExtenFlow.Identity.Roles
         }
 
         /// <summary>
+        /// Gets the claims asynchronous.
+        /// </summary>
+        /// <param name="role">The role.</param>
+        /// <param name="cancellationToken">
+        /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
+        /// <returns>Task&lt;IList&lt;Claim&gt;&gt;.</returns>
+        /// <exception cref="ArgumentNullException">role</exception>
+        /// <exception cref="ArgumentException">role</exception>
+        public Task<IList<Claim>> GetClaimsAsync(Role role, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            _ = role ?? throw new ArgumentNullException(nameof(role));
+            if (role.Id == default)
+            {
+                throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
+            }
+            IRoleClaimsActor actor = _getRoleClaimsActor(role.Id);
+            return actor.Ask<IList<Claim>>(new GetRoleClaims(role.Id.ToString(), _user.Name));
+        }
+
+        /// <summary>
         /// Gets the normalized role name asynchronous.
         /// </summary>
         /// <param name="role">The role.</param>
@@ -161,8 +224,17 @@ namespace ExtenFlow.Identity.Roles
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;System.String&gt;.</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public Task<string> GetNormalizedRoleNameAsync(Role role, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public Task<string> GetNormalizedRoleNameAsync(Role role, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            _ = role ?? throw new ArgumentNullException(nameof(role));
+            if (role.Id == default)
+            {
+                throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
+            }
+            return Task.FromResult(role.NormalizedName);
+        }
 
         /// <summary>
         /// Gets the role identifier asynchronous.
@@ -172,8 +244,17 @@ namespace ExtenFlow.Identity.Roles
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;System.String&gt;.</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public Task<string> GetRoleIdAsync(Role role, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public Task<string> GetRoleIdAsync(Role role, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            _ = role ?? throw new ArgumentNullException(nameof(role));
+            if (role.Id == default)
+            {
+                throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
+            }
+            return Task.FromResult(role.Id.ToString());
+        }
 
         /// <summary>
         /// Gets the role name asynchronous.
@@ -183,8 +264,30 @@ namespace ExtenFlow.Identity.Roles
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;System.String&gt;.</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public Task<string> GetRoleNameAsync(Role role, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public Task<string> GetRoleNameAsync(Role role, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            _ = role ?? throw new ArgumentNullException(nameof(role));
+            if (role.Id == default)
+            {
+                throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
+            }
+            return Task.FromResult(role.Name);
+        }
+
+        public Task RemoveClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            _ = role ?? throw new ArgumentNullException(nameof(role));
+            if (role.Id == default)
+            {
+                throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
+            }
+            IRoleClaimsActor actor = _getRoleClaimsActor(role.Id);
+            return actor.Tell(new RemoveRoleClaim(role.Id.ToString(), claim.Type, claim.Value, _user.Name));
+        }
 
         /// <summary>
         /// Sets the normalized role name asynchronous.
@@ -195,8 +298,19 @@ namespace ExtenFlow.Identity.Roles
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task.</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public Task SetNormalizedRoleNameAsync(Role role, string normalizedName, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public async Task SetNormalizedRoleNameAsync(Role role, string normalizedName, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            _ = role ?? throw new ArgumentNullException(nameof(role));
+            IRoleActor actor = _getRoleActor(role.Id);
+            if (role.Id == default)
+            {
+                throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
+            }
+            await actor.Tell(new RenameRole(role.Id.ToString(), role.Name, normalizedName, role.ConcurrencyStamp, _user.Name));
+            SetRoleValues(role, await actor.Ask(new GetRoleDetails(role.Id.ToString(), _user.Name)));
+        }
 
         /// <summary>
         /// Sets the role name asynchronous.
@@ -207,8 +321,19 @@ namespace ExtenFlow.Identity.Roles
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task.</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public Task SetRoleNameAsync(Role role, string roleName, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public async Task SetRoleNameAsync(Role role, string roleName, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            _ = role ?? throw new ArgumentNullException(nameof(role));
+            IRoleActor actor = _getRoleActor(role.Id);
+            if (role.Id == default)
+            {
+                throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
+            }
+            await actor.Tell(new RenameRole(role.Id.ToString(), roleName, role.NormalizedName, role.ConcurrencyStamp, _user.Name));
+            SetRoleValues(role, await actor.Ask(new GetRoleDetails(role.Id.ToString(), _user.Name)));
+        }
 
         /// <summary>
         /// Updates the asynchronous.
@@ -218,21 +343,71 @@ namespace ExtenFlow.Identity.Roles
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;IdentityResult&gt;.</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public Task<IdentityResult> UpdateAsync(Role role, CancellationToken cancellationToken) => throw new NotImplementedException();
+        public async Task<IdentityResult> UpdateAsync(Role role, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            _ = role ?? throw new ArgumentNullException(nameof(role));
+            try
+            {
+                await SetRoleNameAsync(role, role.Name, cancellationToken);
+                await SetNormalizedRoleNameAsync(role, role.NormalizedName, cancellationToken);
+            }
+            catch (RoleConcurrencyFailureException e)
+            {
+                _log.LogWarning(e.Message);
+                return IdentityResult.Failed(_describer.ConcurrencyFailure());
+            }
+            catch (DuplicateRoleException e)
+            {
+                _log.LogWarning(e.Message);
+                return IdentityResult.Failed(_describer.DuplicateRoleName(e.Message));
+            }
+            catch (InvalidRoleNameException e)
+            {
+                _log.LogWarning(e.Message);
+                return IdentityResult.Failed(_describer.InvalidRoleName(e.Message));
+            }
+            catch (InvalidRoleNormalizedNameException e)
+            {
+                _log.LogWarning(e.Message);
+                return IdentityResult.Failed(_describer.InvalidRoleName(e.Message));
+            }
+            return IdentityResult.Success;
+        }
 
-        private static void SetRoleValues(Role role, RoleDetailsViewModel details)
+        private static void SetRoleValues(Role role, RoleDetailsModel details)
         {
             role.Name = details.Name;
             role.NormalizedName = details.NormalizedName;
             role.ConcurrencyStamp = details.ConcurrencyStamp;
         }
 
-        private static Role ToRole(RoleDetailsViewModel details)
+        private static Role ToRole(RoleDetailsModel details)
         {
             var role = new Role();
             SetRoleValues(role, details);
             return role;
+        }
+
+        private async Task<IList<Role>> GetAllRoles()
+        {
+            ThrowIfDisposed();
+            return await Task.WhenAll((await _collection.All())
+                    .Select(p => FindByIdAsync(p, default))
+                    .ToList()
+               );
+        }
+
+        /// <summary>
+        /// Throws if this class has been disposed.
+        /// </summary>
+        private void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().Name);
+            }
         }
     }
 }

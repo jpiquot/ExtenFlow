@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Dapr.Actors;
@@ -45,6 +46,12 @@ namespace ExtenFlow.Actors
             State.Add(id);
             return SetStateData();
         }
+
+        /// <summary>
+        /// Gets all the ids.
+        /// </summary>
+        /// <returns>Task&lt;IList&lt;System.String&gt;&gt;.</returns>
+        public Task<IList<string>> All() => Task.FromResult<IList<string>>(State.ToList());
 
         /// <summary>
         /// Check if an item with the specified identifier exists.

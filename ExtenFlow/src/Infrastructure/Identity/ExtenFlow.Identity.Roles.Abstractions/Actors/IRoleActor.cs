@@ -2,7 +2,7 @@
 
 using ExtenFlow.Actors;
 
-namespace ExtenFlow.Identity.Roles
+namespace ExtenFlow.Identity.Roles.Actors
 {
     /// <summary>
     /// The role actor interface

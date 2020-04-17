@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Resources;
+
 using Dapr.Actors;
 using Dapr.Actors.Client;
 
 #pragma warning disable IDE0060 // Remove unused parameter
 [assembly: NeutralResourcesLanguage("en")]
 
-namespace ExtenFlow.Identity.Roles
+namespace ExtenFlow.Identity.Roles.Actors
 {
     /// <summary>
     /// Role actors helper

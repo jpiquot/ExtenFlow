@@ -3,28 +3,27 @@
 namespace ExtenFlow.Identity.Roles.Commands
 {
     /// <summary>
-    /// Rename role command
+    /// Delete role command
     /// </summary>
     /// <seealso cref="RoleCommand"/>
-    public class RenameRole : RoleCommand
+    public class AddRoleClaim : RoleCommand
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RenameRole"/> class.
+        /// Initializes a new instance of the <see cref="AddRoleClaim"/> class.
         /// </summary>
         /// <remarks>This constructor must not be used. It has been added for serializers</remarks>
         [Obsolete("Can only be used by serializers")]
-        public RenameRole()
+        public AddRoleClaim()
         {
-            Name = string.Empty;
-            NormalizedName = string.Empty;
+            ClaimType = string.Empty;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RenameRole"/> class.
+        /// Initializes a new instance of the <see cref="AddRoleClaim"/> class.
         /// </summary>
         /// <param name="aggregateId">Aggragate Id.</param>
-        /// <param name="name">The role new name.</param>
-        /// <param name="normalizedName"></param>
+        /// <param name="claimType"></param>
+        /// <param name="claimValue"></param>
         /// <param name="concurrencyStamp">Concurrency stamp used for optimistic concurrency check.</param>
         /// <param name="userId">The user submitting the command.</param>
         /// <param name="correlationId">
@@ -32,23 +31,27 @@ namespace ExtenFlow.Identity.Roles.Commands
         /// </param>
         /// <param name="messageId">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        public RenameRole(string aggregateId, string name, string normalizedName, string concurrencyStamp, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
+        public AddRoleClaim(string aggregateId, string claimType, string? claimValue, string concurrencyStamp, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
             : base(aggregateId, concurrencyStamp, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
         {
-            Name = name;
-            NormalizedName = normalizedName;
+            if (string.IsNullOrWhiteSpace(claimType))
+            {
+                throw new ArgumentException(Properties.Resources.ClaimTypeNotDefined, nameof(claimType));
+            }
+            ClaimType = claimType;
+            ClaimValue = claimValue;
         }
 
         /// <summary>
-        /// Gets the new role name.
+        /// Gets the type of the role claim.
         /// </summary>
-        /// <value>The name.</value>
-        public string Name { get; }
+        /// <value>The type of the claim.</value>
+        public string ClaimType { get; }
 
         /// <summary>
-        /// Gets the new normalized role name.
+        /// Gets the role claim value.
         /// </summary>
-        /// <value>The name.</value>
-        public string NormalizedName { get; }
+        /// <value>The claim value.</value>
+        public string? ClaimValue { get; }
     }
 }

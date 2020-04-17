@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace ExtenFlow.Identity.Roles
+namespace ExtenFlow.Identity.Roles.Exceptions
 {
     /// <summary>
     /// Class DuplicateRoleException. Implements the <see cref="System.Exception"/>

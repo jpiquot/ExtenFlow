@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ExtenFlow.Identity.Roles
+namespace ExtenFlow.Identity.Roles.Events
 {
     /// <summary>
     /// New role created

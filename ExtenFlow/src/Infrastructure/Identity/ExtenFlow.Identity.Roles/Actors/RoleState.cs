@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace ExtenFlow.Identity.Roles
+namespace ExtenFlow.Identity.Roles.Actors
 {
     /// <summary>
     /// Class RoleActorState.
