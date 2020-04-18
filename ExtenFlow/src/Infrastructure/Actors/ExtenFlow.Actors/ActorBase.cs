@@ -13,7 +13,7 @@ namespace ExtenFlow.Actors
     /// </summary>
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <seealso cref="Actor"/>
-    public abstract class ActorBase<TState> : Actor, IRemindable, IBaseActor<TState>
+    public abstract class ActorBase<TState> : Actor, IRemindable, IBaseActor
         where TState : class, new()
     {
         private TState? _state;
@@ -48,11 +48,17 @@ namespace ExtenFlow.Actors
         /// Gets the state.
         /// </summary>
         /// <returns></returns>
-        public Task<TState> GetStateValue()
+        public Task<object> GetStateValue()
             // The actor state has not been initialized for actor {0} with Id '{1}'.
             => (_state != null) ?
-                    Task.FromResult(State) :
-                    Task.FromException<TState>(new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.ActorStateNotInitialized, this.ActorName(), Id.GetId())));
+                    Task.FromResult<object>(State) :
+                    Task.FromException<object>(new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.ActorStateNotInitialized, this.ActorName(), Id.GetId())));
+
+        /// <summary>
+        /// Determines whether this instance is initialized.
+        /// </summary>
+        /// <returns>Task&lt;System.Boolean&gt;.</returns>
+        public Task<bool> IsInitialized() => Task.FromResult(_state != null);
 
         /// <inheriteddoc/>
         public virtual Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)

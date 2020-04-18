@@ -21,7 +21,4 @@
 		<ProjectReference Include="..\..\Infrastructure\ExtenFlow.Infrastructure.Abstractions\ExtenFlow.Infrastructure.Abstractions.csproj" />
 		<ProjectReference Include="..\ExtenFlow.Identity.Roles.Abstractions\ExtenFlow.Identity.Roles.Abstractions.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-		<Folder Include="Helpers\" />
-	</ItemGroup>
 </Project>

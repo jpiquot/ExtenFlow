@@ -24,15 +24,14 @@ namespace ExtenFlow.Identity.Roles.Commands
         /// <param name="aggregateId">Aggragate Id.</param>
         /// <param name="claimType"></param>
         /// <param name="claimValue"></param>
-        /// <param name="concurrencyStamp">Concurrency stamp used for optimistic concurrency check.</param>
         /// <param name="userId">The user submitting the command.</param>
         /// <param name="correlationId">
         /// The correlation id used to chain messages, queries, commands and events.
         /// </param>
         /// <param name="messageId">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        public AddRoleClaim(string aggregateId, string claimType, string? claimValue, string concurrencyStamp, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
-            : base(aggregateId, concurrencyStamp, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+        public AddRoleClaim(string aggregateId, string claimType, string? claimValue, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
+            : base(aggregateId, null, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
         {
             if (string.IsNullOrWhiteSpace(claimType))
             {

@@ -29,6 +29,13 @@ namespace ExtenFlow.Actors
         }
 
         /// <summary>
+        /// Actors the name.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>System.String.</returns>
+        public static string ActorName<T>() => ActorName(typeof(T));
+
+        /// <summary>
         /// The actors type name.
         /// </summary>
         /// <param name="actorType">Type of the actor.</param>

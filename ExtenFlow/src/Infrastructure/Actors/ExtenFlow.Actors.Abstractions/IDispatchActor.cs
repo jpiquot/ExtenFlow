@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
 
+using Dapr.Actors;
+
 using ExtenFlow.Messages;
 
 namespace ExtenFlow.Actors
@@ -7,7 +9,7 @@ namespace ExtenFlow.Actors
     /// <summary>
     /// Message dispatcher Actor
     /// </summary>
-    public interface IDispatchActor
+    public interface IDispatchActor : IActor, IBaseActor
     {
         /// <summary>
         /// Ask for a response to the query contained in the spécified envelope.

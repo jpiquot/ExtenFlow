@@ -2,8 +2,6 @@
 
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.Actors;
-
 namespace ExtenFlow.Identity.Actors
 {
     /// <summary>
@@ -21,12 +19,6 @@ namespace ExtenFlow.Identity.Actors
             {
                 throw new ArgumentNullException(nameof(actorRuntime));
             }
-            actorRuntime.RegisterActor<RoleActor>(information
-                => new ActorService(information, (service, id)
-                    => new RoleActor(service, id, CollectionServiceProxyFactory.Create<IdentityCollectionActor, RoleActor>())));
-
-            actorRuntime.RegisterActor<RoleClaimsActor>(information => new ActorService(information, (service, id) => new RoleClaimsActor(service, id)));
-            actorRuntime.RegisterActor<RoleClaimsCollectionActor>(information => new ActorService(information, (service, id) => new RoleClaimsCollectionActor(service, id)));
             actorRuntime.RegisterActor<UserActor>(information => new ActorService(information, (service, id) => new UserActor(service, id)));
             actorRuntime.RegisterActor<UserCollectionActor>(information => new ActorService(information, (service, id) => new UserCollectionActor(service, id)));
             actorRuntime.RegisterActor<UserClaimsActor>(information => new ActorService(information, (service, id) => new UserClaimsActor(service, id)));

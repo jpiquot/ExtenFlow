@@ -8,13 +8,19 @@ namespace ExtenFlow.Actors
     /// <summary>
     /// Message dispatcher Actor
     /// </summary>
-    public interface IBaseActor<T> : IActor
+    public interface IBaseActor : IActor
     {
         /// <summary>
         /// Gets the state.
         /// </summary>
-        /// <returns></returns>
-        Task<T> GetStateValue();
+        /// <returns>The state instance</returns>
+        Task<object> GetStateValue();
+
+        /// <summary>
+        /// Determines whether this instance is initialized.
+        /// </summary>
+        /// <returns>Task&lt;System.Boolean&gt;.</returns>
+        Task<bool> IsInitialized();
 
         /// <summary>
         /// Registers the reminder.

@@ -8,6 +8,8 @@ using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
+using ExtenFlow.EventStorage;
+using ExtenFlow.Messages.Dispatcher;
 
 namespace ExtenFlow.Identity.Roles.Actors
 {
@@ -25,8 +27,11 @@ namespace ExtenFlow.Identity.Roles.Actors
         /// The <see cref="ActorService"/> that will host this actor instance.
         /// </param>
         /// <param name="actorId">The Id of the actor.</param>
+        /// <param name="eventBus"></param>
+        /// <param name="eventStore"></param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
-        public RoleClaimsActor(ActorService actorService, ActorId actorId, IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
+        public RoleClaimsActor(ActorService actorService, ActorId actorId, IEventBus eventBus, IEventStore eventStore, IActorStateManager? actorStateManager = null)
+            : base(actorService, actorId, eventBus, eventStore, actorStateManager)
         {
         }
 
@@ -75,7 +80,7 @@ namespace ExtenFlow.Identity.Roles.Actors
             var list = new List<Tuple<string, string>>();
             if (State != null)
             {
-                foreach (KeyValuePair<string, HashSet<string>> entry in State)
+                foreach (KeyValuePair<string, HashSet<string>> entry in State.Claims)
                 {
                     foreach (string value in entry.Value)
                     {
@@ -113,10 +118,10 @@ namespace ExtenFlow.Identity.Roles.Actors
                 // The actor state has not been initialized for actor {0} with Id '{1}'.
                 throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, ExtenFlow.Actors.Properties.Resources.ActorStateNotInitialized, this.ActorName(), Id.GetId()));
             }
-            if (!State.TryGetValue(claimType, out HashSet<string>? values))
+            if (!State.Claims.TryGetValue(claimType, out HashSet<string>? values))
             {
                 values = new HashSet<string>();
-                State.Add(claimType, values);
+                State.Claims.Add(claimType, values);
             }
             return values;
         }

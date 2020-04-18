@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -68,7 +69,42 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// <value>The roles.</value>
         public IQueryable<Role> Roles => GetAllRoles().GetAwaiter().GetResult().AsQueryable();
 
-        public Task AddClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        /// <summary>
+        /// add claim as an asynchronous operation.
+        /// </summary>
+        /// <param name="role">The role.</param>
+        /// <param name="claim">The claim.</param>
+        /// <param name="cancellationToken">
+        /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
+        /// <exception cref="ArgumentNullException">role</exception>
+        /// <exception cref="ArgumentNullException">claim</exception>
+        /// <exception cref="ArgumentException">role</exception>
+        /// <exception cref="ArgumentException">claim</exception>
+        /// <exception cref="RoleNotFoundException">Id</exception>
+        public async Task AddClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            _ = role ?? throw new ArgumentNullException(nameof(role));
+            _ = claim ?? throw new ArgumentNullException(nameof(claim));
+            if (role.Id == default)
+            {
+                throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
+            }
+            if (string.IsNullOrWhiteSpace(claim.Type))
+            {
+                throw new ArgumentException(Properties.Resources.ClaimTypeNotDefined, nameof(claim));
+            }
+            IRoleActor roleActor = _getRoleActor(role.Id);
+            if (!await roleActor.IsInitialized())
+            {
+                throw new RoleNotFoundException(CultureInfo.CurrentCulture, nameof(Role.Id), role.Id.ToString());
+            }
+            IRoleClaimsActor claimActor = _getRoleClaimsActor(role.Id);
+
+            await claimActor.Tell(new AddRoleClaim(role.Id.ToString(), claim.Type, claim.Value, _user.Name));
+        }
 
         /// <summary>
         /// Creates the asynchronous.
@@ -276,17 +312,41 @@ namespace ExtenFlow.Identity.Roles.Stores
             return Task.FromResult(role.Name);
         }
 
-        public Task RemoveClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// remove claim as an asynchronous operation.
+        /// </summary>
+        /// <param name="role">The role.</param>
+        /// <param name="claim">The claim.</param>
+        /// <param name="cancellationToken">
+        /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
+        /// <exception cref="ArgumentNullException">role</exception>
+        /// <exception cref="ArgumentNullException">claim</exception>
+        /// <exception cref="ArgumentException">role</exception>
+        /// <exception cref="ArgumentException">claim</exception>
+        /// <exception cref="RoleNotFoundException">Id</exception>
+        public async Task RemoveClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
             _ = role ?? throw new ArgumentNullException(nameof(role));
+            _ = claim ?? throw new ArgumentNullException(nameof(claim));
             if (role.Id == default)
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
-            IRoleClaimsActor actor = _getRoleClaimsActor(role.Id);
-            return actor.Tell(new RemoveRoleClaim(role.Id.ToString(), claim.Type, claim.Value, _user.Name));
+            if (string.IsNullOrWhiteSpace(claim.Type))
+            {
+                throw new ArgumentException(Properties.Resources.ClaimTypeNotDefined, nameof(claim));
+            }
+            IRoleActor roleActor = _getRoleActor(role.Id);
+            if (!await roleActor.IsInitialized())
+            {
+                throw new RoleNotFoundException(CultureInfo.CurrentCulture, nameof(Role.Id), role.Id.ToString());
+            }
+            IRoleClaimsActor claimActor = _getRoleClaimsActor(role.Id);
+
+            await claimActor.Tell(new RemoveRoleClaim(role.Id.ToString(), claim.Type, claim.Value, _user.Name));
         }
 
         /// <summary>
