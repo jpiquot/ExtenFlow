@@ -35,7 +35,7 @@ namespace ExtenFlow.Identity.Roles.Events
         {
             if (string.IsNullOrWhiteSpace(claimType))
             {
-                throw new ArgumentException(Properties.Resources.ClaimTypeNotDefined, nameof(claimType));
+                throw new ArgumentException(Properties.Resources.RoleClaimTypeNotDefined, nameof(claimType));
             }
             ClaimType = claimType;
             ClaimValue = claimValue;

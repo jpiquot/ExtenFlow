@@ -94,7 +94,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             }
             if (string.IsNullOrWhiteSpace(claim.Type))
             {
-                throw new ArgumentException(Properties.Resources.ClaimTypeNotDefined, nameof(claim));
+                throw new ArgumentException(Properties.Resources.RoleClaimTypeNotDefined, nameof(claim));
             }
             IRoleActor roleActor = _getRoleActor(role.Id);
             if (!await roleActor.IsInitialized())
@@ -126,7 +126,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             IRoleActor actor = _getRoleActor(role.Id);
             try
             {
-                await actor.Tell(new CreateNewRole(role, _user.Name));
+                await actor.Tell(new AddNewRole(role, _user.Name));
             }
             catch (RoleConcurrencyFailureException e)
             {
@@ -168,7 +168,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             IRoleActor actor = _getRoleActor(role.Id);
             try
             {
-                await actor.Tell(new DeleteRole(role.Id.ToString(), role.ConcurrencyStamp, _user.Name));
+                await actor.Tell(new RemoveRole(role.Id.ToString(), role.ConcurrencyStamp, _user.Name));
             }
             catch (RoleConcurrencyFailureException e)
             {
@@ -337,7 +337,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             }
             if (string.IsNullOrWhiteSpace(claim.Type))
             {
-                throw new ArgumentException(Properties.Resources.ClaimTypeNotDefined, nameof(claim));
+                throw new ArgumentException(Properties.Resources.RoleClaimTypeNotDefined, nameof(claim));
             }
             IRoleActor roleActor = _getRoleActor(role.Id);
             if (!await roleActor.IsInitialized())

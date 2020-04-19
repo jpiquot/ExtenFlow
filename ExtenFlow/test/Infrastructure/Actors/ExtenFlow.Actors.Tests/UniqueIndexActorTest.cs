@@ -23,9 +23,9 @@ namespace ExtenFlow.Actors.Tests
         public async Task UniqueIndexActorAdd_ExpectGetStateAsync()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var state1 = new Dictionary<string, string> { { "Test1", Guid.NewGuid().ToString() }, { "Test2", Guid.NewGuid().ToString() }, { "Test3", Guid.NewGuid().ToString() }, { "Test4", Guid.NewGuid().ToString() }, { "Test5", Guid.NewGuid().ToString() }, { "Test6", Guid.NewGuid().ToString() }, { "Test7", Guid.NewGuid().ToString() } };
+            var state = new Dictionary<string, string> { { "Test1", Guid.NewGuid().ToString() }, { "Test2", Guid.NewGuid().ToString() }, { "Test3", Guid.NewGuid().ToString() }, { "Test4", Guid.NewGuid().ToString() }, { "Test5", Guid.NewGuid().ToString() }, { "Test6", Guid.NewGuid().ToString() }, { "Test7", Guid.NewGuid().ToString() } };
             stateManager.Setup(manager => manager.GetStateAsync<Dictionary<string, string>>(_stateName, It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(state1))
+                .Returns(Task.FromResult(state))
                 .Verifiable();
             UniqueIndexActor testDemoActor = await CreateActor(stateManager.Object, "Test UniqueIndexActor");
 
@@ -33,8 +33,8 @@ namespace ExtenFlow.Actors.Tests
             result.Should().NotBeNull();
             result.Should().BeOfType<Dictionary<string, string>>();
             var ids = (Dictionary<string, string>)result;
-            ids.Should().HaveCount(state1.Count);
-            ids.Should().BeEquivalentTo(state1);
+            ids.Should().HaveCount(state.Count);
+            ids.Should().BeEquivalentTo(state);
 
             stateManager.VerifyAll();
         }
@@ -58,6 +58,74 @@ namespace ExtenFlow.Actors.Tests
             state1.Should().HaveCount(10);
             state1.Should().Contain(state2);
 
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task UniqueIndexActorExist_ExpectFalse()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var state = new Dictionary<string, string> { { "Test1", Guid.NewGuid().ToString() }, { "Test2", Guid.NewGuid().ToString() }, { "Test3", Guid.NewGuid().ToString() }, { "Test4", Guid.NewGuid().ToString() }, { "Test5", Guid.NewGuid().ToString() }, { "Test6", Guid.NewGuid().ToString() }, { "Test7", Guid.NewGuid().ToString() } };
+            stateManager.Setup(manager => manager.GetStateAsync<Dictionary<string, string>>(_stateName, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(state))
+                .Verifiable();
+            UniqueIndexActor testDemoActor = await CreateActor(stateManager.Object, "Test UniqueIndexActor");
+
+            bool result = await testDemoActor.Exist("Test99");
+            result.Should().BeFalse();
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task UniqueIndexActorExist_ExpectTrue()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var state = new Dictionary<string, string> { { "Test1", Guid.NewGuid().ToString() }, { "Test2", Guid.NewGuid().ToString() }, { "Test3", Guid.NewGuid().ToString() }, { "Test4", Guid.NewGuid().ToString() }, { "Test5", Guid.NewGuid().ToString() }, { "Test6", Guid.NewGuid().ToString() }, { "Test7", Guid.NewGuid().ToString() } };
+            stateManager.Setup(manager => manager.GetStateAsync<Dictionary<string, string>>(_stateName, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(state))
+                .Verifiable();
+            UniqueIndexActor testDemoActor = await CreateActor(stateManager.Object, "Test UniqueIndexActor");
+
+            bool result = await testDemoActor.Exist("Test4");
+            result.Should().BeTrue();
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task UniqueIndexActorGetIdentifier_ExpectIdentifier()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var state = new Dictionary<string, string> { { "Test1", Guid.NewGuid().ToString() }, { "Test2", Guid.NewGuid().ToString() }, { "Test3", Guid.NewGuid().ToString() }, { "Test4", Guid.NewGuid().ToString() }, { "Test5", Guid.NewGuid().ToString() }, { "Test6", Guid.NewGuid().ToString() }, { "Test7", Guid.NewGuid().ToString() } };
+            stateManager.Setup(manager => manager.GetStateAsync<Dictionary<string, string>>(_stateName, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(state))
+                .Verifiable();
+            UniqueIndexActor testDemoActor = await CreateActor(stateManager.Object, "Test UniqueIndexActor");
+
+            string result = await testDemoActor.GetIdentifier("Test1");
+            result.Should().Be(state["Test1"]);
+            result = await testDemoActor.GetIdentifier("Test4");
+            result.Should().Be(state["Test4"]);
+            result = await testDemoActor.GetIdentifier("Test7");
+            result.Should().Be(state["Test7"]);
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task UniqueIndexActorGetKey_ExpectKey()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var state = new Dictionary<string, string> { { "Test1", Guid.NewGuid().ToString() }, { "Test2", Guid.NewGuid().ToString() }, { "Test3", Guid.NewGuid().ToString() }, { "Test4", Guid.NewGuid().ToString() }, { "Test5", Guid.NewGuid().ToString() }, { "Test6", Guid.NewGuid().ToString() }, { "Test7", Guid.NewGuid().ToString() } };
+            stateManager.Setup(manager => manager.GetStateAsync<Dictionary<string, string>>(_stateName, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(state))
+                .Verifiable();
+            UniqueIndexActor testDemoActor = await CreateActor(stateManager.Object, "Test UniqueIndexActor");
+
+            string result = await testDemoActor.GetKey(state["Test1"]);
+            result.Should().Be("Test1");
+            result = await testDemoActor.GetKey(state["Test4"]);
+            result.Should().Be("Test4");
+            result = await testDemoActor.GetKey(state["Test7"]);
+            result.Should().Be("Test7");
             stateManager.VerifyAll();
         }
 

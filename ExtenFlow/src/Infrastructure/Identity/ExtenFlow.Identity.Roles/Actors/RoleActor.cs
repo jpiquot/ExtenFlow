@@ -78,8 +78,8 @@ namespace ExtenFlow.Identity.Roles.Actors
         protected override Task<IList<IEvent>> ReceiveCommand(ICommand command)
             => command switch
             {
-                CreateNewRole create => Handle(create),
-                DeleteRole delete => Handle(delete),
+                AddNewRole create => Handle(create),
+                RemoveRole delete => Handle(delete),
                 RenameRole rename => Handle(rename),
                 _ => base.ReceiveCommand(command)
             };
@@ -94,11 +94,11 @@ namespace ExtenFlow.Identity.Roles.Actors
         {
             switch (@event)
             {
-                case RoleCreated create:
+                case NewRoleAdded create:
                     Apply(create);
                     break;
 
-                case RoleDeleted delete:
+                case RoleRemoved delete:
                     Apply(delete);
                     break;
 
@@ -127,10 +127,10 @@ namespace ExtenFlow.Identity.Roles.Actors
         private void Apply(RoleRenamed rename)
             => State.Name = rename.Name;
 
-        private void Apply(RoleDeleted _)
+        private void Apply(RoleRemoved _)
             => ClearState();
 
-        private void Apply(RoleCreated create)
+        private void Apply(NewRoleAdded create)
         {
             State.Name = create.Name;
             State.NormalizedName = create.NormalizedName;
@@ -152,7 +152,7 @@ namespace ExtenFlow.Identity.Roles.Actors
         /// <returns>IList&lt;IEvent&gt;.</returns>
         /// <exception cref="RoleNotFoundException">Id</exception>
         /// <exception cref="RoleConcurrencyFailureException"></exception>
-        private Task<IList<IEvent>> Handle(DeleteRole command)
+        private Task<IList<IEvent>> Handle(RemoveRole command)
         {
             if (StateIsNull())
             {
@@ -162,7 +162,7 @@ namespace ExtenFlow.Identity.Roles.Actors
             {
                 throw new RoleConcurrencyFailureException(CultureInfo.CurrentCulture, command.ConcurrencyStamp, State.ConcurrencyStamp);
             }
-            return Task.FromResult<IList<IEvent>>(new[] { new RoleDeleted(Id.GetId(), command.UserId, command.CorrelationId) });
+            return Task.FromResult<IList<IEvent>>(new[] { new RoleRemoved(Id.GetId(), command.UserId, command.CorrelationId) });
         }
 
         private Task<IList<IEvent>> Handle(RenameRole command)
@@ -184,7 +184,7 @@ namespace ExtenFlow.Identity.Roles.Actors
         /// <param name="command">The command.</param>
         /// <returns>IList&lt;IEvent&gt;.</returns>
         /// <exception cref="DuplicateRoleException">Id</exception>
-        private async Task<IList<IEvent>> Handle(CreateNewRole command)
+        private async Task<IList<IEvent>> Handle(AddNewRole command)
         {
             if (!StateIsNull())
             {
@@ -194,7 +194,7 @@ namespace ExtenFlow.Identity.Roles.Actors
             {
                 throw new DuplicateRoleException(CultureInfo.CurrentCulture, nameof(RoleState.NormalizedName), command.NormalizedName);
             }
-            return new[] { new RoleCreated(Id.GetId(), command.Name, command.NormalizedName, command.UserId, command.CorrelationId) };
+            return new[] { new NewRoleAdded(Id.GetId(), command.Name, command.NormalizedName, command.UserId, command.CorrelationId) };
         }
     }
 }

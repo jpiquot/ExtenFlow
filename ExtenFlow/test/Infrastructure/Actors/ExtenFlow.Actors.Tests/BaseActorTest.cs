@@ -38,6 +38,23 @@ namespace ExtenFlow.Actors.Tests
             stateManager.VerifyAll();
         }
 
+        [Fact]
+        public async Task ActorBaseIsInitialized_ExpectTrue()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var state = new FakeState { FakeGuid = Guid.NewGuid(), FakeString = "hello world", FakeInt = 2000 };
+            stateManager.Setup(manager => manager.GetStateAsync<FakeState>(_stateName, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(state))
+                .Verifiable();
+            // stateManager.Setup(manager => manager.SetStateAsync("FakeBase", state, It.IsAny<CancellationToken>())).Verifiable();
+            FakeBaseActor testDemoActor = await CreateActor(stateManager.Object, state.FakeGuid);
+
+            bool result = await testDemoActor.IsInitialized();
+            result.Should().BeTrue();
+
+            stateManager.VerifyAll();
+        }
+
         private async Task<FakeBaseActor> CreateActor(IActorStateManager actorStateManager, Guid id)
         {
             var actorTypeInformation = ActorTypeInformation.Get(typeof(FakeBaseActor));

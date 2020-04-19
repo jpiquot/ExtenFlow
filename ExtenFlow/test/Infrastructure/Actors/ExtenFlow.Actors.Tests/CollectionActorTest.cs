@@ -23,9 +23,9 @@ namespace ExtenFlow.Actors.Tests
         public async Task CollectionActorAdd_ExpectGetStateAsync()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var state1 = new HashSet<string> { Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString() };
+            var state = new HashSet<string> { Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString() };
             stateManager.Setup(manager => manager.GetStateAsync<HashSet<string>>(_stateName, It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(state1))
+                .Returns(Task.FromResult(state))
                 .Verifiable();
             CollectionActor testDemoActor = await CreateActor(stateManager.Object, "Test Collection");
 
@@ -33,8 +33,8 @@ namespace ExtenFlow.Actors.Tests
             result.Should().NotBeNull();
             result.Should().BeOfType<HashSet<string>>();
             var ids = (HashSet<string>)result;
-            ids.Should().HaveCount(state1.Count);
-            ids.Should().BeEquivalentTo(state1);
+            ids.Should().HaveCount(state.Count);
+            ids.Should().BeEquivalentTo(state);
 
             stateManager.VerifyAll();
         }
@@ -57,6 +57,58 @@ namespace ExtenFlow.Actors.Tests
             await testDemoActor.Add(state2[2]);
             state1.Should().HaveCount(8);
             state1.Should().Contain(state2);
+
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task CollectionActorAll_ExpectsAllItems()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var list = new List<string> { Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString() };
+            var state = new HashSet<string>(list);
+            stateManager.Setup(manager => manager.GetStateAsync<HashSet<string>>(_stateName, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(state))
+                .Verifiable();
+            CollectionActor testDemoActor = await CreateActor(stateManager.Object, "Test Collection");
+
+            IList<string> result = await testDemoActor.All();
+            result.Should().HaveCount(list.Count);
+            result.Should().Contain(state);
+
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task CollectionActorExist_ExpectsFalse()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var list = new List<string> { Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString() };
+            var state = new HashSet<string>(list);
+            stateManager.Setup(manager => manager.GetStateAsync<HashSet<string>>(_stateName, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(state))
+                .Verifiable();
+            CollectionActor testDemoActor = await CreateActor(stateManager.Object, "Test Collection");
+
+            bool result = await testDemoActor.Exist("this value does not exist");
+            result.Should().BeFalse();
+
+            stateManager.VerifyAll();
+        }
+
+        [Fact]
+        public async Task CollectionActorExist_ExpectsTrue()
+        {
+            var stateManager = new Mock<IActorStateManager>();
+            var list = new List<string> { Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString() };
+            var state = new HashSet<string>(list);
+            stateManager.Setup(manager => manager.GetStateAsync<HashSet<string>>(_stateName, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(state))
+                .Verifiable();
+            CollectionActor testDemoActor = await CreateActor(stateManager.Object, "Test Collection");
+
+            bool result = await testDemoActor.Exist(list[3]);
+            result.Should().BeTrue();
 
             stateManager.VerifyAll();
         }

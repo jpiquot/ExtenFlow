@@ -117,25 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DuplicateRole" xml:space="preserve">
-    <value>Duplicate role with '{0}'='{1}'.</value>
+  <data name="DuplicateToken" xml:space="preserve">
+    <value>Duplicate Token : UserId='{0}'; LoginProvider='{1}'; TokenName='{2}'</value>
   </data>
-  <data name="InvalidRoleName" xml:space="preserve">
-    <value>Invalid role name : '{0}'.</value>
+  <data name="DuplicateUser" xml:space="preserve">
+    <value>Duplicate user with '{0}'='{1}'.</value>
   </data>
-  <data name="InvalidRoleNormalizedName" xml:space="preserve">
-    <value>Invalid role normalized name : '{0}'.</value>
+  <data name="InvalidUserName" xml:space="preserve">
+    <value>Invalid user name : '{0}'.</value>
   </data>
-  <data name="RoleClaimTypeNotDefined" xml:space="preserve">
-    <value>The role claim type is not defined.</value>
+  <data name="InvalidUserNormalizedName" xml:space="preserve">
+    <value>Invalid user normalized name : '{0}'.</value>
   </data>
-  <data name="RoleConcurrencyFailure" xml:space="preserve">
-    <value>Concurrency check failure when updating the role in database. Expected stamp : '{0}'; Actual stamp : '{1}'.</value>
+  <data name="UserClaimTypeNotDefined" xml:space="preserve">
+    <value>The user claim type is not defined.</value>
   </data>
-  <data name="RoleIdNotDefined" xml:space="preserve">
-    <value>The role id is not defined</value>
+  <data name="UserConcurrencyFailure" xml:space="preserve">
+    <value>Concurrency check failure when updating user in the database. Expected stamp : '{0}'; Actual stamp : '{1}'.</value>
   </data>
-  <data name="RoleNotFound" xml:space="preserve">
-    <value>Role with '{0}'='{1}' not found.</value>
+  <data name="UserIdNotDefined" xml:space="preserve">
+    <value>The user id is not defined</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User with '{0}'='{1}' not found.</value>
   </data>
 </root>

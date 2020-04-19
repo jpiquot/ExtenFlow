@@ -1,25 +1,25 @@
 ﻿using System;
 
-namespace ExtenFlow.Identity.Roles.Events
+namespace ExtenFlow.Identity.Users.Commands
 {
     /// <summary>
-    /// Role claim added event
+    /// Delete user command
     /// </summary>
-    /// <seealso cref="RoleEvent"/>
-    public class RoleClaimAdded : RoleEvent
+    /// <seealso cref="UserCommand"/>
+    public class RemoveUserClaim : UserCommand
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleClaimAdded"/> class.
+        /// Initializes a new instance of the <see cref="RemoveUserClaim"/> class.
         /// </summary>
         /// <remarks>This constructor must not be used. It has been added for serializers</remarks>
         [Obsolete("Can only be used by serializers")]
-        public RoleClaimAdded()
+        public RemoveUserClaim()
         {
             ClaimType = string.Empty;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleClaimAdded"/> class.
+        /// Initializes a new instance of the <see cref="RemoveUserClaim"/> class.
         /// </summary>
         /// <param name="aggregateId">Aggragate Id.</param>
         /// <param name="claimType"></param>
@@ -30,25 +30,25 @@ namespace ExtenFlow.Identity.Roles.Events
         /// </param>
         /// <param name="messageId">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        public RoleClaimAdded(string aggregateId, string claimType, string claimValue, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
-            : base(aggregateId, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+        public RemoveUserClaim(string aggregateId, string claimType, string? claimValue, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
+            : base(aggregateId, null, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
         {
             if (string.IsNullOrWhiteSpace(claimType))
             {
-                throw new ArgumentException(Properties.Resources.RoleClaimTypeNotDefined, nameof(claimType));
+                throw new ArgumentException(Properties.Resources.UserClaimTypeNotDefined, nameof(claimType));
             }
             ClaimType = claimType;
             ClaimValue = claimValue;
         }
 
         /// <summary>
-        /// Gets the type of the role claim.
+        /// Gets the type of the user claim.
         /// </summary>
         /// <value>The type of the claim.</value>
         public string ClaimType { get; }
 
         /// <summary>
-        /// Gets the role claim value.
+        /// Gets the user claim value.
         /// </summary>
         /// <value>The claim value.</value>
         public string? ClaimValue { get; }

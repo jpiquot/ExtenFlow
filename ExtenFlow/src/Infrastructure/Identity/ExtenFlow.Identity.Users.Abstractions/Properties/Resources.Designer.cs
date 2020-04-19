@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ExtenFlow.Identity.Roles.Properties {
+namespace ExtenFlow.Identity.Users.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ExtenFlow.Identity.Roles.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ExtenFlow.Identity.Roles.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ExtenFlow.Identity.Users.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,65 +61,74 @@ namespace ExtenFlow.Identity.Roles.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Duplicate role with &apos;{0}&apos;=&apos;{1}&apos;..
+        ///   Looks up a localized string similar to Duplicate Token : UserId=&apos;{0}&apos;; LoginProvider=&apos;{1}&apos;; TokenName=&apos;{2}&apos;.
         /// </summary>
-        public static string DuplicateRole {
+        public static string DuplicateToken {
             get {
-                return ResourceManager.GetString("DuplicateRole", resourceCulture);
+                return ResourceManager.GetString("DuplicateToken", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid role name : &apos;{0}&apos;..
+        ///   Looks up a localized string similar to Duplicate user with &apos;{0}&apos;=&apos;{1}&apos;..
         /// </summary>
-        public static string InvalidRoleName {
+        public static string DuplicateUser {
             get {
-                return ResourceManager.GetString("InvalidRoleName", resourceCulture);
+                return ResourceManager.GetString("DuplicateUser", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid role normalized name : &apos;{0}&apos;..
+        ///   Looks up a localized string similar to Invalid user name : &apos;{0}&apos;..
         /// </summary>
-        public static string InvalidRoleNormalizedName {
+        public static string InvalidUserName {
             get {
-                return ResourceManager.GetString("InvalidRoleNormalizedName", resourceCulture);
+                return ResourceManager.GetString("InvalidUserName", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The role claim type is not defined..
+        ///   Looks up a localized string similar to Invalid user normalized name : &apos;{0}&apos;..
         /// </summary>
-        public static string RoleClaimTypeNotDefined {
+        public static string InvalidUserNormalizedName {
             get {
-                return ResourceManager.GetString("RoleClaimTypeNotDefined", resourceCulture);
+                return ResourceManager.GetString("InvalidUserNormalizedName", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Concurrency check failure when updating the role in database. Expected stamp : &apos;{0}&apos;; Actual stamp : &apos;{1}&apos;..
+        ///   Looks up a localized string similar to The user claim type is not defined..
         /// </summary>
-        public static string RoleConcurrencyFailure {
+        public static string UserClaimTypeNotDefined {
             get {
-                return ResourceManager.GetString("RoleConcurrencyFailure", resourceCulture);
+                return ResourceManager.GetString("UserClaimTypeNotDefined", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The role id is not defined.
+        ///   Looks up a localized string similar to Concurrency check failure when updating user in the database. Expected stamp : &apos;{0}&apos;; Actual stamp : &apos;{1}&apos;..
         /// </summary>
-        public static string RoleIdNotDefined {
+        public static string UserConcurrencyFailure {
             get {
-                return ResourceManager.GetString("RoleIdNotDefined", resourceCulture);
+                return ResourceManager.GetString("UserConcurrencyFailure", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Role with &apos;{0}&apos;=&apos;{1}&apos; not found..
+        ///   Looks up a localized string similar to The user id is not defined.
         /// </summary>
-        public static string RoleNotFound {
+        public static string UserIdNotDefined {
             get {
-                return ResourceManager.GetString("RoleNotFound", resourceCulture);
+                return ResourceManager.GetString("UserIdNotDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User with &apos;{0}&apos;=&apos;{1}&apos; not found..
+        /// </summary>
+        public static string UserNotFound {
+            get {
+                return ResourceManager.GetString("UserNotFound", resourceCulture);
             }
         }
     }
