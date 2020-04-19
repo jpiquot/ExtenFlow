@@ -31,7 +31,7 @@ namespace ExtenFlow.Actors.Tests
             var messageQueue = new Mock<IEventBus>();
             var state = new FakeState { FakeGuid = Guid.NewGuid(), FakeString = "hello world", FakeInt = 2000 };
             stateManager.Setup(manager => manager.SetStateAsync(_stateName, state, It.IsAny<CancellationToken>())).Verifiable();
-            FakeDispatchActor testDemoActor = await CreateActor(stateManager.Object, messageQueue.Object, Guid.NewGuid());
+            FakeDispatchActor testDemoActor = await CreateActor(stateManager.Object, messageQueue.Object, state.FakeGuid);
 
             await testDemoActor.Tell(new CreateFakeDispatch(state.FakeGuid, state.FakeInt, state.FakeString));
             stateManager.VerifyAll();
@@ -52,7 +52,7 @@ namespace ExtenFlow.Actors.Tests
             messageQueue
                 .Setup(messageQueue => messageQueue.ConfirmSend(messageId))
                 .Verifiable();
-            FakeDispatchActor testDemoActor = await CreateActor(stateManager.Object, messageQueue.Object, Guid.NewGuid());
+            FakeDispatchActor testDemoActor = await CreateActor(stateManager.Object, messageQueue.Object, state.FakeGuid);
 
             await testDemoActor.Tell(new CreateFakeDispatch(state.FakeGuid, state.FakeInt, state.FakeString));
             stateManager.VerifyAll();
@@ -85,7 +85,7 @@ namespace ExtenFlow.Actors.Tests
 
             await Invoking(async () => await testDemoActor.Tell(new FakeDispatchUnknownCommand()))
                             .Should()
-                            .ThrowAsync<NotSupportedException>();
+                            .ThrowAsync<InvalidOperationException>();
         }
 
         [Fact]

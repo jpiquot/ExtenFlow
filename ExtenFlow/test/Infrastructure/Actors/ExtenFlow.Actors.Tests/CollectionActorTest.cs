@@ -17,7 +17,7 @@ namespace ExtenFlow.Actors.Tests
 {
     public class CollectionActorTest
     {
-        private const string _stateName = "FakeCollection";
+        private const string _stateName = "Collection";
 
         [Fact]
         public async Task CollectionActorAdd_ExpectGetStateAsync()

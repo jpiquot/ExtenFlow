@@ -17,7 +17,7 @@ namespace ExtenFlow.Actors.Tests
 {
     public class UniqueIndexActorTest
     {
-        private const string _stateName = "FakeUniqueIndexActor";
+        private const string _stateName = "UniqueIndex";
 
         [Fact]
         public async Task UniqueIndexActorAdd_ExpectGetStateAsync()
