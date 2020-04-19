@@ -34,7 +34,7 @@ namespace ExtenFlow.EventStorage.DaprActors.Tests
                 .Verifiable();
             EventStoreStreamActor testDemoActor = await CreateActor(stateManager.Object, EventStoreStreamActor.CreateStreamId(events[0].AggregateType, events[0].AggregateId));
 
-            EventStoreStreamState result = await testDemoActor.GetStateValue();
+            EventStoreStreamState result = (EventStoreStreamState)await testDemoActor.GetStateValue();
             result.Should().Be(state);
 
             stateManager.VerifyAll();

@@ -29,7 +29,7 @@ namespace ExtenFlow.Actors.Tests
             // stateManager.Setup(manager => manager.SetStateAsync("FakeBase", state, It.IsAny<CancellationToken>())).Verifiable();
             FakeBaseActor testDemoActor = await CreateActor(stateManager.Object, state.FakeGuid);
 
-            FakeState result = await testDemoActor.GetStateValue();
+            FakeState result = (FakeState)await testDemoActor.GetStateValue();
             result.Should().NotBeNull();
             result.FakeInt.Should().Be(state.FakeInt);
             result.FakeGuid.Should().Be(state.FakeGuid);
