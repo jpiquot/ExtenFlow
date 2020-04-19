@@ -15,8 +15,8 @@ namespace ExtenFlow.Identity.Users.Commands
         [Obsolete("Can only be used by serializers")]
         public RenameUser()
         {
-            UserName = string.Empty;
-            NormalizedUserName = string.Empty;
+            Name = string.Empty;
+            NormalizedName = string.Empty;
         }
 
         /// <summary>
@@ -35,20 +35,20 @@ namespace ExtenFlow.Identity.Users.Commands
         public RenameUser(string aggregateId, string name, string normalizedUserName, string concurrencyStamp, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
             : base(aggregateId, concurrencyStamp, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
         {
-            UserName = name;
-            NormalizedUserName = normalizedUserName;
+            Name = name;
+            NormalizedName = normalizedUserName;
         }
-
-        /// <summary>
-        /// Gets the new normalized user name.
-        /// </summary>
-        /// <value>The name.</value>
-        public string NormalizedUserName { get; }
 
         /// <summary>
         /// Gets the new user name.
         /// </summary>
         /// <value>The name.</value>
-        public string UserName { get; }
+        public string Name { get; }
+
+        /// <summary>
+        /// Gets the new normalized user name.
+        /// </summary>
+        /// <value>The name.</value>
+        public string NormalizedName { get; }
     }
 }

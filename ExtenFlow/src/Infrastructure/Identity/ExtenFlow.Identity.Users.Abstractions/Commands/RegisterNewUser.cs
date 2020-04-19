@@ -18,7 +18,7 @@ namespace ExtenFlow.Identity.Users.Commands
         public RegisterNewUser()
         {
             UserName = string.Empty;
-            NormalizedUserName = string.Empty;
+            NormalizedName = string.Empty;
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace ExtenFlow.Identity.Users.Commands
                 throw new ArgumentNullException(nameof(aggregateId));
             }
             UserName = name;
-            NormalizedUserName = normalizedUserName;
+            NormalizedName = normalizedUserName;
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace ExtenFlow.Identity.Users.Commands
         /// Gets the new user normalized name.
         /// </summary>
         /// <value>The name of the normalized.</value>
-        public string NormalizedUserName { get; }
+        public string NormalizedName { get; }
 
         /// <summary>
         /// Gets the new user name.
