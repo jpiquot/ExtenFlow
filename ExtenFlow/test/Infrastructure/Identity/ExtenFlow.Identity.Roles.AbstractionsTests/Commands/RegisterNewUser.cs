@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-using ExtenFlow.Identity.Users.Commands;
+using ExtenFlow.Identity.Roles.Commands;
 
 using FluentAssertions;
 
@@ -14,41 +14,41 @@ using static FluentAssertions.FluentActions;
 
 namespace ExtenFlow.Messages.AbstractionsTests
 {
-    public class RegisterNewUserTest : IClassFixture<UserCommandFixture<RegisterNewUser>>
+    public class AddNewRoleTest : IClassFixture<RoleCommandFixture<RegisterNewRole>>
     {
-        public RegisterNewUserTest(UserCommandFixture<RegisterNewUser> registerNewUserFixture)
+        public AddNewRoleTest(RoleCommandFixture<RegisterNewRole> registerNewRoleFixture)
         {
-            RegisterNewUserFixture = registerNewUserFixture;
+            RegisterNewRoleFixture = registerNewRoleFixture;
         }
 
-        private UserCommandFixture<RegisterNewUser> RegisterNewUserFixture { get; }
+        private RoleCommandFixture<RegisterNewRole> RegisterNewRoleFixture { get; }
 
         [Theory]
-        [ClassData(typeof(RegisterNewUserTestDate))]
-        public void CreateRegisterNewUser_CheckState(string aggregateId, string password, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RegisterNewUserFixture.CheckMessageState(new RegisterNewUser(aggregateId, password, userId, correlationId, messageId, dateTime), "User", aggregateId, userId, correlationId, messageId, dateTime);
+        [ClassData(typeof(RegisterNewRoleTestDate))]
+        public void CreateRegisterNewRole_CheckState(string aggregateId, string password, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => RegisterNewRoleFixture.CheckMessageState(new RegisterNewRole(aggregateId, password, userId, correlationId, messageId, dateTime), "Role", aggregateId, userId, correlationId, messageId, dateTime);
 
         [Fact]
-        public void CreateRegisterNewUser_DefaultMessageShouldHaveACorrelationId()
-            => new RegisterNewUser("aggr id", "pass").CorrelationId
+        public void CreateRegisterNewRole_DefaultMessageShouldHaveACorrelationId()
+            => new RegisterNewRole("aggr id", "pass").CorrelationId
                 .Should()
                 .NotBe(Guid.Empty);
 
         [Fact]
-        public void CreateRegisterNewUser_DefaultMessageShouldHaveAMessageId()
-            => new RegisterNewUser("aggr id", "pass").MessageId
+        public void CreateRegisterNewRole_DefaultMessageShouldHaveAMessageId()
+            => new RegisterNewRole("aggr id", "pass").MessageId
                 .Should()
                 .NotBe(Guid.Empty);
 
         [Fact]
-        public void CreateRegisterNewUser_EmptyCorrelationIdShouldThrowException()
-            => Invoking(() => new RegisterNewUser("Aggr. Id", "pass", "User Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
+        public void CreateRegisterNewRole_EmptyCorrelationIdShouldThrowException()
+            => Invoking(() => new RegisterNewRole("Aggr. Id", "pass", "Role Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
         [Fact]
-        public void CreateRegisterNewUser_EmptyMessageIdShouldThrowException()
-            => Invoking(() => new RegisterNewUser("Aggr. Id", "pass", "User Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
+        public void CreateRegisterNewRole_EmptyMessageIdShouldThrowException()
+            => Invoking(() => new RegisterNewRole("Aggr. Id", "pass", "Role Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
@@ -56,27 +56,27 @@ namespace ExtenFlow.Messages.AbstractionsTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("                      ")]
-        public void CreateRegisterNewUser_UndefinedUserIdShouldThrowException(string userId)
-            => Invoking(() => new RegisterNewUser("Aggr. Id", "pass", userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now))
+        public void CreateRegisterNewRole_UndefinedRoleIdShouldThrowException(string userId)
+            => Invoking(() => new RegisterNewRole("Aggr. Id", "pass", userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
         [Theory]
-        [ClassData(typeof(RegisterNewUserTestDate))]
+        [ClassData(typeof(RegisterNewRoleTestDate))]
         public void DotNetJsonSerializeMessage_Check(string aggregateId, string password, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RegisterNewUserFixture.CheckMessageJsonSerialization(new RegisterNewUser(aggregateId, password, userId, correlationId, messageId, dateTime));
+            => RegisterNewRoleFixture.CheckMessageJsonSerialization(new RegisterNewRole(aggregateId, password, userId, correlationId, messageId, dateTime));
 
         [Theory]
-        [ClassData(typeof(RegisterNewUserTestDate))]
+        [ClassData(typeof(RegisterNewRoleTestDate))]
         public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string password, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RegisterNewUserFixture.CheckMessageNewtonSoftSerialization(new RegisterNewUser(aggregateId, password, userId, correlationId, messageId, dateTime));
+            => RegisterNewRoleFixture.CheckMessageNewtonSoftSerialization(new RegisterNewRole(aggregateId, password, userId, correlationId, messageId, dateTime));
     }
 
-    public class RegisterNewUserTestDate : IEnumerable<object[]>
+    public class RegisterNewRoleTestDate : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            yield return new object[] { "Aggr. Id", "passWord @ 123", "User Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
+            yield return new object[] { "Aggr. Id", "passWord @ 123", "Role Id", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
             yield return new object[] { "Aggr. ID", "passWord123/%$", "USER", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now };
         }
 

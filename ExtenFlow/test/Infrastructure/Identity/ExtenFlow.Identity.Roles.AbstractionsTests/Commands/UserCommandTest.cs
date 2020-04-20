@@ -1,6 +1,6 @@
 using System;
 
-using ExtenFlow.Identity.Users.Commands;
+using ExtenFlow.Identity.Roles.Commands;
 
 using FluentAssertions;
 
@@ -14,55 +14,55 @@ using static FluentAssertions.FluentActions;
 
 namespace ExtenFlow.Messages.AbstractionsTests
 {
-    public class FakeUserCommand : UserCommand
+    public class FakeRoleCommand : RoleCommand
     {
         [Obsolete]
-        public FakeUserCommand()
+        public FakeRoleCommand()
         {
         }
 
         [JsonConstructor]
-        public FakeUserCommand(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+        public FakeRoleCommand(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
             : base(aggregateId, null, userId, correlationId, messageId, dateTime)
         {
         }
     }
 
-    public class UserCommandTest : IClassFixture<UserCommandFixture<FakeUserCommand>>
+    public class RoleCommandTest : IClassFixture<RoleCommandFixture<FakeRoleCommand>>
     {
-        public UserCommandTest(UserCommandFixture<FakeUserCommand> userCommandFixture)
+        public RoleCommandTest(RoleCommandFixture<FakeRoleCommand> userCommandFixture)
         {
-            UserCommandFixture = userCommandFixture;
+            RoleCommandFixture = userCommandFixture;
         }
 
-        private UserCommandFixture<FakeUserCommand> UserCommandFixture { get; }
+        private RoleCommandFixture<FakeRoleCommand> RoleCommandFixture { get; }
 
         [Theory]
-        [ClassData(typeof(UserCommandTestData))]
-        public void CreateUserCommand_CheckState(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => UserCommandFixture.CheckMessageState(new FakeUserCommand(aggregateId, userId, correlationId, messageId, dateTime), "User", aggregateId, userId, correlationId, messageId, dateTime);
+        [ClassData(typeof(RoleCommandTestData))]
+        public void CreateRoleCommand_CheckState(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => RoleCommandFixture.CheckMessageState(new FakeRoleCommand(aggregateId, userId, correlationId, messageId, dateTime), "Role", aggregateId, userId, correlationId, messageId, dateTime);
 
         [Fact]
-        public void CreateUserCommand_DefaultMessageShouldHaveACorrelationId()
-            => new FakeUserCommand().CorrelationId
+        public void CreateRoleCommand_DefaultMessageShouldHaveACorrelationId()
+            => new FakeRoleCommand().CorrelationId
                 .Should()
                 .NotBe(Guid.Empty);
 
         [Fact]
-        public void CreateUserCommand_DefaultMessageShouldHaveAMessageId()
-            => new FakeUserCommand().MessageId
+        public void CreateRoleCommand_DefaultMessageShouldHaveAMessageId()
+            => new FakeRoleCommand().MessageId
                 .Should()
                 .NotBe(Guid.Empty);
 
         [Fact]
-        public void CreateUserCommand_EmptyCorrelationIdShouldThrowException()
-            => Invoking(() => new FakeUserCommand("Aggr. Id", "User Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
+        public void CreateRoleCommand_EmptyCorrelationIdShouldThrowException()
+            => Invoking(() => new FakeRoleCommand("Aggr. Id", "Role Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
         [Fact]
-        public void CreateUserCommand_EmptyMessageIdShouldThrowException()
-            => Invoking(() => new FakeUserCommand("Aggr. Id", "User Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
+        public void CreateRoleCommand_EmptyMessageIdShouldThrowException()
+            => Invoking(() => new FakeRoleCommand("Aggr. Id", "Role Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
@@ -70,19 +70,19 @@ namespace ExtenFlow.Messages.AbstractionsTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("                      ")]
-        public void CreateUserCommand_UndefinedUserIdShouldThrowException(string userId)
-            => Invoking(() => new FakeUserCommand("Aggr. Id", userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now))
+        public void CreateRoleCommand_UndefinedRoleIdShouldThrowException(string userId)
+            => Invoking(() => new FakeRoleCommand("Aggr. Id", userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
         [Theory]
-        [ClassData(typeof(UserCommandTestData))]
+        [ClassData(typeof(RoleCommandTestData))]
         public void DotNetJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => UserCommandFixture.CheckMessageJsonSerialization(new FakeUserCommand(aggregateId, userId, correlationId, messageId, dateTime));
+            => RoleCommandFixture.CheckMessageJsonSerialization(new FakeRoleCommand(aggregateId, userId, correlationId, messageId, dateTime));
 
         [Theory]
-        [ClassData(typeof(UserCommandTestData))]
+        [ClassData(typeof(RoleCommandTestData))]
         public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => UserCommandFixture.CheckMessageNewtonSoftSerialization(new FakeUserCommand(aggregateId, userId, correlationId, messageId, dateTime));
+            => RoleCommandFixture.CheckMessageNewtonSoftSerialization(new FakeRoleCommand(aggregateId, userId, correlationId, messageId, dateTime));
     }
 }

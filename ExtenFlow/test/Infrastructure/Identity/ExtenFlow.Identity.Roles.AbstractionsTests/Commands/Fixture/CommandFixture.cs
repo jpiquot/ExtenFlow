@@ -3,14 +3,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using ExtenFlow.Identity.Roles.Commands;
 
 namespace ExtenFlow.Messages.AbstractionsTests
 {
-    public class RoleQueryFixture<TR, TQ> : QueryFixture<TR, TQ> where TQ : RoleQuery<TR>
+    public class RoleCommandFixture<T> : CommandFixture<T> where T : RoleCommand
     {
     }
 
-    public class RoleQueryTestData : IEnumerable<object[]>
+    public class RoleCommandTestData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {

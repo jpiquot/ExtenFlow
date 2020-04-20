@@ -13,41 +13,41 @@ using static FluentAssertions.FluentActions;
 
 namespace ExtenFlow.Messages.AbstractionsTests
 {
-    public class GetUserTest : IClassFixture<UserQueryFixture<User, GetUser>>
+    public class GetRoleTest : IClassFixture<RoleQueryFixture<Role, GetRole>>
     {
-        public GetUserTest(UserQueryFixture<User, GetUser> getUserFixture)
+        public GetRoleTest(RoleQueryFixture<Role, GetRole> getRoleFixture)
         {
-            GetUserFixture = getUserFixture;
+            GetRoleFixture = getRoleFixture;
         }
 
-        private UserQueryFixture<User, GetUser> GetUserFixture { get; }
+        private RoleQueryFixture<Role, GetRole> GetRoleFixture { get; }
 
         [Theory]
-        [ClassData(typeof(UserQueryTestData))]
-        public void CreateGetUser_CheckState(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => GetUserFixture.CheckMessageState(new GetUser(aggregateId, userId, correlationId, messageId, dateTime), "User", aggregateId, userId, correlationId, messageId, dateTime);
+        [ClassData(typeof(RoleQueryTestData))]
+        public void CreateGetRole_CheckState(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+            => GetRoleFixture.CheckMessageState(new GetRole(aggregateId, userId, correlationId, messageId, dateTime), "Role", aggregateId, userId, correlationId, messageId, dateTime);
 
         [Fact]
-        public void CreateGetUser_DefaultMessageShouldHaveACorrelationId()
-            => new GetUser("aggr id", "User Id").CorrelationId
+        public void CreateGetRole_DefaultMessageShouldHaveACorrelationId()
+            => new GetRole("aggr id", "Role Id").CorrelationId
                 .Should()
                 .NotBe(Guid.Empty);
 
         [Fact]
-        public void CreateGetUser_DefaultMessageShouldHaveAMessageId()
-            => new GetUser("aggr id", "User Id").MessageId
+        public void CreateGetRole_DefaultMessageShouldHaveAMessageId()
+            => new GetRole("aggr id", "Role Id").MessageId
                 .Should()
                 .NotBe(Guid.Empty);
 
         [Fact]
-        public void CreateGetUser_EmptyCorrelationIdShouldThrowException()
-            => Invoking(() => new GetUser("Aggr. Id", "User Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
+        public void CreateGetRole_EmptyCorrelationIdShouldThrowException()
+            => Invoking(() => new GetRole("Aggr. Id", "Role Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
         [Fact]
-        public void CreateGetUser_EmptyMessageIdShouldThrowException()
-            => Invoking(() => new GetUser("Aggr. Id", "User Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
+        public void CreateGetRole_EmptyMessageIdShouldThrowException()
+            => Invoking(() => new GetRole("Aggr. Id", "Role Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
@@ -55,19 +55,19 @@ namespace ExtenFlow.Messages.AbstractionsTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("                      ")]
-        public void CreateGetUser_UndefinedUserIdShouldThrowException(string userId)
-            => Invoking(() => new GetUser("Aggr. Id", userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now))
+        public void CreateGetRole_UndefinedRoleIdShouldThrowException(string userId)
+            => Invoking(() => new GetRole("Aggr. Id", userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
         [Theory]
-        [ClassData(typeof(UserQueryTestData))]
+        [ClassData(typeof(RoleQueryTestData))]
         public void DotNetJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => GetUserFixture.CheckMessageJsonSerialization(new GetUser(aggregateId, userId, correlationId, messageId, dateTime));
+            => GetRoleFixture.CheckMessageJsonSerialization(new GetRole(aggregateId, userId, correlationId, messageId, dateTime));
 
         [Theory]
-        [ClassData(typeof(UserQueryTestData))]
+        [ClassData(typeof(RoleQueryTestData))]
         public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => GetUserFixture.CheckMessageNewtonSoftSerialization(new GetUser(aggregateId, userId, correlationId, messageId, dateTime));
+            => GetRoleFixture.CheckMessageNewtonSoftSerialization(new GetRole(aggregateId, userId, correlationId, messageId, dateTime));
     }
 }
