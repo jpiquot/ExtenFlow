@@ -70,31 +70,31 @@ namespace ExtenFlow.Identity.Users.Stores
         public IQueryable<User> Users => GetAllUsers().GetAwaiter().GetResult().AsQueryable();
 
         /// <summary>
-        /// add claim as an asynchronous operation.
+        /// add claims as an asynchronous operation.
         /// </summary>
         /// <param name="user">The user.</param>
-        /// <param name="claim">The claim.</param>
+        /// <param name="claims">The claims.</param>
         /// <param name="cancellationToken">
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
-        /// <exception cref="ArgumentNullException">user</exception>
-        /// <exception cref="ArgumentNullException">claim</exception>
-        /// <exception cref="ArgumentException">user</exception>
-        /// <exception cref="ArgumentException">claim</exception>
-        /// <exception cref="UserNotFoundException">Id</exception>
-        public async Task AddClaimAsync(User user, Claim claim, CancellationToken cancellationToken = default)
+        /// <exception cref="System.ArgumentNullException">user</exception>
+        /// <exception cref="System.ArgumentNullException">claims</exception>
+        /// <exception cref="System.ArgumentException">user</exception>
+        /// <exception cref="System.ArgumentException">claims</exception>
+        /// <exception cref="ExtenFlow.Identity.Users.Exceptions.UserNotFoundException">Id</exception>
+        public async Task AddClaimsAsync(User user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
             _ = user ?? throw new ArgumentNullException(nameof(user));
-            _ = claim ?? throw new ArgumentNullException(nameof(claim));
+            _ = claims ?? throw new ArgumentNullException(nameof(claims));
             if (user.Id == default)
             {
                 throw new ArgumentException(Properties.Resources.UserIdNotDefined, nameof(user));
             }
-            if (string.IsNullOrWhiteSpace(claim.Type))
+            if (claims.Any(p => string.IsNullOrWhiteSpace(p.Type)))
             {
-                throw new ArgumentException(Properties.Resources.UserClaimTypeNotDefined, nameof(claim));
+                throw new ArgumentException(Properties.Resources.UserClaimTypeNotDefined, nameof(claims));
             }
             IUserActor userActor = _getUserActor(user.Id);
             if (!await userActor.IsInitialized())
@@ -103,10 +103,8 @@ namespace ExtenFlow.Identity.Users.Stores
             }
             IUserClaimsActor claimActor = _getUserClaimsActor(user.Id);
 
-            await claimActor.Tell(new AddUserClaim(user.Id.ToString(), claim.Type, claim.Value, _user.Name));
+            await claimActor.Tell(new AddUserClaims(user.Id.ToString(), claims.ToDictionary(p => p.Type, t => t.Value), _user.Name));
         }
-
-        public Task AddClaimsAsync(User user, IEnumerable<Claim> claims, CancellationToken cancellationToken) => throw new NotImplementedException();
 
         /// <summary>
         /// Creates the asynchronous.
@@ -314,34 +312,63 @@ namespace ExtenFlow.Identity.Users.Stores
             return Task.FromResult(user.UserName);
         }
 
-        public Task<IList<User>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken) => throw new NotImplementedException();
-
         /// <summary>
-        /// remove claim as an asynchronous operation.
+        /// get users for claim as an asynchronous operation.
         /// </summary>
-        /// <param name="user">The user.</param>
         /// <param name="claim">The claim.</param>
         /// <param name="cancellationToken">
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
-        /// <exception cref="ArgumentNullException">user</exception>
-        /// <exception cref="ArgumentNullException">claim</exception>
-        /// <exception cref="ArgumentException">user</exception>
-        /// <exception cref="ArgumentException">claim</exception>
-        /// <exception cref="UserNotFoundException">Id</exception>
-        public async Task RemoveClaimAsync(User user, Claim claim, CancellationToken cancellationToken = default)
+        /// <returns>IList&lt;User&gt;.</returns>
+        public async Task<IList<User>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+        {
+            var list = (await _collection.All())
+                .Select(p => new
+                {
+                    Id = p,
+                    Exist = _getUserClaimsActor(new Guid(p))
+                                .Exist(claim.Type, claim.Value)
+                })
+                .ToList();
+            var result = await Task.WhenAll(list.Select(p => p.Exist).ToList());
+            var details = await Task.WhenAll(list
+                .Where(p => p.Exist.Result)
+                .Select(p => _getUserActor(new Guid(p.Id)).Ask(new GetUserDetails(p.Id, _user.Name))));
+            return details.Select(p => new User
+            {
+                Id = p.Id,
+                NormalizedUserName = p.NormalizedName,
+                UserName = p.Name,
+                ConcurrencyStamp = p.ConcurrencyStamp
+            }).ToList();
+        }
+
+        /// <summary>
+        /// remove claims as an asynchronous operation.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <param name="claims">The claims.</param>
+        /// <param name="cancellationToken">
+        /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">user</exception>
+        /// <exception cref="System.ArgumentNullException">claims</exception>
+        /// <exception cref="System.ArgumentException">user</exception>
+        /// <exception cref="System.ArgumentException">claims</exception>
+        /// <exception cref="ExtenFlow.Identity.Users.Exceptions.UserNotFoundException">Id</exception>
+        public async Task RemoveClaimsAsync(User user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
             _ = user ?? throw new ArgumentNullException(nameof(user));
-            _ = claim ?? throw new ArgumentNullException(nameof(claim));
+            _ = claims ?? throw new ArgumentNullException(nameof(claims));
             if (user.Id == default)
             {
                 throw new ArgumentException(Properties.Resources.UserIdNotDefined, nameof(user));
             }
-            if (string.IsNullOrWhiteSpace(claim.Type))
+            if (claims.Any(p => string.IsNullOrWhiteSpace(p.Type)))
             {
-                throw new ArgumentException(Properties.Resources.UserClaimTypeNotDefined, nameof(claim));
+                throw new ArgumentException(Properties.Resources.UserClaimTypeNotDefined, nameof(claims));
             }
             IUserActor userActor = _getUserActor(user.Id);
             if (!await userActor.IsInitialized())
@@ -350,12 +377,54 @@ namespace ExtenFlow.Identity.Users.Stores
             }
             IUserClaimsActor claimActor = _getUserClaimsActor(user.Id);
 
-            await claimActor.Tell(new RemoveUserClaim(user.Id.ToString(), claim.Type, claim.Value, _user.Name));
+            await claimActor.Tell(new RemoveUserClaims(user.Id.ToString(), claims.ToDictionary(p => p.Type, p => p.Value), _user.Name));
         }
 
-        public Task RemoveClaimsAsync(User user, IEnumerable<Claim> claims, CancellationToken cancellationToken) => throw new NotImplementedException();
+        /// <summary>
+        /// replace claim as an asynchronous operation.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <param name="claim">The claim.</param>
+        /// <param name="newClaim">The new claim.</param>
+        /// <param name="cancellationToken">
+        /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">user</exception>
+        /// <exception cref="System.ArgumentNullException">claim</exception>
+        /// <exception cref="System.ArgumentNullException">newClaim</exception>
+        /// <exception cref="System.ArgumentException">user</exception>
+        /// <exception cref="System.ArgumentException">claim</exception>
+        /// <exception cref="System.ArgumentException">newClaim</exception>
+        /// <exception cref="ExtenFlow.Identity.Users.Exceptions.UserNotFoundException">Id</exception>
+        public async Task ReplaceClaimAsync(User user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            _ = user ?? throw new ArgumentNullException(nameof(user));
+            _ = claim ?? throw new ArgumentNullException(nameof(claim));
+            _ = newClaim ?? throw new ArgumentNullException(nameof(newClaim));
+            if (user.Id == default)
+            {
+                throw new ArgumentException(Properties.Resources.UserIdNotDefined, nameof(user));
+            }
+            if (string.IsNullOrWhiteSpace(claim.Type))
+            {
+                throw new ArgumentException(Properties.Resources.UserClaimTypeNotDefined, nameof(claim));
+            }
+            if (string.IsNullOrWhiteSpace(newClaim.Type))
+            {
+                throw new ArgumentException(Properties.Resources.UserClaimTypeNotDefined, nameof(newClaim));
+            }
+            IUserActor userActor = _getUserActor(user.Id);
+            if (!await userActor.IsInitialized())
+            {
+                throw new UserNotFoundException(CultureInfo.CurrentCulture, nameof(User.Id), user.Id.ToString());
+            }
+            IUserClaimsActor claimActor = _getUserClaimsActor(user.Id);
 
-        public Task ReplaceClaimAsync(User user, Claim claim, Claim newClaim, CancellationToken cancellationToken) => throw new NotImplementedException();
+            await claimActor.Tell(new RemoveUserClaims(user.Id.ToString(), new Dictionary<string, string> { { claim.Type, claim.Value } }, _user.Name));
+            await claimActor.Tell(new AddUserClaims(user.Id.ToString(), new Dictionary<string, string> { { newClaim.Type, newClaim.Value } }, _user.Name));
+        }
 
         /// <summary>
         /// Sets the normalized user name asynchronous.

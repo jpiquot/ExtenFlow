@@ -18,21 +18,18 @@ namespace ExtenFlow.Identity.Users.Helpers
     public static class IdentityUserActorsHelper
     {
         /// <summary>
-        /// Gets the unique index for an aggregate field.
+        /// Gets the user normalized name index actor.
         /// </summary>
-        /// <param name="aggregateType">Type of the aggregate.</param>
-        /// <param name="aggregateField">The aggregate identifier.</param>
         /// <returns>IUniqueIndexActor.</returns>
-        public static IUniqueIndexActor GetUniqueIndexActor(string aggregateType, string aggregateField)
-            => ActorProxy.Create<IUniqueIndexActor>(new ActorId(aggregateType + "." + aggregateField), nameof(UniqueIndexActor));
+        public static IUniqueIndexActor GetUserNormalizedNameIndexActor() => GetUserUniqueIndexActor(nameof(UserState.NormalizedName));
 
         /// <summary>
-        /// Gets the index of the unique.
+        /// Gets the unique index for an aggregate field.
         /// </summary>
-        /// <typeparam name="TAggregate">The type of the aggregate.</typeparam>
-        /// <param name="aggregateField">The aggregate field.</param>
+        /// <param name="aggregateField">The aggregate identifier.</param>
         /// <returns>IUniqueIndexActor.</returns>
-        public static IUniqueIndexActor GetUniqueIndexActor<TAggregate>(string aggregateField) => GetUniqueIndexActor(typeof(TAggregate).Name, aggregateField);
+        public static IUniqueIndexActor GetUserUniqueIndexActor(string aggregateField)
+            => ActorProxy.Create<IUniqueIndexActor>(new ActorId(nameof(User) + "." + aggregateField), nameof(UniqueIndexActor));
 
         /// <summary>
         /// Registers the identity actors.
@@ -51,7 +48,7 @@ namespace ExtenFlow.Identity.Users.Helpers
                     => new UserActor(
                         service,
                         id,
-                        GetUniqueIndexActor<User>(nameof(User.NormalizedName)),
+                        GetUserNormalizedNameIndexActor(),
                         eventBus,
                         eventStore
                         )

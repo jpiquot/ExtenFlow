@@ -97,6 +97,15 @@ namespace ExtenFlow.Identity.Users.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The user claim list is empty..
+        /// </summary>
+        public static string UserClaimListIsEmpty {
+            get {
+                return ResourceManager.GetString("UserClaimListIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The user claim type is not defined..
         /// </summary>
         public static string UserClaimTypeNotDefined {

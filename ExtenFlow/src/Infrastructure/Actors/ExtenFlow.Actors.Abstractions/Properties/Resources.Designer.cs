@@ -97,6 +97,24 @@ namespace ExtenFlow.Actors.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Item with Id=&apos;{0}&apos; already exist in unique index {1} with another Key=&apos;{2}&apos;..
+        /// </summary>
+        public static string DuplicateIndexIdentifier {
+            get {
+                return ResourceManager.GetString("DuplicateIndexIdentifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item with Key=&apos;{0}&apos; already exist in unique index {1} with another Id=&apos;{2}&apos;..
+        /// </summary>
+        public static string DuplicateIndexKey {
+            get {
+                return ResourceManager.GetString("DuplicateIndexKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Id is null, empty or white spaces..
         /// </summary>
         public static string IdIsNullEmptyOrWhiteSpace {
@@ -111,15 +129,6 @@ namespace ExtenFlow.Actors.Properties {
         public static string ItemExistInCollection {
             get {
                 return ResourceManager.GetString("ItemExistInCollection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Item with Key=&apos;{0}&apos; already exist in unique index {1} with another Id=&apos;{2}&apos;..
-        /// </summary>
-        public static string ItemExistInIndex {
-            get {
-                return ResourceManager.GetString("ItemExistInIndex", resourceCulture);
             }
         }
         

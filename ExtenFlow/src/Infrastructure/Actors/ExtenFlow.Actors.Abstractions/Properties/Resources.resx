@@ -129,14 +129,17 @@
   <data name="CommandNotSupported" xml:space="preserve">
     <value>The command '{0}' is not supported by '{1}'.</value>
   </data>
+  <data name="DuplicateIndexIdentifier" xml:space="preserve">
+    <value>Item with Id='{0}' already exist in unique index {1} with another Key='{2}'.</value>
+  </data>
+  <data name="DuplicateIndexKey" xml:space="preserve">
+    <value>Item with Key='{0}' already exist in unique index {1} with another Id='{2}'.</value>
+  </data>
   <data name="IdIsNullEmptyOrWhiteSpace" xml:space="preserve">
     <value>Id is null, empty or white spaces.</value>
   </data>
   <data name="ItemExistInCollection" xml:space="preserve">
     <value>Item with Id='{0}' already exist in collection {1}.</value>
-  </data>
-  <data name="ItemExistInIndex" xml:space="preserve">
-    <value>Item with Key='{0}' already exist in unique index {1} with another Id='{2}'.</value>
   </data>
   <data name="MessageAggregateIdMismatch" xml:space="preserve">
     <value>Message aggregate identifier mismatch. Expected='{0}; Message='{1}'.</value>

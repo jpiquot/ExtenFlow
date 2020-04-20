@@ -18,21 +18,18 @@ namespace ExtenFlow.Identity.Roles.Helpers
     public static class IdentityRoleActorsHelper
     {
         /// <summary>
-        /// Gets the unique index for an aggregate field.
+        /// Gets the user normalized name index actor.
         /// </summary>
-        /// <param name="aggregateType">Type of the aggregate.</param>
-        /// <param name="aggregateField">The aggregate identifier.</param>
         /// <returns>IUniqueIndexActor.</returns>
-        public static IUniqueIndexActor GetUniqueIndexActor(string aggregateType, string aggregateField)
-            => ActorProxy.Create<IUniqueIndexActor>(new ActorId(aggregateType + "." + aggregateField), nameof(UniqueIndexActor));
+        public static IUniqueIndexActor GetRoleNormalizedNameIndexActor() => GetRoleUniqueIndexActor(nameof(RoleState.NormalizedName));
 
         /// <summary>
         /// Gets the index of the unique.
         /// </summary>
-        /// <typeparam name="TAggregate">The type of the aggregate.</typeparam>
         /// <param name="aggregateField">The aggregate field.</param>
         /// <returns>IUniqueIndexActor.</returns>
-        public static IUniqueIndexActor GetUniqueIndexActor<TAggregate>(string aggregateField) => GetUniqueIndexActor(typeof(TAggregate).Name, aggregateField);
+        public static IUniqueIndexActor GetRoleUniqueIndexActor(string aggregateField)
+            => ActorProxy.Create<IUniqueIndexActor>(new ActorId(nameof(Role) + "." + aggregateField), nameof(UniqueIndexActor));
 
         /// <summary>
         /// Registers the identity actors.
@@ -51,7 +48,7 @@ namespace ExtenFlow.Identity.Roles.Helpers
                     => new RoleActor(
                         service,
                         id,
-                        GetUniqueIndexActor<Role>(nameof(Role.NormalizedName)),
+                        GetRoleNormalizedNameIndexActor(),
                         eventBus,
                         eventStore
                         )

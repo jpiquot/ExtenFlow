@@ -129,6 +129,9 @@
   <data name="InvalidUserNormalizedName" xml:space="preserve">
     <value>Invalid user normalized name : '{0}'.</value>
   </data>
+  <data name="UserClaimListIsEmpty" xml:space="preserve">
+    <value>The user claim list is empty.</value>
+  </data>
   <data name="UserClaimTypeNotDefined" xml:space="preserve">
     <value>The user claim type is not defined.</value>
   </data>
