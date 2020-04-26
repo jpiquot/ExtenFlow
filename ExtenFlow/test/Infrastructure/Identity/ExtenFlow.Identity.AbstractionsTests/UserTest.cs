@@ -10,22 +10,22 @@ using static FluentAssertions.FluentActions;
 
 namespace ExtenFlow.Identity.AbstractionsTests
 {
-    public class RoleTest
+    public class UserTest
     {
         [Fact]
-        public void RoleNew_ExpectNoExceptions()
+        public void UserNew_ExpectNoExceptions()
         {
-            new Role();
-            new Role("my role");
+            new User();
+            new User("my user");
         }
 
         [Theory]
         [InlineData("")]
         [InlineData("   ")]
         [InlineData(null)]
-        public void RoleNewWithEmptyName_ExpectThrowException(string value)
+        public void UserNewWithEmptyName_ExpectThrowException(string value)
         {
-            Invoking(() => new Role(value))
+            Invoking(() => new User(value))
                 .Should()
                 .Throw<Exception>();
         }
@@ -36,24 +36,24 @@ namespace ExtenFlow.Identity.AbstractionsTests
         [InlineData("abc")]
         [InlineData("+-*/")]
         [InlineData(":;,*%")]
-        public void RoleSetConcurrencyStamp_ExpectsValue(string value)
+        public void UserSetConcurrencyStamp_ExpectsValue(string value)
         {
-            var role = new Role
+            var user = new User
             {
                 ConcurrencyStamp = value
             };
-            role.ConcurrencyStamp.Should().Be(value);
+            user.ConcurrencyStamp.Should().Be(value);
         }
 
         [Fact]
-        public void RoleSetId_ExpectsValue()
+        public void UserSetId_ExpectsValue()
         {
             var value = Guid.NewGuid();
-            var role = new Role
+            var user = new User
             {
                 Id = value
             };
-            role.Id.Should().Be(value);
+            user.Id.Should().Be(value);
         }
 
         [Theory]
@@ -62,15 +62,15 @@ namespace ExtenFlow.Identity.AbstractionsTests
         [InlineData("abc")]
         [InlineData("+-*/")]
         [InlineData(":;,*%")]
-        public void RoleSetName_ExpectsValue(string value)
+        public void UserSetName_ExpectsValue(string value)
         {
-            var role = new Role
+            var user = new User
             {
-                Name = value
+                UserName = value
             };
-            role.Name.Should().Be(value);
-            role = new Role(value);
-            role.Name.Should().Be(value);
+            user.UserName.Should().Be(value);
+            user = new User(value);
+            user.UserName.Should().Be(value);
         }
 
         [Theory]
@@ -79,13 +79,13 @@ namespace ExtenFlow.Identity.AbstractionsTests
         [InlineData("abc")]
         [InlineData("+-*/")]
         [InlineData(":;,*%")]
-        public void RoleSetNormalizedName_ExpectsValue(string value)
+        public void UserSetNormalizedName_ExpectsValue(string value)
         {
-            var role = new Role
+            var user = new User
             {
-                NormalizedName = value
+                NormalizedUserName = value
             };
-            role.NormalizedName.Should().Be(value);
+            user.NormalizedUserName.Should().Be(value);
         }
     }
 }

@@ -4,6 +4,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+using ExtenFlow.Identity.Roles.Queries;
+
 namespace ExtenFlow.Messages.AbstractionsTests
 {
     public class RoleQueryFixture<TR, TQ> : QueryFixture<TR, TQ> where TQ : RoleQuery<TR>

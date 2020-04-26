@@ -1,9 +1,6 @@
 using System;
 
 using Dapr.Actors.AspNetCore;
-using Dapr.Actors.Runtime;
-
-using ExtenFlow.Identity.Actors;
 
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -38,21 +35,11 @@ namespace ExtenFlow.Identity.StoreActors
                     .UseStartup<Startup>()
                     .UseActors(actorRuntime =>
                     {
-                        actorRuntime.RegisterActor<RoleActor>(information => new ActorService(information, (service, id) => new RoleActor(service, id)));
-                        actorRuntime.RegisterActor<RoleCollectionActor>(information => new ActorService(information, (service, id) => new RoleCollectionActor(service, id)));
-                        actorRuntime.RegisterActor<RoleClaimsActor>(information => new ActorService(information, (service, id) => new RoleClaimsActor(service, id)));
-                        actorRuntime.RegisterActor<RoleClaimsCollectionActor>(information => new ActorService(information, (service, id) => new RoleClaimsCollectionActor(service, id)));
-                        actorRuntime.RegisterActor<UserActor>(information => new ActorService(information, (service, id) => new UserActor(service, id)));
-                        actorRuntime.RegisterActor<UserCollectionActor>(information => new ActorService(information, (service, id) => new UserCollectionActor(service, id)));
-                        actorRuntime.RegisterActor<UserClaimsActor>(information => new ActorService(information, (service, id) => new UserClaimsActor(service, id)));
-                        actorRuntime.RegisterActor<UserClaimsCollectionActor>(information => new ActorService(information, (service, id) => new UserClaimsCollectionActor(service, id)));
-                        actorRuntime.RegisterActor<UserLoginsActor>(information => new ActorService(information, (service, id) => new UserLoginsActor(service, id)));
-                        actorRuntime.RegisterActor<UserLoginsCollectionActor>(information => new ActorService(information, (service, id) => new UserLoginsCollectionActor(service, id)));
-                        actorRuntime.RegisterActor<UserRoleCollectionActor>(information => new ActorService(information, (service, id) => new UserRoleCollectionActor(service, id)));
-                        actorRuntime.RegisterActor<UserTokensActor>(information => new ActorService(information, (service, id) => new UserTokensActor(service, id)));
+                        // actorRuntime.RegisterIdentityRoleActors(); actorRuntime.RegisterIdentityUserActors();
                     })
                     .UseUrls($"http://localhost:{_appChannelHttpPort}/");
         }
+
         /// <summary>
         /// Defines the entry point of the application.
         /// </summary>

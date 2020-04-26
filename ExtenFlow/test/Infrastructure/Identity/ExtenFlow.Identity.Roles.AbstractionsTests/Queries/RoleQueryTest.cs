@@ -1,6 +1,6 @@
 using System;
 
-using ExtenFlow.Identity.Queries;
+using ExtenFlow.Identity.Roles.Queries;
 
 using FluentAssertions;
 

@@ -15,9 +15,10 @@
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Kubernetes.Tools.Targets" Version="1.1.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Infrastructure\Identity\ExtenFlow.Identity.Actors\ExtenFlow.Identity.Actors.csproj" />
+		<Folder Include="charts\extenflowidentitystoreactors\charts\" />
 	</ItemGroup>
 	<ItemGroup>
-		<Folder Include="charts\extenflowidentitystoreactors\charts\" />
+		<ProjectReference Include="..\..\Infrastructure\Identity\ExtenFlow.Identity.Roles\ExtenFlow.Identity.Roles.csproj" />
+		<ProjectReference Include="..\..\Infrastructure\Identity\ExtenFlow.Identity.Users\ExtenFlow.Identity.Users.csproj" />
 	</ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 using System;
 
 using ExtenFlow.Identity.Models;
-using ExtenFlow.Identity.Queries;
+using ExtenFlow.Identity.Roles.Queries;
 
 using FluentAssertions;
 
@@ -13,41 +13,41 @@ using static FluentAssertions.FluentActions;
 
 namespace ExtenFlow.Messages.AbstractionsTests
 {
-    public class GetRoleTest : IClassFixture<RoleQueryFixture<Role, GetRole>>
+    public class GetRoleTest : IClassFixture<RoleQueryFixture<RoleDetailsModel, GetRoleDetails>>
     {
-        public GetRoleTest(RoleQueryFixture<Role, GetRole> getRoleFixture)
+        public GetRoleTest(RoleQueryFixture<RoleDetailsModel, GetRoleDetails> getRoleDetailsFixture)
         {
-            GetRoleFixture = getRoleFixture;
+            GetRoleDetailsFixture = getRoleDetailsFixture;
         }
 
-        private RoleQueryFixture<Role, GetRole> GetRoleFixture { get; }
+        private RoleQueryFixture<RoleDetailsModel, GetRoleDetails> GetRoleDetailsFixture { get; }
 
         [Theory]
         [ClassData(typeof(RoleQueryTestData))]
         public void CreateGetRole_CheckState(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => GetRoleFixture.CheckMessageState(new GetRole(aggregateId, userId, correlationId, messageId, dateTime), "Role", aggregateId, userId, correlationId, messageId, dateTime);
+            => GetRoleDetailsFixture.CheckMessageState(new GetRoleDetails(aggregateId, userId, correlationId, messageId, dateTime), "Role", aggregateId, userId, correlationId, messageId, dateTime);
 
         [Fact]
         public void CreateGetRole_DefaultMessageShouldHaveACorrelationId()
-            => new GetRole("aggr id", "Role Id").CorrelationId
+            => new GetRoleDetails("aggr id", "Role Id").CorrelationId
                 .Should()
                 .NotBe(Guid.Empty);
 
         [Fact]
         public void CreateGetRole_DefaultMessageShouldHaveAMessageId()
-            => new GetRole("aggr id", "Role Id").MessageId
+            => new GetRoleDetails("aggr id", "Role Id").MessageId
                 .Should()
                 .NotBe(Guid.Empty);
 
         [Fact]
         public void CreateGetRole_EmptyCorrelationIdShouldThrowException()
-            => Invoking(() => new GetRole("Aggr. Id", "Role Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
+            => Invoking(() => new GetRoleDetails("Aggr. Id", "Role Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
         [Fact]
         public void CreateGetRole_EmptyMessageIdShouldThrowException()
-            => Invoking(() => new GetRole("Aggr. Id", "Role Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
+            => Invoking(() => new GetRoleDetails("Aggr. Id", "Role Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
@@ -56,18 +56,18 @@ namespace ExtenFlow.Messages.AbstractionsTests
         [InlineData("")]
         [InlineData("                      ")]
         public void CreateGetRole_UndefinedRoleIdShouldThrowException(string userId)
-            => Invoking(() => new GetRole("Aggr. Id", userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now))
+            => Invoking(() => new GetRoleDetails("Aggr. Id", userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
         [Theory]
         [ClassData(typeof(RoleQueryTestData))]
         public void DotNetJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => GetRoleFixture.CheckMessageJsonSerialization(new GetRole(aggregateId, userId, correlationId, messageId, dateTime));
+            => GetRoleDetailsFixture.CheckMessageJsonSerialization(new GetRoleDetails(aggregateId, userId, correlationId, messageId, dateTime));
 
         [Theory]
         [ClassData(typeof(RoleQueryTestData))]
         public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => GetRoleFixture.CheckMessageNewtonSoftSerialization(new GetRole(aggregateId, userId, correlationId, messageId, dateTime));
+            => GetRoleDetailsFixture.CheckMessageNewtonSoftSerialization(new GetRoleDetails(aggregateId, userId, correlationId, messageId, dateTime));
     }
 }
