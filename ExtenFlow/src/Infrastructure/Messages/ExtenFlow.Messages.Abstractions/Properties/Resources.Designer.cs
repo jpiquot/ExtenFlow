@@ -61,11 +61,65 @@ namespace ExtenFlow.Messages.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The aggregate identifier is not defined..
+        /// </summary>
+        internal static string AggregateIdNotDefined {
+            get {
+                return ResourceManager.GetString("AggregateIdNotDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The aggregate type is not defined..
+        /// </summary>
+        internal static string AggregateTypeNotDefined {
+            get {
+                return ResourceManager.GetString("AggregateTypeNotDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The correlation identifier is not defined..
+        /// </summary>
+        internal static string CorrelationIdNotDefined {
+            get {
+                return ResourceManager.GetString("CorrelationIdNotDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The message creation date and time are not defined..
+        /// </summary>
+        internal static string MessageDateTimeNotDefined {
+            get {
+                return ResourceManager.GetString("MessageDateTimeNotDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The message identifier is not defined..
+        /// </summary>
+        internal static string MessageIdNotDefined {
+            get {
+                return ResourceManager.GetString("MessageIdNotDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown object type..
         /// </summary>
         internal static string UnkownType {
             get {
                 return ResourceManager.GetString("UnkownType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The user identifier is not defined..
+        /// </summary>
+        internal static string UserIdNotDefined {
+            get {
+                return ResourceManager.GetString("UserIdNotDefined", resourceCulture);
             }
         }
     }

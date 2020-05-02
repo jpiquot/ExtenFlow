@@ -117,7 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AggregateIdNotDefined" xml:space="preserve">
+    <value>The aggregate identifier is not defined.</value>
+  </data>
+  <data name="AggregateTypeNotDefined" xml:space="preserve">
+    <value>The aggregate type is not defined.</value>
+  </data>
+  <data name="CorrelationIdNotDefined" xml:space="preserve">
+    <value>The correlation identifier is not defined.</value>
+  </data>
+  <data name="MessageDateTimeNotDefined" xml:space="preserve">
+    <value>The message creation date and time are not defined.</value>
+  </data>
+  <data name="MessageIdNotDefined" xml:space="preserve">
+    <value>The message identifier is not defined.</value>
+  </data>
   <data name="UnkownType" xml:space="preserve">
     <value>Unknown object type.</value>
+  </data>
+  <data name="UserIdNotDefined" xml:space="preserve">
+    <value>The user identifier is not defined.</value>
   </data>
 </root>

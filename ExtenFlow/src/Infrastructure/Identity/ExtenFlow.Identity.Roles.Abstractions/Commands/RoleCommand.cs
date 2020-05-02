@@ -32,8 +32,19 @@ namespace ExtenFlow.Identity.Roles.Commands
         /// </param>
         /// <param name="messageId">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        protected RoleCommand(string aggregateId, string? concurrencyStamp, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(nameof(Role), aggregateId, concurrencyStamp, userId, correlationId, messageId, dateTime)
+        protected RoleCommand(string aggregateId,
+                              string? concurrencyStamp,
+                              string userId,
+                              Guid correlationId,
+                              Guid messageId,
+                              DateTimeOffset dateTime)
+            : base(DefaultAggregateType, aggregateId, concurrencyStamp, userId, correlationId, messageId, dateTime)
         {
         }
+
+        /// <summary>
+        /// Default aggregate type
+        /// </summary>
+        public static string DefaultAggregateType => nameof(Role);
     }
 }

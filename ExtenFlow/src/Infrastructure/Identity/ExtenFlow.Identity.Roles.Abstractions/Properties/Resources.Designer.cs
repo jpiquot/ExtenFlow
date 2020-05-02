@@ -61,6 +61,15 @@ namespace ExtenFlow.Identity.Roles.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Duplicate normalized role name. .
+        /// </summary>
+        public static string DuplicateNormalizedRoleName {
+            get {
+                return ResourceManager.GetString("DuplicateNormalizedRoleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate role with &apos;{0}&apos;=&apos;{1}&apos;..
         /// </summary>
         public static string DuplicateRole {
@@ -88,6 +97,15 @@ namespace ExtenFlow.Identity.Roles.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The normalized role name is not defined..
+        /// </summary>
+        public static string NormalizedRoleNameNotDefined {
+            get {
+                return ResourceManager.GetString("NormalizedRoleNameNotDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The role claim type is not defined..
         /// </summary>
         public static string RoleClaimTypeNotDefined {
@@ -111,6 +129,15 @@ namespace ExtenFlow.Identity.Roles.Properties {
         public static string RoleIdNotDefined {
             get {
                 return ResourceManager.GetString("RoleIdNotDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The role name is not defined..
+        /// </summary>
+        public static string RoleNameNotDefined {
+            get {
+                return ResourceManager.GetString("RoleNameNotDefined", resourceCulture);
             }
         }
         

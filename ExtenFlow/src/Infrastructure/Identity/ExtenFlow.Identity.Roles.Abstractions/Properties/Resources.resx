@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DuplicateNormalizedRoleName" xml:space="preserve">
+    <value>Duplicate normalized role name. </value>
+  </data>
   <data name="DuplicateRole" xml:space="preserve">
     <value>Duplicate role with '{0}'='{1}'.</value>
   </data>
@@ -126,6 +129,9 @@
   <data name="InvalidRoleNormalizedName" xml:space="preserve">
     <value>Invalid role normalized name : '{0}'.</value>
   </data>
+  <data name="NormalizedRoleNameNotDefined" xml:space="preserve">
+    <value>The normalized role name is not defined.</value>
+  </data>
   <data name="RoleClaimTypeNotDefined" xml:space="preserve">
     <value>The role claim type is not defined.</value>
   </data>
@@ -134,6 +140,9 @@
   </data>
   <data name="RoleIdNotDefined" xml:space="preserve">
     <value>The role id is not defined</value>
+  </data>
+  <data name="RoleNameNotDefined" xml:space="preserve">
+    <value>The role name is not defined.</value>
   </data>
   <data name="RoleNotFound" xml:space="preserve">
     <value>Role with '{0}'='{1}' not found.</value>

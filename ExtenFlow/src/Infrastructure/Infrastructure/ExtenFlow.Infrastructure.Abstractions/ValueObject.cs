@@ -18,10 +18,7 @@ namespace ExtenFlow.Infrastructure
         /// <param name="a">a.</param>
         /// <param name="b">The b.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator !=(ValueObject a, ValueObject b)
-        {
-            return !(a == b);
-        }
+        public static bool operator !=(ValueObject a, ValueObject b) => !(a == b);
 
         /// <summary>
         /// Implements the operator ==.
@@ -31,11 +28,17 @@ namespace ExtenFlow.Infrastructure
         /// <returns>The result of the operator.</returns>
         public static bool operator ==(ValueObject a, ValueObject b)
         {
+#pragma warning disable IDE0041 // Use 'is null' check
             if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+            {
                 return true;
+            }
 
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+            {
                 return false;
+            }
+#pragma warning restore IDE0041 // Use 'is null' check
 
             return a.Equals(b);
         }
@@ -51,10 +54,14 @@ namespace ExtenFlow.Infrastructure
         public override bool Equals(object? obj)
         {
             if (obj == null)
+            {
                 return false;
+            }
 
             if (GetType() != obj.GetType())
+            {
                 return false;
+            }
 
             var valueObject = (ValueObject)obj;
 
@@ -69,8 +76,7 @@ namespace ExtenFlow.Infrastructure
         /// structures like a hash table.
         /// </returns>
         public override int GetHashCode()
-        {
-            return GetEqualityComponents()
+            => GetEqualityComponents()
                 .Aggregate(1, (current, obj) =>
                 {
                     unchecked
@@ -78,7 +84,6 @@ namespace ExtenFlow.Infrastructure
                         return current * 23 + (obj?.GetHashCode() ?? 0);
                     }
                 });
-        }
 
         /// <summary>
         /// Gets the equality components.
