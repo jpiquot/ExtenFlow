@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 
@@ -95,22 +94,12 @@ namespace ExtenFlow.Actors
         /// </summary>
         protected virtual async Task ReadStateData()
         {
-            try
-            {
-                _state = await StateManager.GetStateAsync<TState>(this.ActorName());
-            }
-#pragma warning disable CA1031 // Do not catch general exception types
-            catch (KeyNotFoundException)
-            {
-                _state = null;
-            }
-#pragma warning restore CA1031 // Do not catch general exception types
+            _state = await StateManager.GetOrAddStateAsync(StateName, new TState());
         }
 
         /// <summary>
         /// Saves the actor state.
         /// </summary>
-        /// <returns></returns>
         protected virtual Task SetStateData()
             => (_state == null) ? StateManager.RemoveStateAsync(StateName) : StateManager.SetStateAsync(StateName, State);
 

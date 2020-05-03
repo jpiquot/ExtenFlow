@@ -124,6 +124,18 @@ namespace ExtenFlow.Identity.Roles.Actors
                         _ => Task.FromException<object>(new ArgumentOutOfRangeException(nameof(query)))
                     };
 
+        /// <summary>
+        /// Saves the actor state.
+        /// </summary>
+        protected override Task SetStateData()
+        {
+            if (!StateIsNull())
+            {
+                State.InitNewConcurrencyStamp();
+            }
+            return base.SetStateData();
+        }
+
         private void Apply(RoleRenamed rename)
             => State.Name = rename.Name;
 

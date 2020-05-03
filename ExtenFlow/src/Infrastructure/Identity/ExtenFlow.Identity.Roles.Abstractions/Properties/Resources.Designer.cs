@@ -97,6 +97,33 @@ namespace ExtenFlow.Identity.Roles.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Normalized.
+        /// </summary>
+        public static string Normalized {
+            get {
+                return ResourceManager.GetString("Normalized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Normalized name.
+        /// </summary>
+        public static string NormalizedName {
+            get {
+                return ResourceManager.GetString("NormalizedName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The normalized name is used to find a role or to identify duplicate names. It&apos;s calculated by the system from the name..
+        /// </summary>
+        public static string NormalizedNameDescription {
+            get {
+                return ResourceManager.GetString("NormalizedNameDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The normalized role name is not defined..
         /// </summary>
         public static string NormalizedRoleNameNotDefined {
@@ -124,11 +151,29 @@ namespace ExtenFlow.Identity.Roles.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The role concurrency stamp is not defined..
+        /// </summary>
+        public static string RoleConcurrencyStampNotDefined {
+            get {
+                return ResourceManager.GetString("RoleConcurrencyStampNotDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The role id is not defined.
         /// </summary>
         public static string RoleIdNotDefined {
             get {
                 return ResourceManager.GetString("RoleIdNotDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The role name is not valid..
+        /// </summary>
+        public static string RoleNameInvalid {
+            get {
+                return ResourceManager.GetString("RoleNameInvalid", resourceCulture);
             }
         }
         

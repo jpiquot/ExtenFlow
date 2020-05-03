@@ -117,49 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DuplicateNormalizedRoleName" xml:space="preserve">
-    <value>Duplicate normalized role name. </value>
+  <data name="CanBeEmptyAndMinInvalid" xml:space="preserve">
+    <value>Invalid argument combination: Min &gt; 0 and CanBeEmpty = true.</value>
   </data>
-  <data name="DuplicateRole" xml:space="preserve">
-    <value>Duplicate role with '{0}'='{1}'.</value>
+  <data name="CanBeNullAndMinInvalid" xml:space="preserve">
+    <value>Invalid argument combination: Min &gt; 0 and CanBeNull = true.</value>
   </data>
-  <data name="InvalidRoleName" xml:space="preserve">
-    <value>Invalid role name : '{0}'.</value>
+  <data name="Code" xml:space="preserve">
+    <value>Code</value>
   </data>
-  <data name="InvalidRoleNormalizedName" xml:space="preserve">
-    <value>Invalid role normalized name : '{0}'.</value>
+  <data name="Comments" xml:space="preserve">
+    <value>Comments</value>
   </data>
-  <data name="Normalized" xml:space="preserve">
-    <value>Normalized</value>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
   </data>
-  <data name="NormalizedName" xml:space="preserve">
-    <value>Normalized name</value>
+  <data name="Id" xml:space="preserve">
+    <value>Id</value>
   </data>
-  <data name="NormalizedNameDescription" xml:space="preserve">
-    <value>The normalized name is used to find a role or to identify duplicate names. It's calculated by the system from the name.</value>
+  <data name="Identifier" xml:space="preserve">
+    <value>Identifier</value>
   </data>
-  <data name="NormalizedRoleNameNotDefined" xml:space="preserve">
-    <value>The normalized role name is not defined.</value>
+  <data name="InvalidFieldValue" xml:space="preserve">
+    <value>Invalid field value.</value>
   </data>
-  <data name="RoleClaimTypeNotDefined" xml:space="preserve">
-    <value>The role claim type is not defined.</value>
-  </data>
-  <data name="RoleConcurrencyFailure" xml:space="preserve">
-    <value>Concurrency check failure when updating the role in database. Expected stamp : '{0}'; Actual stamp : '{1}'.</value>
-  </data>
-  <data name="RoleConcurrencyStampNotDefined" xml:space="preserve">
-    <value>The role concurrency stamp is not defined.</value>
-  </data>
-  <data name="RoleIdNotDefined" xml:space="preserve">
-    <value>The role id is not defined</value>
-  </data>
-  <data name="RoleNameInvalid" xml:space="preserve">
-    <value>The role name is not valid.</value>
-  </data>
-  <data name="RoleNameNotDefined" xml:space="preserve">
-    <value>The role name is not defined.</value>
-  </data>
-  <data name="RoleNotFound" xml:space="preserve">
-    <value>Role with '{0}'='{1}' not found.</value>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
   </data>
 </root>

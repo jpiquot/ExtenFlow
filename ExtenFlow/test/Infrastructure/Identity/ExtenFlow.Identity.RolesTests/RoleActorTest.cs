@@ -56,7 +56,7 @@ namespace ExtenFlow.Identity.RolesTests
                     It.Is<RoleState>(o =>
                         o.Name == state1.Name &&
                         o.NormalizedName == state1.NormalizedName &&
-                        string.IsNullOrWhiteSpace(o.ConcurrencyStamp)),
+                        !string.IsNullOrWhiteSpace(o.ConcurrencyStamp)),
                     It.IsAny<CancellationToken>()))
                 .Verifiable();
             string id = Guid.NewGuid().ToString();
@@ -67,11 +67,12 @@ namespace ExtenFlow.Identity.RolesTests
         }
 
         [Fact]
-        public async Task RoleActorRemove_ExpectsStateNull()
+        public async Task RoleActorRemove_ExpectsRemoveState()
         {
             var stateManager = new Mock<IActorStateManager>();
             var oldState = new RoleState("old role", "OLDROLE", Guid.NewGuid().ToString());
-            stateManager.Setup(manager => manager.GetStateAsync<RoleState>(_stateName, It.IsAny<CancellationToken>()))
+            stateManager.Setup(manager => manager
+                .GetStateAsync<RoleState>(_stateName, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(oldState))
                 .Verifiable();
             stateManager.Setup(manager => manager
