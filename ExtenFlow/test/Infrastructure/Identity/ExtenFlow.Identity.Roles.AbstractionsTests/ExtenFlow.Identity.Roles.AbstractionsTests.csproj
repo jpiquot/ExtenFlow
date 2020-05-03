@@ -16,14 +16,12 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Update="FluentAssertions" Version="5.10.3" />
+		<PackageReference Include="Moq" Version="4.13.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\src\Infrastructure\Identity\ExtenFlow.Identity.Roles.Abstractions\ExtenFlow.Identity.Roles.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Messages\ExtenFlow.Messages.AbstractionsTests\ExtenFlow.Messages.AbstractionsTests.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Update="FluentAssertions" Version="5.10.3" />
 	</ItemGroup>
 </Project>

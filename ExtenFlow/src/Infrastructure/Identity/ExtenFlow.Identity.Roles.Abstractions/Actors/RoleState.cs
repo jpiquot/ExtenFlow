@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+
 using ExtenFlow.Identity.Roles.Exceptions;
 
 namespace ExtenFlow.Identity.Roles.Actors
@@ -9,6 +10,26 @@ namespace ExtenFlow.Identity.Roles.Actors
     /// </summary>
     public class RoleState
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public RoleState()
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="normalizedName"></param>
+        /// <param name="concurrencyStamp"></param>
+        public RoleState(string name, string normalizedName, string? concurrencyStamp)
+        {
+            Name = name;
+            NormalizedName = normalizedName;
+            ConcurrencyStamp = concurrencyStamp;
+        }
+
         /// <summary>
         /// Gets the concurrency stamp. A random value that should change whenever a role is
         /// persisted to the store.

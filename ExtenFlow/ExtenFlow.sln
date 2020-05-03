@@ -110,6 +110,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Roles.Ab
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Users", "src\Infrastructure\Identity\ExtenFlow.Identity.Users\ExtenFlow.Identity.Users.csproj", "{F6F33759-3EE3-4A0B-9869-64B2E8BB8D32}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.RolesTests", "test\Infrastructure\Identity\ExtenFlow.Identity.RolesTests\ExtenFlow.Identity.RolesTests.csproj", "{70765F51-3BAC-4F63-AACB-09524020A89D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -212,6 +214,10 @@ Global
 		{F6F33759-3EE3-4A0B-9869-64B2E8BB8D32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6F33759-3EE3-4A0B-9869-64B2E8BB8D32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6F33759-3EE3-4A0B-9869-64B2E8BB8D32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70765F51-3BAC-4F63-AACB-09524020A89D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70765F51-3BAC-4F63-AACB-09524020A89D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70765F51-3BAC-4F63-AACB-09524020A89D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70765F51-3BAC-4F63-AACB-09524020A89D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -254,6 +260,7 @@ Global
 		{493083C7-DF33-4F0A-9C5D-2A14CFB21473} = {4DBB4614-3603-4AD8-834E-7FA9C70CE404}
 		{7592525F-2FAE-48BF-8176-B929618E028B} = {86F38A60-E77B-4002-9A85-8CEDD15C0140}
 		{F6F33759-3EE3-4A0B-9869-64B2E8BB8D32} = {4DBB4614-3603-4AD8-834E-7FA9C70CE404}
+		{70765F51-3BAC-4F63-AACB-09524020A89D} = {86F38A60-E77B-4002-9A85-8CEDD15C0140}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B174E5CA-DE64-416A-B7A6-338036C49BF5}
