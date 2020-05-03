@@ -3,7 +3,7 @@
 namespace ExtenFlow.ApplicationDictionary.FieldDefinitions
 {
     /// <summary>
-    /// Name field definition
+    /// Comments field definition
     /// </summary>
     public class CommentsFieldDefinition : StringFieldDefinition
     {

@@ -1,16 +1,19 @@
-﻿using FluentValidation.Validators;
+﻿using ExtenFlow.ApplicationDictionary.FieldValidators;
+using ExtenFlow.Identity.Roles.FieldDefinitions;
+
+using FluentValidation.Validators;
 
 namespace ExtenFlow.Identity.Roles.Validators
 {
     /// <summary>
     /// Role name validator
     /// </summary>
-    public class RoleNameValidator : PropertyValidator
+    public class RoleNameValidator : StringFieldValidator<RoleNameDefinition>
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        public RoleNameValidator() : base(Properties.Resources.RoleNameInvalid)
+        public RoleNameValidator(RoleNameDefinition definition) : base(definition, Properties.Resources.RoleNameInvalid)
         {
         }
 

@@ -3,30 +3,9 @@
 namespace ExtenFlow.ApplicationDictionary.FieldDefinitions
 {
     /// <summary>
-    /// Field alignment
-    /// </summary>
-    public enum FieldAlignment
-    {
-        /// <summary>
-        /// Align on left
-        /// </summary>
-        Left = 0,
-
-        /// <summary>
-        /// Align on right
-        /// </summary>
-        Right = 1,
-
-        /// <summary>
-        /// Align on center
-        /// </summary>
-        Center = 2
-    }
-
-    /// <summary>
     /// String field/property definition
     /// </summary>
-    public abstract class FieldDefinition<T>
+    public abstract class FieldDefinition<T> : IFieldDefinition
     {
         private readonly FieldAlignment? _alignment;
         private readonly bool? _canBeEmpty;
@@ -131,6 +110,11 @@ namespace ExtenFlow.ApplicationDictionary.FieldDefinitions
         public string DisplayName => _displayName ?? Name;
 
         /// <summary>
+        /// The value is editable.
+        /// </summary>
+        public bool IsReadOnly => _readOnly ?? _parent?.IsReadOnly ?? false;
+
+        /// <summary>
         /// Maximum value or maximum length for strings
         /// </summary>
         public int Max => _max ?? _parent?.Max ?? 0;
@@ -144,11 +128,6 @@ namespace ExtenFlow.ApplicationDictionary.FieldDefinitions
         /// The field name
         /// </summary>
         public string Name => _name;
-
-        /// <summary>
-        /// The value is editable.
-        /// </summary>
-        public bool ReadOnly => _readOnly ?? _parent?.ReadOnly ?? false;
 
         /// <summary>
         /// The field display name

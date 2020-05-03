@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Resources;
+
 using ExtenFlow.ApplicationDictionary.FieldDefinitions;
 
 using FluentValidation.Validators;
@@ -12,21 +13,20 @@ namespace ExtenFlow.ApplicationDictionary.FieldValidators
     /// Field validator
     /// </summary>
     public abstract class FieldValidator<TField, TType> : PropertyValidator
-        where TField : FieldDefinition<TType>, new()
+        where TField : IFieldDefinition
     {
-        private TField? _definition;
-
         /// <summary>
         /// Constructor
         /// </summary>
-        public FieldValidator(string? errorMessage = null) : base(errorMessage ?? Properties.Resources.InvalidFieldValue)
+        public FieldValidator(TField definition, string? errorMessage = null) : base(errorMessage ?? Properties.Resources.InvalidFieldValue)
         {
+            Definition = definition ?? throw new ArgumentNullException(nameof(definition));
         }
 
         /// <summary>
         /// Field definition
         /// </summary>
-        protected TField Definition => _definition ?? (_definition = new TField());
+        protected TField Definition { get; }
 
         /// <summary>
         /// Check if property is valid

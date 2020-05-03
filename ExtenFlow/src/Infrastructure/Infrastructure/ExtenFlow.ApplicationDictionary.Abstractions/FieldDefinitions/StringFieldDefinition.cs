@@ -5,7 +5,7 @@ namespace ExtenFlow.ApplicationDictionary.FieldDefinitions
     /// <summary>
     /// String field/property definition
     /// </summary>
-    public abstract class StringFieldDefinition : FieldDefinition<string>
+    public abstract class StringFieldDefinition : FieldDefinition<string>, IStringFieldDefinition
     {
         private readonly bool? _canBeWhiteSpaces;
 
