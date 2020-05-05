@@ -17,7 +17,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Update="FluentAssertions" Version="5.10.3" />
-		<PackageReference Include="Moq" Version="4.13.1" />
+		<PackageReference Include="Moq" Version="4.14.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\src\Infrastructure\Identity\ExtenFlow.Identity.Roles\ExtenFlow.Identity.Roles.csproj" />

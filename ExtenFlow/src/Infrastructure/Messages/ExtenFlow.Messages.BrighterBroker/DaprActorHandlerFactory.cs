@@ -47,22 +47,7 @@ namespace ExtenFlow.Messages.BrighterBroker
             {
                 throw new ArgumentNullException(nameof(handlerType));
             }
-            MethodInfo? method = typeof(ActorProxy).GetMethod("Create", BindingFlags.Static);
-            if (method == null)
-            {
-#pragma warning disable CA1303 // Do not pass literals as localized parameters
-                throw new Exception("Static method create not found on ActorProxy class.");
-            }
-            MethodInfo generic = method.MakeGenericMethod(handlerType);
-            var handler = (IHandleRequestsAsync?)generic.Invoke(this, new object[] { new ActorId(_random.Next(1, _maxHandlers).ToString(CultureInfo.InvariantCulture)), handlerType, handlerType.Name.Substring(1) });
-            if (handler == null)
-            {
-                throw new Exception("The actor proxy create method returned a null value.");
-#pragma warning restore CA1303 // Do not pass literals as localized parameters
-            }
-            // TODO: Change create signature
-            //return (IHandleRequestsAsync)_actorProxy.Create(new ActorId(_random.Next(1, _maxHandlers).ToString(CultureInfo.InvariantCulture)), handlerType, handlerType.Name.Substring(1));
-            return handler;
+            return (IHandleRequestsAsync)_actorProxy.Create(new ActorId(_random.Next(1, _maxHandlers).ToString(CultureInfo.InvariantCulture)), handlerType, handlerType.Name.Substring(1));
         }
 
         /// <summary>
