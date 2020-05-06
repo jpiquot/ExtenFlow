@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
-using System.Reflection;
 using System.Resources;
+
 using Dapr.Actors;
 using Dapr.Actors.Client;
 
@@ -47,7 +47,8 @@ namespace ExtenFlow.Messages.BrighterBroker
             {
                 throw new ArgumentNullException(nameof(handlerType));
             }
-            return (IHandleRequestsAsync)_actorProxy.Create(new ActorId(_random.Next(1, _maxHandlers).ToString(CultureInfo.InvariantCulture)), handlerType, handlerType.Name.Substring(1));
+            // TODO Wait for 0.7.0 Dapr to fix missing method
+            return (IHandleRequestsAsync)ActorProxy.Create(new ActorId(_random.Next(1, _maxHandlers).ToString(CultureInfo.InvariantCulture)), handlerType, handlerType.Name.Substring(1));
         }
 
         /// <summary>

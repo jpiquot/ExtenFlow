@@ -28,7 +28,7 @@ namespace ExtenFlow.Identity.Roles.Validators
         /// <returns></returns>
         protected override bool IsValid(PropertyValidatorContext context)
         {
-            string? name = context?.Instance as string;
+            string? name = context?.PropertyValue as string;
             if (string.IsNullOrWhiteSpace(name))
             {
                 return true;

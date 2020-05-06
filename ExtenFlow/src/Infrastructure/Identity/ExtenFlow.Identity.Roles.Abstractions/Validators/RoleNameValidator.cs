@@ -23,6 +23,6 @@ namespace ExtenFlow.Identity.Roles.Validators
         /// <param name="context"></param>
         /// <returns></returns>
         protected override bool IsValid(PropertyValidatorContext context)
-            => string.IsNullOrWhiteSpace(context?.Instance as string);
+            => string.IsNullOrWhiteSpace(context?.PropertyValue as string);
     }
 }
