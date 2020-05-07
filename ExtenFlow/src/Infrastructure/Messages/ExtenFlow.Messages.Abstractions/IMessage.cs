@@ -8,9 +8,14 @@ namespace ExtenFlow.Messages
     public interface IMessage
     {
         /// <summary>
-        /// The message unique identifier
+        /// The aggregate id
         /// </summary>
-        Guid MessageId { get; }
+        string? AggregateId { get; }
+
+        /// <summary>
+        /// The aggregate type
+        /// </summary>
+        string AggregateType { get; }
 
         /// <summary>
         /// The correlation id is used to link messages together. It can be considered as the
@@ -25,18 +30,13 @@ namespace ExtenFlow.Messages
         DateTimeOffset DateTime { get; }
 
         /// <summary>
+        /// The message unique identifier
+        /// </summary>
+        Guid Id { get; }
+
+        /// <summary>
         /// The user that submitted the message
         /// </summary>
         string UserId { get; }
-
-        /// <summary>
-        /// The aggregate type
-        /// </summary>
-        string AggregateType { get; }
-
-        /// <summary>
-        /// The aggregate id
-        /// </summary>
-        string? AggregateId { get; }
     }
 }

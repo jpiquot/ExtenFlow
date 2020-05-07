@@ -22,7 +22,7 @@ namespace ExtenFlow.Messages
             UserId = string.Empty;
             CorrelationId = Guid.NewGuid();
             DateTime = DateTimeOffset.Now;
-            MessageId = Guid.NewGuid();
+            Id = Guid.NewGuid();
             AggregateType = string.Empty;
             AggregateId = null;
         }
@@ -34,13 +34,13 @@ namespace ExtenFlow.Messages
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="userId">The identifier of the user that created the message.</param>
         /// <param name="correlationId">The correlation identifier. Used to link messages together.</param>
-        /// <param name="messageId">The message unique identifier.</param>
+        /// <param name="id">The message unique identifier.</param>
         /// <param name="dateTime">The date time, the message was created.</param>
         /// <exception cref="ArgumentNullException">userId</exception>
         /// <exception cref="ArgumentNullException">aggregateType</exception>
         /// <exception cref="ArgumentNullException">correlationId</exception>
-        /// <exception cref="ArgumentNullException">messageId</exception>
-        protected Message(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+        /// <exception cref="ArgumentNullException">id</exception>
+        protected Message(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
         {
             if (string.IsNullOrWhiteSpace(userId))
             {
@@ -54,14 +54,14 @@ namespace ExtenFlow.Messages
             {
                 throw new ArgumentNullException(nameof(correlationId));
             }
-            if (messageId == null || messageId == Guid.Empty)
+            if (id == null || id == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(messageId));
+                throw new ArgumentNullException(nameof(id));
             }
             UserId = userId;
             CorrelationId = correlationId;
             DateTime = dateTime;
-            MessageId = messageId;
+            Id = id;
             AggregateId = aggregateId;
             AggregateType = aggregateType;
         }
@@ -91,7 +91,7 @@ namespace ExtenFlow.Messages
         /// <summary>
         /// The message unique identifier.
         /// </summary>
-        public Guid MessageId { get; [Obsolete]set; }
+        public Guid Id { get; [Obsolete]set; }
 
         /// <summary>
         /// The id of the message creator.

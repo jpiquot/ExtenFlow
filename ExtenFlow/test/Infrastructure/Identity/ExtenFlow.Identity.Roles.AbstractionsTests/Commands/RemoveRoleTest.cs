@@ -25,8 +25,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(RemoveRoleTestDate))]
-        public void CreateRemoveRole_CheckState(string aggregateId, string concurrencyStamp, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RemoveRoleFixture.CheckMessageState(new RemoveRole(aggregateId, concurrencyStamp, userId, correlationId, messageId, dateTime), "Role", aggregateId, userId, correlationId, messageId, dateTime);
+        public void CreateRemoveRole_CheckState(string aggregateId, string concurrencyStamp, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => RemoveRoleFixture.CheckMessageState(new RemoveRole(aggregateId, concurrencyStamp, userId, correlationId, id, dateTime), "Role", aggregateId, userId, correlationId, id, dateTime);
 
         [Fact]
         public void CreateRemoveRole_DefaultMessageShouldHaveACorrelationId()
@@ -35,8 +35,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
                 .NotBe(Guid.Empty);
 
         [Fact]
-        public void CreateRemoveRole_DefaultMessageShouldHaveAMessageId()
-            => new RemoveRole("aggr id", "3256535385", "user").MessageId
+        public void CreateRemoveRole_DefaultMessageShouldHaveAId()
+            => new RemoveRole("aggr id", "3256535385", "user").Id
                 .Should()
                 .NotBe(Guid.Empty);
 
@@ -47,7 +47,7 @@ namespace ExtenFlow.Messages.AbstractionsTests
                 .Throw<ArgumentNullException>();
 
         [Fact]
-        public void CreateRemoveRole_EmptyMessageIdShouldThrowException()
+        public void CreateRemoveRole_EmptyIdShouldThrowException()
             => Invoking(() => new RemoveRole("Aggr. Id", "6585351232", "user", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
@@ -63,13 +63,13 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(RemoveRoleTestDate))]
-        public void DotNetJsonSerializeMessage_Check(string aggregateId, string concurrencyStamp, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RemoveRoleFixture.CheckMessageJsonSerialization(new RemoveRole(aggregateId, concurrencyStamp, userId, correlationId, messageId, dateTime));
+        public void DotNetJsonSerializeMessage_Check(string aggregateId, string concurrencyStamp, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => RemoveRoleFixture.CheckMessageJsonSerialization(new RemoveRole(aggregateId, concurrencyStamp, userId, correlationId, id, dateTime));
 
         [Theory]
         [ClassData(typeof(RemoveRoleTestDate))]
-        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string concurrencyStamp, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RemoveRoleFixture.CheckMessageNewtonSoftSerialization(new RemoveRole(aggregateId, concurrencyStamp, userId, correlationId, messageId, dateTime));
+        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string concurrencyStamp, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => RemoveRoleFixture.CheckMessageNewtonSoftSerialization(new RemoveRole(aggregateId, concurrencyStamp, userId, correlationId, id, dateTime));
     }
 
     public class RemoveRoleTestDate : IEnumerable<object[]>

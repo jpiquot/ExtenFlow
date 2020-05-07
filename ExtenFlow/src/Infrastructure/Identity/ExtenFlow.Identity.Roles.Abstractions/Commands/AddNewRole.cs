@@ -31,10 +31,10 @@ namespace ExtenFlow.Identity.Roles.Commands
         /// <param name="correlationId">
         /// The correlation id used to chain messages, queries, commands and events.
         /// </param>
-        /// <param name="messageId">The Id of this command.</param>
+        /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        public AddNewRole(string aggregateId, string name, string normalizedName, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
-            : base(aggregateId, null, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+        public AddNewRole(string aggregateId, string name, string normalizedName, string userId, Guid? correlationId = null, Guid? id = null, DateTimeOffset? dateTime = null)
+            : base(aggregateId, null, userId, correlationId ?? Guid.NewGuid(), id ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
         {
             if (string.IsNullOrWhiteSpace(aggregateId))
             {

@@ -15,7 +15,7 @@ namespace ExtenFlow.Messages.Validators
         protected MessageValidator(bool aggregateIdRequired = true)
         {
             RuleFor(message => message.UserId).NotEmpty().WithMessage(Properties.Resources.UserIdNotDefined);
-            RuleFor(message => message.MessageId).NotEmpty().WithMessage(Properties.Resources.MessageIdNotDefined);
+            RuleFor(message => message.Id).NotEmpty().WithMessage(Properties.Resources.IdNotDefined);
             RuleFor(message => message.CorrelationId).NotEmpty().WithMessage(Properties.Resources.CorrelationIdNotDefined);
             RuleFor(message => message.AggregateType).NotEmpty().WithMessage(Properties.Resources.AggregateTypeNotDefined);
             RuleFor(message => message.DateTime).NotEmpty().WithMessage(Properties.Resources.MessageDateTimeNotDefined);

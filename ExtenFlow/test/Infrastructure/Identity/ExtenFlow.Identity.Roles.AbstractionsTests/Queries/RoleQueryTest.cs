@@ -22,8 +22,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
         }
 
         [JsonConstructor]
-        public FakeRoleQuery(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            : base(aggregateId, userId, correlationId, messageId, dateTime)
+        public FakeRoleQuery(string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            : base(aggregateId, userId, correlationId, id, dateTime)
         {
         }
     }
@@ -39,8 +39,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(RoleQueryTestData))]
-        public void CreateRoleQuery_CheckState(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RoleQueryFixture.CheckMessageState(new FakeRoleQuery(aggregateId, userId, correlationId, messageId, dateTime), "Role", aggregateId, userId, correlationId, messageId, dateTime);
+        public void CreateRoleQuery_CheckState(string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => RoleQueryFixture.CheckMessageState(new FakeRoleQuery(aggregateId, userId, correlationId, id, dateTime), "Role", aggregateId, userId, correlationId, id, dateTime);
 
         [Fact]
         public void CreateRoleQuery_DefaultMessageShouldHaveACorrelationId()
@@ -49,8 +49,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
                 .NotBe(Guid.Empty);
 
         [Fact]
-        public void CreateRoleQuery_DefaultMessageShouldHaveAMessageId()
-            => new FakeRoleQuery().MessageId
+        public void CreateRoleQuery_DefaultMessageShouldHaveAId()
+            => new FakeRoleQuery().Id
                 .Should()
                 .NotBe(Guid.Empty);
 
@@ -61,7 +61,7 @@ namespace ExtenFlow.Messages.AbstractionsTests
                 .Throw<ArgumentNullException>();
 
         [Fact]
-        public void CreateRoleQuery_EmptyMessageIdShouldThrowException()
+        public void CreateRoleQuery_EmptyIdShouldThrowException()
             => Invoking(() => new FakeRoleQuery("Aggr. Id", "Role Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
@@ -77,12 +77,12 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(RoleQueryTestData))]
-        public void DotNetJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RoleQueryFixture.CheckMessageJsonSerialization(new FakeRoleQuery(aggregateId, userId, correlationId, messageId, dateTime));
+        public void DotNetJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => RoleQueryFixture.CheckMessageJsonSerialization(new FakeRoleQuery(aggregateId, userId, correlationId, id, dateTime));
 
         [Theory]
         [ClassData(typeof(RoleQueryTestData))]
-        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RoleQueryFixture.CheckMessageNewtonSoftSerialization(new FakeRoleQuery(aggregateId, userId, correlationId, messageId, dateTime));
+        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => RoleQueryFixture.CheckMessageNewtonSoftSerialization(new FakeRoleQuery(aggregateId, userId, correlationId, id, dateTime));
     }
 }

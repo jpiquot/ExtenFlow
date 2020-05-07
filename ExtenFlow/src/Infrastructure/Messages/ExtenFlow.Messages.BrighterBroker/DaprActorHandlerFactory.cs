@@ -39,7 +39,7 @@ namespace ExtenFlow.Messages.BrighterBroker
         /// Creates the specified handler type.
         /// </summary>
         /// <param name="handlerType">Type of the handler.</param>
-        /// <returns></returns>
+        /// <returns>The handler instance</returns>
         /// <exception cref="System.ArgumentNullException">handlerType</exception>
         public IHandleRequestsAsync Create(Type handlerType)
         {

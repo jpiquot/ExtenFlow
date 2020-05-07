@@ -72,7 +72,7 @@ namespace ExtenFlow.EventStorage.DaprActors.Tests
                 .Verifiable();
 
             EventStoreStreamActor testDemoActor = await CreateActor(stateManager.Object, EventStoreStreamActor.CreateStreamId(testEvents1[0].AggregateType, testEvents1[0].AggregateId));
-            IList<IEvent> result = await testDemoActor.Read(testEvents1.Last().MessageId, 5);
+            IList<IEvent> result = await testDemoActor.Read(testEvents1.Last().Id, 5);
             CheckValues(testEvents2.Take(5).ToList<IEvent>(), result);
         }
 
@@ -82,7 +82,7 @@ namespace ExtenFlow.EventStorage.DaprActors.Tests
             actual.Count.Should().Be(expected.Count);
             for (int i = 0; i < expected.Count; i++)
             {
-                actual[i].MessageId.Should().Be(expected[i].MessageId);
+                actual[i].Id.Should().Be(expected[i].Id);
                 actual[i].CorrelationId.Should().Be(expected[i].CorrelationId);
                 actual[i].AggregateId.Should().Be(expected[i].AggregateId);
                 actual[i].AggregateType.Should().Be(expected[i].AggregateType);

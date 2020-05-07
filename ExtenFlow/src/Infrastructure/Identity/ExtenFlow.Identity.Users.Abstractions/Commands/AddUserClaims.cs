@@ -29,10 +29,10 @@ namespace ExtenFlow.Identity.Users.Commands
         /// <param name="correlationId">
         /// The correlation id used to chain messages, queries, commands and events.
         /// </param>
-        /// <param name="messageId">The Id of this command.</param>
+        /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        public AddUserClaims(string aggregateId, Dictionary<string, string> claims, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
-            : base(aggregateId, null, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+        public AddUserClaims(string aggregateId, Dictionary<string, string> claims, string userId, Guid? correlationId = null, Guid? id = null, DateTimeOffset? dateTime = null)
+            : base(aggregateId, null, userId, correlationId ?? Guid.NewGuid(), id ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
         {
             Claims = claims ?? throw new ArgumentNullException(nameof(claims));
             if (claims.Count < 1)

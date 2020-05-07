@@ -33,10 +33,10 @@ namespace ExtenFlow.Identity.Users.Queries
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="userId">The identifier of the user that created the message.</param>
         /// <param name="correlationId">The correlation identifier. Used to link messages together.</param>
-        /// <param name="messageId">The message unique identifier.</param>
+        /// <param name="id">The message unique identifier.</param>
         /// <param name="dateTime">The date time, the message was created.</param>
-        public GetUserDetails(string aggregateId, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
-            : base(aggregateId, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+        public GetUserDetails(string aggregateId, string userId, Guid? correlationId = null, Guid? id = null, DateTimeOffset? dateTime = null)
+            : base(aggregateId, userId, correlationId ?? Guid.NewGuid(), id ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
         {
         }
     }

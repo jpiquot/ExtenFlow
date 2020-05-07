@@ -88,20 +88,20 @@ namespace ExtenFlow.Messages.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The message identifier is not defined..
+        /// </summary>
+        internal static string IdNotDefined {
+            get {
+                return ResourceManager.GetString("IdNotDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The message creation date and time are not defined..
         /// </summary>
         internal static string MessageDateTimeNotDefined {
             get {
                 return ResourceManager.GetString("MessageDateTimeNotDefined", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The message identifier is not defined..
-        /// </summary>
-        internal static string MessageIdNotDefined {
-            get {
-                return ResourceManager.GetString("MessageIdNotDefined", resourceCulture);
             }
         }
         

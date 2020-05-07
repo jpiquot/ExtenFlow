@@ -25,9 +25,9 @@ namespace ExtenFlow.Messages.Dispatcher
         /// <summary>
         /// Removes the message.
         /// </summary>
-        /// <param name="messageId">The message identifier.</param>
+        /// <param name="id">The message identifier.</param>
         /// <returns></returns>
-        Task RemoveMessage(Guid messageId);
+        Task RemoveMessage(Guid id);
 
         /// <summary>
         /// Sends the specified events.

@@ -29,9 +29,9 @@ namespace ExtenFlow.Identity.Roles.Events
         /// <param name="correlationId">
         /// The correlation id used to chain messages, queries, commands and events.
         /// </param>
-        /// <param name="messageId">The Id of this command.</param>
+        /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        protected RoleEvent(string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(nameof(Role), aggregateId, userId, correlationId, messageId, dateTime)
+        protected RoleEvent(string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime) : base(nameof(Role), aggregateId, userId, correlationId, id, dateTime)
         {
         }
     }

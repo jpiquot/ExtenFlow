@@ -27,10 +27,10 @@ namespace ExtenFlow.Messages
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="userId">The identifier of the user that created the message.</param>
         /// <param name="correlationId">The correlation identifier. Used to link messages together.</param>
-        /// <param name="messageId">The message unique identifier.</param>
+        /// <param name="id">The message unique identifier.</param>
         /// <param name="dateTime">The date time, the message was created.</param>
-        protected Event(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
+        protected Event(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            : base(aggregateType, aggregateId, userId, correlationId, id, dateTime)
         {
         }
     }

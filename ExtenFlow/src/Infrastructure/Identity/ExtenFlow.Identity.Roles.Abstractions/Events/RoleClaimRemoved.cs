@@ -28,10 +28,10 @@ namespace ExtenFlow.Identity.Roles.Events
         /// <param name="correlationId">
         /// The correlation id used to chain messages, queries, commands and events.
         /// </param>
-        /// <param name="messageId">The Id of this command.</param>
+        /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        public RoleClaimRemoved(string aggregateId, string claimType, string claimValue, string userId, Guid? correlationId = null, Guid? messageId = null, DateTimeOffset? dateTime = null)
-            : base(aggregateId, userId, correlationId ?? Guid.NewGuid(), messageId ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+        public RoleClaimRemoved(string aggregateId, string claimType, string claimValue, string userId, Guid? correlationId = null, Guid? id = null, DateTimeOffset? dateTime = null)
+            : base(aggregateId, userId, correlationId ?? Guid.NewGuid(), id ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
         {
             if (string.IsNullOrWhiteSpace(claimType))
             {

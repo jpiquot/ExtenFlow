@@ -25,8 +25,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(AddNewRoleTestDate))]
-        public void CreateAddNewRole_CheckState(string aggregateId, string name, string normalizedName, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => AddNewRoleFixture.CheckMessageState(new AddNewRole(aggregateId, name, normalizedName, userId, correlationId, messageId, dateTime), "Role", aggregateId, userId, correlationId, messageId, dateTime);
+        public void CreateAddNewRole_CheckState(string aggregateId, string name, string normalizedName, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => AddNewRoleFixture.CheckMessageState(new AddNewRole(aggregateId, name, normalizedName, userId, correlationId, id, dateTime), "Role", aggregateId, userId, correlationId, id, dateTime);
 
         [Fact]
         public void CreateAddNewRole_DefaultMessageShouldHaveACorrelationId()
@@ -35,8 +35,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
                 .NotBe(Guid.Empty);
 
         [Fact]
-        public void CreateAddNewRole_DefaultMessageShouldHaveAMessageId()
-            => new AddNewRole("aggr id", "name", "normalizedName", "user").MessageId
+        public void CreateAddNewRole_DefaultMessageShouldHaveAId()
+            => new AddNewRole("aggr id", "name", "normalizedName", "user").Id
                 .Should()
                 .NotBe(Guid.Empty);
 
@@ -47,7 +47,7 @@ namespace ExtenFlow.Messages.AbstractionsTests
                 .Throw<ArgumentNullException>();
 
         [Fact]
-        public void CreateAddNewRole_EmptyMessageIdShouldThrowException()
+        public void CreateAddNewRole_EmptyIdShouldThrowException()
             => Invoking(() => new AddNewRole("Aggr. Id", "name", "normalized name", "user", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
@@ -63,13 +63,13 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(AddNewRoleTestDate))]
-        public void DotNetJsonSerializeMessage_Check(string aggregateId, string name, string normalizedName, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => AddNewRoleFixture.CheckMessageJsonSerialization(new AddNewRole(aggregateId, name, normalizedName, userId, correlationId, messageId, dateTime));
+        public void DotNetJsonSerializeMessage_Check(string aggregateId, string name, string normalizedName, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => AddNewRoleFixture.CheckMessageJsonSerialization(new AddNewRole(aggregateId, name, normalizedName, userId, correlationId, id, dateTime));
 
         [Theory]
         [ClassData(typeof(AddNewRoleTestDate))]
-        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string name, string normalizedName, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => AddNewRoleFixture.CheckMessageNewtonSoftSerialization(new AddNewRole(aggregateId, name, normalizedName, userId, correlationId, messageId, dateTime));
+        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string name, string normalizedName, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => AddNewRoleFixture.CheckMessageNewtonSoftSerialization(new AddNewRole(aggregateId, name, normalizedName, userId, correlationId, id, dateTime));
     }
 
     public class AddNewRoleTestDate : IEnumerable<object[]>

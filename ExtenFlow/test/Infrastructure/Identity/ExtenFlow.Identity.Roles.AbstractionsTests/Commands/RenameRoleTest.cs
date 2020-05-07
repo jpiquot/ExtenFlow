@@ -25,8 +25,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(RenameRoleTestDate))]
-        public void CreateRenameRole_CheckState(string aggregateId, string name, string normalizedName, string concurrencyStamp, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RenameRoleFixture.CheckMessageState(new RenameRole(aggregateId, name, normalizedName, concurrencyStamp, userId, correlationId, messageId, dateTime), "Role", aggregateId, userId, correlationId, messageId, dateTime);
+        public void CreateRenameRole_CheckState(string aggregateId, string name, string normalizedName, string concurrencyStamp, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => RenameRoleFixture.CheckMessageState(new RenameRole(aggregateId, name, normalizedName, concurrencyStamp, userId, correlationId, id, dateTime), "Role", aggregateId, userId, correlationId, id, dateTime);
 
         [Fact]
         public void CreateRenameRole_DefaultMessageShouldHaveACorrelationId()
@@ -35,8 +35,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
                 .NotBe(Guid.Empty);
 
         [Fact]
-        public void CreateRenameRole_DefaultMessageShouldHaveAMessageId()
-            => new RenameRole("aggr id", "name", "normalizedName", "OCC1255", "user").MessageId
+        public void CreateRenameRole_DefaultMessageShouldHaveAId()
+            => new RenameRole("aggr id", "name", "normalizedName", "OCC1255", "user").Id
                 .Should()
                 .NotBe(Guid.Empty);
 
@@ -47,7 +47,7 @@ namespace ExtenFlow.Messages.AbstractionsTests
                 .Throw<ArgumentNullException>();
 
         [Fact]
-        public void CreateRenameRole_EmptyMessageIdShouldThrowException()
+        public void CreateRenameRole_EmptyIdShouldThrowException()
             => Invoking(() => new RenameRole("Aggr. Id", "name", "normalized name", "OCC1255", "user", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
@@ -63,13 +63,13 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(RenameRoleTestDate))]
-        public void DotNetJsonSerializeMessage_Check(string aggregateId, string name, string normalizedName, string concurrencyStamp, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RenameRoleFixture.CheckMessageJsonSerialization(new RenameRole(aggregateId, name, normalizedName, concurrencyStamp, userId, correlationId, messageId, dateTime));
+        public void DotNetJsonSerializeMessage_Check(string aggregateId, string name, string normalizedName, string concurrencyStamp, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => RenameRoleFixture.CheckMessageJsonSerialization(new RenameRole(aggregateId, name, normalizedName, concurrencyStamp, userId, correlationId, id, dateTime));
 
         [Theory]
         [ClassData(typeof(RenameRoleTestDate))]
-        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string name, string normalizedName, string concurrencyStamp, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RenameRoleFixture.CheckMessageNewtonSoftSerialization(new RenameRole(aggregateId, name, normalizedName, concurrencyStamp, userId, correlationId, messageId, dateTime));
+        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string name, string normalizedName, string concurrencyStamp, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => RenameRoleFixture.CheckMessageNewtonSoftSerialization(new RenameRole(aggregateId, name, normalizedName, concurrencyStamp, userId, correlationId, id, dateTime));
     }
 
     public class RenameRoleTestDate : IEnumerable<object[]>

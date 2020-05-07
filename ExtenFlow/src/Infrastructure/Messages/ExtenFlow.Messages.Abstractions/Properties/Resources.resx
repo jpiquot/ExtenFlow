@@ -129,7 +129,7 @@
   <data name="MessageDateTimeNotDefined" xml:space="preserve">
     <value>The message creation date and time are not defined.</value>
   </data>
-  <data name="MessageIdNotDefined" xml:space="preserve">
+  <data name="IdNotDefined" xml:space="preserve">
     <value>The message identifier is not defined.</value>
   </data>
   <data name="UnkownType" xml:space="preserve">

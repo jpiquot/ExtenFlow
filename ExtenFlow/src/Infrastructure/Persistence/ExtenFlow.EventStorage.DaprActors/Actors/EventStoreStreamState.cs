@@ -71,7 +71,7 @@ namespace ExtenFlow.EventStorage.DaprActors
                     result.Add(@event);
                     count++;
                 }
-                if (afterId != null && @event.MessageId == afterId)
+                if (afterId != null && @event.Id == afterId)
                 {
                     afterIdFound = true;
                 }

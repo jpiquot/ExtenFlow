@@ -25,8 +25,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(RemoveRoleClaimTestDate))]
-        public void CreateRemoveRoleClaim_CheckState(string aggregateId, string claimType, string claimValue, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RemoveRoleClaimFixture.CheckMessageState(new RemoveRoleClaim(aggregateId, claimType, claimValue, userId, correlationId, messageId, dateTime), "Role", aggregateId, userId, correlationId, messageId, dateTime);
+        public void CreateRemoveRoleClaim_CheckState(string aggregateId, string claimType, string claimValue, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => RemoveRoleClaimFixture.CheckMessageState(new RemoveRoleClaim(aggregateId, claimType, claimValue, userId, correlationId, id, dateTime), "Role", aggregateId, userId, correlationId, id, dateTime);
 
         [Fact]
         public void CreateRemoveRoleClaim_DefaultMessageShouldHaveACorrelationId()
@@ -35,8 +35,8 @@ namespace ExtenFlow.Messages.AbstractionsTests
                 .NotBe(Guid.Empty);
 
         [Fact]
-        public void CreateRemoveRoleClaim_DefaultMessageShouldHaveAMessageId()
-            => new RemoveRoleClaim("aggr id", "claim type", "claim value", "user").MessageId
+        public void CreateRemoveRoleClaim_DefaultMessageShouldHaveAId()
+            => new RemoveRoleClaim("aggr id", "claim type", "claim value", "user").Id
                 .Should()
                 .NotBe(Guid.Empty);
 
@@ -47,7 +47,7 @@ namespace ExtenFlow.Messages.AbstractionsTests
                 .Throw<ArgumentNullException>();
 
         [Fact]
-        public void CreateRemoveRoleClaim_EmptyMessageIdShouldThrowException()
+        public void CreateRemoveRoleClaim_EmptyIdShouldThrowException()
             => Invoking(() => new RemoveRoleClaim("Aggr. Id", "claim type", "claim value", "user", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
@@ -63,13 +63,13 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(RemoveRoleClaimTestDate))]
-        public void DotNetJsonSerializeMessage_Check(string aggregateId, string claimType, string claimValue, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RemoveRoleClaimFixture.CheckMessageJsonSerialization(new RemoveRoleClaim(aggregateId, claimType, claimValue, userId, correlationId, messageId, dateTime));
+        public void DotNetJsonSerializeMessage_Check(string aggregateId, string claimType, string claimValue, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => RemoveRoleClaimFixture.CheckMessageJsonSerialization(new RemoveRoleClaim(aggregateId, claimType, claimValue, userId, correlationId, id, dateTime));
 
         [Theory]
         [ClassData(typeof(RemoveRoleClaimTestDate))]
-        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string claimType, string claimValue, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => RemoveRoleClaimFixture.CheckMessageNewtonSoftSerialization(new RemoveRoleClaim(aggregateId, claimType, claimValue, userId, correlationId, messageId, dateTime));
+        public void NewtonsoftJsonSerializeMessage_Check(string aggregateId, string claimType, string claimValue, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => RemoveRoleClaimFixture.CheckMessageNewtonSoftSerialization(new RemoveRoleClaim(aggregateId, claimType, claimValue, userId, correlationId, id, dateTime));
     }
 
     public class RemoveRoleClaimTestDate : IEnumerable<object[]>

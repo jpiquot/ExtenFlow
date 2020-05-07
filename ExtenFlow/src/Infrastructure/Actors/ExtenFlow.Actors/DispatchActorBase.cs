@@ -90,7 +90,7 @@ namespace ExtenFlow.Actors
             while ((message = await MessageQueue.ReadNext()) != null)
             {
                 await ReceiveQueueMessage(message);
-                await MessageQueue.RemoveMessage(message.MessageId);
+                await MessageQueue.RemoveMessage(message.Id);
             }
         }
 

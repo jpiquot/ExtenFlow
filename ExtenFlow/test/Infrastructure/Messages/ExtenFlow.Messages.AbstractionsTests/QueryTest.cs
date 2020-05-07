@@ -20,32 +20,25 @@ namespace ExtenFlow.Messages.AbstractionsTests
         }
 
         [JsonConstructor]
-        public FakeQuery(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
+        public FakeQuery(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            : base(aggregateType, aggregateId, userId, correlationId, id, dateTime)
         {
         }
     }
 
     public class QueryTest : IClassFixture<QueryFixture<string, FakeQuery>>
     {
-        private QueryFixture<string, FakeQuery> QueryFixture { get; }
-
         public QueryTest(QueryFixture<string, FakeQuery> queryFixture)
         {
             QueryFixture = queryFixture;
         }
 
-        [Fact]
-        public void CreateQuery_EmptyMessageIdShouldThrowException()
-            => Invoking(() => new FakeQuery("Aggr. Type", "Aggr. Id", "User Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
-                .Should()
-                .Throw<ArgumentNullException>();
+        private QueryFixture<string, FakeQuery> QueryFixture { get; }
 
-        [Fact]
-        public void CreateQuery_DefaultMessageShouldHaveAMessageId()
-            => new FakeQuery().MessageId
-                .Should()
-                .NotBe(Guid.Empty);
+        [Theory]
+        [ClassData(typeof(MessageTestData))]
+        public void CreateQuery_CheckState(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => QueryFixture.CheckMessageState(new FakeQuery(aggregateType, aggregateId, userId, correlationId, id, dateTime), aggregateType, aggregateId, userId, correlationId, id, dateTime);
 
         [Fact]
         public void CreateQuery_DefaultMessageShouldHaveACorrelationId()
@@ -54,8 +47,20 @@ namespace ExtenFlow.Messages.AbstractionsTests
                 .NotBe(Guid.Empty);
 
         [Fact]
+        public void CreateQuery_DefaultMessageShouldHaveAId()
+            => new FakeQuery().Id
+                .Should()
+                .NotBe(Guid.Empty);
+
+        [Fact]
         public void CreateQuery_EmptyCorrelationIdShouldThrowException()
             => Invoking(() => new FakeQuery("Aggr. Type", "Aggr. Id", "User Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
+                .Should()
+                .Throw<ArgumentNullException>();
+
+        [Fact]
+        public void CreateQuery_EmptyIdShouldThrowException()
+            => Invoking(() => new FakeQuery("Aggr. Type", "Aggr. Id", "User Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
                 .Should()
                 .Throw<ArgumentNullException>();
 
@@ -70,17 +75,12 @@ namespace ExtenFlow.Messages.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(MessageTestData))]
-        public void NewtonsoftJsonSerializeMessage_Check(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => QueryFixture.CheckMessageNewtonSoftSerialization(new FakeQuery(aggregateType, aggregateId, userId, correlationId, messageId, dateTime));
+        public void DotNetJsonSerializeMessage_Check(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => QueryFixture.CheckMessageJsonSerialization(new FakeQuery(aggregateType, aggregateId, userId, correlationId, id, dateTime));
 
         [Theory]
         [ClassData(typeof(MessageTestData))]
-        public void DotNetJsonSerializeMessage_Check(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => QueryFixture.CheckMessageJsonSerialization(new FakeQuery(aggregateType, aggregateId, userId, correlationId, messageId, dateTime));
-
-        [Theory]
-        [ClassData(typeof(MessageTestData))]
-        public void CreateQuery_CheckState(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
-            => QueryFixture.CheckMessageState(new FakeQuery(aggregateType, aggregateId, userId, correlationId, messageId, dateTime), aggregateType, aggregateId, userId, correlationId, messageId, dateTime);
+        public void NewtonsoftJsonSerializeMessage_Check(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+            => QueryFixture.CheckMessageNewtonSoftSerialization(new FakeQuery(aggregateType, aggregateId, userId, correlationId, id, dateTime));
     }
 }

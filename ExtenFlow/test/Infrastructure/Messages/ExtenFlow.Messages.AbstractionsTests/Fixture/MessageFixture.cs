@@ -12,14 +12,6 @@ namespace ExtenFlow.Messages.AbstractionsTests
 {
     public class MessageFixture<T> where T : IMessage
     {
-        public T CheckMessageNewtonSoftSerialization(T message)
-        {
-            string json = JsonConvert.SerializeObject(message);
-            T deserializedMessage = JsonConvert.DeserializeObject<T>(json);
-            CheckMessageStateAreEqual(message, deserializedMessage);
-            return deserializedMessage;
-        }
-
         public T CheckMessageJsonSerialization(T message)
         {
             string json = System.Text.Json.JsonSerializer.Serialize<T>(message);
@@ -28,24 +20,32 @@ namespace ExtenFlow.Messages.AbstractionsTests
             return deserializedMessage;
         }
 
-        public virtual void CheckMessageStateAreEqual(T expected, T result)
+        public T CheckMessageNewtonSoftSerialization(T message)
         {
-            result.MessageId.Should().Be(expected.MessageId);
-            result.UserId.Should().Be(expected.UserId);
-            result.CorrelationId.Should().Be(expected.CorrelationId);
-            result.DateTime.Should().Be(expected.DateTime);
-            result.AggregateId.Should().Be(expected.AggregateId);
-            result.AggregateType.Should().Be(expected.AggregateType);
+            string json = JsonConvert.SerializeObject(message);
+            T deserializedMessage = JsonConvert.DeserializeObject<T>(json);
+            CheckMessageStateAreEqual(message, deserializedMessage);
+            return deserializedMessage;
         }
 
-        public virtual void CheckMessageState(T result, string aggregateType, string aggregateId, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime)
+        public virtual void CheckMessageState(T result, string aggregateType, string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
         {
-            result.MessageId.Should().Be(messageId);
+            result.Id.Should().Be(id);
             result.UserId.Should().Be(userId);
             result.CorrelationId.Should().Be(correlationId);
             result.DateTime.Should().Be(dateTime);
             result.AggregateId.Should().Be(aggregateId);
             result.AggregateType.Should().Be(aggregateType);
+        }
+
+        public virtual void CheckMessageStateAreEqual(T expected, T result)
+        {
+            result.Id.Should().Be(expected.Id);
+            result.UserId.Should().Be(expected.UserId);
+            result.CorrelationId.Should().Be(expected.CorrelationId);
+            result.DateTime.Should().Be(expected.DateTime);
+            result.AggregateId.Should().Be(expected.AggregateId);
+            result.AggregateType.Should().Be(expected.AggregateType);
         }
     }
 

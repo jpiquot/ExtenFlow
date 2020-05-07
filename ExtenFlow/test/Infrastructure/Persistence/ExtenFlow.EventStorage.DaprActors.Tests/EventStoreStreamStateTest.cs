@@ -53,7 +53,7 @@ namespace ExtenFlow.EventStorage.DaprActors.Tests
             var store = new EventStoreStreamState();
             store.Append(testEvents1);
             store.Append(testEvents2);
-            IList<IEvent> result = store.Read(testEvents1.Last().MessageId);
+            IList<IEvent> result = store.Read(testEvents1.Last().Id);
             CheckValues(testEvents2, result);
         }
 
@@ -74,7 +74,7 @@ namespace ExtenFlow.EventStorage.DaprActors.Tests
             var store = new EventStoreStreamState();
             store.Append(testEvents1);
             store.Append(testEvents2);
-            IList<IEvent> result = store.Read(testEvents1.Last().MessageId, 5);
+            IList<IEvent> result = store.Read(testEvents1.Last().Id, 5);
             CheckValues(testEvents2.Take(5).ToList<IEvent>(), result);
         }
 
@@ -94,7 +94,7 @@ namespace ExtenFlow.EventStorage.DaprActors.Tests
             actual.Count.Should().Be(expected.Count);
             for (int i = 0; i < expected.Count; i++)
             {
-                actual[i].MessageId.Should().Be(expected[i].MessageId);
+                actual[i].Id.Should().Be(expected[i].Id);
                 actual[i].CorrelationId.Should().Be(expected[i].CorrelationId);
                 actual[i].AggregateId.Should().Be(expected[i].AggregateId);
                 actual[i].AggregateType.Should().Be(expected[i].AggregateType);

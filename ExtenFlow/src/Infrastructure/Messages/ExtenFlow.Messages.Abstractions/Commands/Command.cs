@@ -29,9 +29,9 @@ namespace ExtenFlow.Messages
         /// <param name="correlationId">
         /// The correlation id used to chain messages, queries, commands and events
         /// </param>
-        /// <param name="messageId">The Id of this command</param>
+        /// <param name="id">The Id of this command</param>
         /// <param name="dateTime">The date time of the command submission</param>
-        protected Command(string aggregateType, string? aggregateId, string? concurrencyStamp, string userId, Guid correlationId, Guid messageId, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, messageId, dateTime)
+        protected Command(string aggregateType, string? aggregateId, string? concurrencyStamp, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, id, dateTime)
         {
             ConcurrencyStamp = concurrencyStamp;
         }

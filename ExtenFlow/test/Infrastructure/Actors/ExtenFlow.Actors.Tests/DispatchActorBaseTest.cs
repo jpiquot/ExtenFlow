@@ -42,15 +42,15 @@ namespace ExtenFlow.Actors.Tests
         {
             var stateManager = new Mock<IActorStateManager>();
             var messageQueue = new Mock<IEventBus>();
-            var messageId = Guid.NewGuid();
+            var id = Guid.NewGuid();
             var state = new FakeState { FakeGuid = Guid.NewGuid(), FakeString = "hello world", FakeInt = 2000 };
             var events = new List<IEvent>(new[] { new FakeDispatchCreated(state.FakeGuid, state.FakeInt, state.FakeString) });
             messageQueue
                 .Setup(messageQueue => messageQueue.Send(events))
-                .Returns(Task.FromResult(messageId))
+                .Returns(Task.FromResult(id))
                 .Verifiable();
             messageQueue
-                .Setup(messageQueue => messageQueue.ConfirmSend(messageId))
+                .Setup(messageQueue => messageQueue.ConfirmSend(id))
                 .Verifiable();
             FakeDispatchActor testDemoActor = await CreateActor(stateManager.Object, messageQueue.Object, state.FakeGuid);
 
