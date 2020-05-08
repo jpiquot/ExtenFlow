@@ -65,7 +65,6 @@ namespace ExtenFlow.Actors
         /// <summary>
         /// Send a query and returns the result.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="actor">The actor.</param>
         /// <param name="query">The message.</param>
         /// <returns></returns>

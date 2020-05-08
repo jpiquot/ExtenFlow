@@ -13,9 +13,8 @@ namespace ExtenFlow.Actors
     /// <typeparam name="TState">The type of the state.</typeparam>
     /// <seealso cref="Actor"/>
     public abstract class ActorBase<TState> : Actor, IRemindable, IBaseActor
-        where TState : class, new()
     {
-        private TState? _state;
+        private object? _state;
         private string? _stateName;
 
         /// <summary>
@@ -35,7 +34,23 @@ namespace ExtenFlow.Actors
         /// </summary>
         /// <value>The state.</value>
         protected TState State
-            => _state ?? (_state = new TState());
+        {
+            get
+            {
+                // Can be simplified, but creates compiler null check errors.
+                if (_state == null)
+                {
+                    TState state = NewState();
+                    _state = state;
+                    return state;
+                }
+                else
+                {
+                    return (TState)_state;
+                }
+            }
+            set => _state = value;
+        }
 
         /// <summary>
         /// Gets the name of the state.
@@ -50,7 +65,7 @@ namespace ExtenFlow.Actors
         public Task<object> GetStateValue()
             // The actor state has not been initialized for actor {0} with Id '{1}'.
             => (_state != null) ?
-                    Task.FromResult<object>(State) :
+                    Task.FromResult(_state) :
                     Task.FromException<object>(new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.ActorStateNotInitialized, this.ActorName(), Id.GetId())));
 
         /// <summary>
@@ -79,6 +94,12 @@ namespace ExtenFlow.Actors
         protected void ClearState() => _state = null;
 
         /// <summary>
+        /// Creates new state.
+        /// </summary>
+        /// <returns>TState.</returns>
+        protected abstract TState NewState();
+
+        /// <summary>
         /// Override this method to initialize the members, initialize state or register timers.
         /// This method is called right after the actor is activated and before any method call or
         /// reminders are dispatched on it.
@@ -93,9 +114,7 @@ namespace ExtenFlow.Actors
         /// Gets the actor state.
         /// </summary>
         protected virtual async Task ReadStateData()
-        {
-            _state = await StateManager.GetOrAddStateAsync(StateName, new TState());
-        }
+            => _state = await StateManager.GetOrAddStateAsync(StateName, NewState());
 
         /// <summary>
         /// Saves the actor state.

@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using ExtenFlow.Actors;
-using ExtenFlow.Identity.Models;
+using ExtenFlow.Identity.Users.Models;
 using ExtenFlow.Identity.Users.Actors;
 using ExtenFlow.Identity.Users.Commands;
 using ExtenFlow.Identity.Users.Exceptions;
@@ -26,8 +26,8 @@ namespace ExtenFlow.Identity.Users.Stores
     {
         private readonly ICollectionActor _collection;
         private readonly IdentityErrorDescriber _describer;
-        private readonly Func<Guid, IUserActor> _getUserActor;
-        private readonly Func<Guid, IUserClaimsActor> _getUserClaimsActor;
+        private readonly Func<string, IUserActor> _getUserActor;
+        private readonly Func<string, IUserClaimsActor> _getUserClaimsActor;
         private readonly ILogger<ActorUserStore> _log;
         private readonly IUniqueIndexActor _normaliedNameIndex;
         private readonly IUser _user;
@@ -46,10 +46,10 @@ namespace ExtenFlow.Identity.Users.Stores
         /// <param name="describer">The describer.</param>
         public ActorUserStore(
             IUser user,
-            Func<Guid, IUserActor> getUserActor,
+            Func<string, IUserActor> getUserActor,
             ICollectionActor collection,
             IUniqueIndexActor normalizedNameIndex,
-            Func<Guid, IUserClaimsActor> getUserClaimsActor,
+            Func<string, IUserClaimsActor> getUserClaimsActor,
             ILogger<ActorUserStore> logger,
             IdentityErrorDescriber? describer = null
             )
@@ -99,11 +99,11 @@ namespace ExtenFlow.Identity.Users.Stores
             IUserActor userActor = _getUserActor(user.Id);
             if (!await userActor.IsInitialized())
             {
-                throw new UserNotFoundException(CultureInfo.CurrentCulture, nameof(User.Id), user.Id.ToString());
+                throw new UserNotFoundException(CultureInfo.CurrentCulture, nameof(User.Id), user.Id);
             }
             IUserClaimsActor claimActor = _getUserClaimsActor(user.Id);
 
-            await claimActor.Tell(new AddUserClaims(user.Id.ToString(), claims.ToDictionary(p => p.Type, t => t.Value), _user.Name));
+            await claimActor.Tell(new AddUserClaims(user.Id, claims.ToDictionary(p => p.Type, t => t.Value), _user.Name));
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace ExtenFlow.Identity.Users.Stores
                 _log.LogWarning(e.Message);
                 return IdentityResult.Failed(_describer.InvalidUserName(e.Message));
             }
-            UserDetailsModel details = await actor.Ask(new GetUserDetails(user.Id.ToString(), _user.Name));
+            UserDetailsModel details = await actor.Ask(new GetUserDetails(user.Id, _user.Name));
             SetUserValues(user, details);
             return IdentityResult.Success;
         }
@@ -168,7 +168,7 @@ namespace ExtenFlow.Identity.Users.Stores
             IUserActor actor = _getUserActor(user.Id);
             try
             {
-                await actor.Tell(new UnregisterUser(user.Id.ToString(), user.ConcurrencyStamp, _user.Name));
+                await actor.Tell(new UnregisterUser(user.Id, user.ConcurrencyStamp, _user.Name));
             }
             catch (UserConcurrencyFailureException e)
             {
@@ -199,7 +199,7 @@ namespace ExtenFlow.Identity.Users.Stores
             {
                 throw new ArgumentException(Properties.Resources.UserIdNotDefined, nameof(userId));
             }
-            IUserActor actor = _getUserActor(new Guid(userId));
+            IUserActor actor = _getUserActor(userId);
             return ToUser(await actor.Ask(new GetUserDetails(userId, _user.Name)));
         }
 
@@ -249,7 +249,7 @@ namespace ExtenFlow.Identity.Users.Stores
                 throw new ArgumentException(Properties.Resources.UserIdNotDefined, nameof(user));
             }
             IUserClaimsActor actor = _getUserClaimsActor(user.Id);
-            return actor.Ask<IList<Claim>>(new GetUserClaims(user.Id.ToString(), _user.Name));
+            return actor.Ask<IList<Claim>>(new GetUserClaims(user.Id, _user.Name));
         }
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace ExtenFlow.Identity.Users.Stores
             {
                 throw new ArgumentException(Properties.Resources.UserIdNotDefined, nameof(user));
             }
-            return Task.FromResult(user.Id.ToString());
+            return Task.FromResult(user.Id);
         }
 
         /// <summary>
@@ -326,14 +326,14 @@ namespace ExtenFlow.Identity.Users.Stores
                 .Select(p => new
                 {
                     Id = p,
-                    Exist = _getUserClaimsActor(new Guid(p))
+                    Exist = _getUserClaimsActor(p)
                                 .Exist(claim.Type, claim.Value)
                 })
                 .ToList();
             var result = await Task.WhenAll(list.Select(p => p.Exist).ToList());
             var details = await Task.WhenAll(list
                 .Where(p => p.Exist.Result)
-                .Select(p => _getUserActor(new Guid(p.Id)).Ask(new GetUserDetails(p.Id, _user.Name))));
+                .Select(p => _getUserActor(p.Id).Ask(new GetUserDetails(p.Id, _user.Name))));
             return details.Select(p => new User
             {
                 Id = p.Id,
@@ -373,11 +373,11 @@ namespace ExtenFlow.Identity.Users.Stores
             IUserActor userActor = _getUserActor(user.Id);
             if (!await userActor.IsInitialized())
             {
-                throw new UserNotFoundException(CultureInfo.CurrentCulture, nameof(User.Id), user.Id.ToString());
+                throw new UserNotFoundException(CultureInfo.CurrentCulture, nameof(User.Id), user.Id);
             }
             IUserClaimsActor claimActor = _getUserClaimsActor(user.Id);
 
-            await claimActor.Tell(new RemoveUserClaims(user.Id.ToString(), claims.ToDictionary(p => p.Type, p => p.Value), _user.Name));
+            await claimActor.Tell(new RemoveUserClaims(user.Id, claims.ToDictionary(p => p.Type, p => p.Value), _user.Name));
         }
 
         /// <summary>
@@ -418,12 +418,12 @@ namespace ExtenFlow.Identity.Users.Stores
             IUserActor userActor = _getUserActor(user.Id);
             if (!await userActor.IsInitialized())
             {
-                throw new UserNotFoundException(CultureInfo.CurrentCulture, nameof(User.Id), user.Id.ToString());
+                throw new UserNotFoundException(CultureInfo.CurrentCulture, nameof(User.Id), user.Id);
             }
             IUserClaimsActor claimActor = _getUserClaimsActor(user.Id);
 
-            await claimActor.Tell(new RemoveUserClaims(user.Id.ToString(), new Dictionary<string, string> { { claim.Type, claim.Value } }, _user.Name));
-            await claimActor.Tell(new AddUserClaims(user.Id.ToString(), new Dictionary<string, string> { { newClaim.Type, newClaim.Value } }, _user.Name));
+            await claimActor.Tell(new RemoveUserClaims(user.Id, new Dictionary<string, string> { { claim.Type, claim.Value } }, _user.Name));
+            await claimActor.Tell(new AddUserClaims(user.Id, new Dictionary<string, string> { { newClaim.Type, newClaim.Value } }, _user.Name));
         }
 
         /// <summary>
@@ -445,8 +445,8 @@ namespace ExtenFlow.Identity.Users.Stores
             {
                 throw new ArgumentException(Properties.Resources.UserIdNotDefined, nameof(user));
             }
-            await actor.Tell(new RenameUser(user.Id.ToString(), user.UserName, normalizedName, user.ConcurrencyStamp, _user.Name));
-            SetUserValues(user, await actor.Ask(new GetUserDetails(user.Id.ToString(), _user.Name)));
+            await actor.Tell(new RenameUser(user.Id, user.UserName, normalizedName, user.ConcurrencyStamp, _user.Name));
+            SetUserValues(user, await actor.Ask(new GetUserDetails(user.Id, _user.Name)));
         }
 
         /// <summary>
@@ -468,8 +468,8 @@ namespace ExtenFlow.Identity.Users.Stores
             {
                 throw new ArgumentException(Properties.Resources.UserIdNotDefined, nameof(user));
             }
-            await actor.Tell(new RenameUser(user.Id.ToString(), userName, user.NormalizedUserName, user.ConcurrencyStamp, _user.Name));
-            SetUserValues(user, await actor.Ask(new GetUserDetails(user.Id.ToString(), _user.Name)));
+            await actor.Tell(new RenameUser(user.Id, userName, user.NormalizedUserName, user.ConcurrencyStamp, _user.Name));
+            SetUserValues(user, await actor.Ask(new GetUserDetails(user.Id, _user.Name)));
         }
 
         /// <summary>

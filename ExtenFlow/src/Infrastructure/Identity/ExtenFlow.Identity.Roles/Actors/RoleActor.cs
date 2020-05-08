@@ -8,11 +8,11 @@ using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
 using ExtenFlow.EventStorage;
-using ExtenFlow.Identity.Models;
-using ExtenFlow.Identity.Properties;
 using ExtenFlow.Identity.Roles.Commands;
 using ExtenFlow.Identity.Roles.Events;
 using ExtenFlow.Identity.Roles.Exceptions;
+using ExtenFlow.Identity.Roles.Models;
+using ExtenFlow.Identity.Roles.Properties;
 using ExtenFlow.Identity.Roles.Queries;
 using ExtenFlow.Messages;
 using ExtenFlow.Messages.Dispatcher;
@@ -63,12 +63,18 @@ namespace ExtenFlow.Identity.Roles.Actors
             return Task.FromResult(
                 new Role()
                 {
-                    Id = new Guid(Id.GetId()),
+                    Id = Id.GetId(),
                     Name = State.Name,
                     NormalizedName = State.NormalizedName,
                     ConcurrencyStamp = State.ConcurrencyStamp
                 });
         }
+
+        /// <summary>
+        /// Creates new state.
+        /// </summary>
+        /// <returns>TState.</returns>
+        protected override RoleState NewState() => new RoleState();
 
         /// <summary>
         /// Executes the specified command.
@@ -120,8 +126,8 @@ namespace ExtenFlow.Identity.Roles.Actors
         protected override async Task<object> ReceiveQuery(IQuery query)
                     => query switch
                     {
-                        GetRoleDetails create => await Handle(create),
-                        _ => Task.FromException<object>(new ArgumentOutOfRangeException(nameof(query)))
+                        GetRoleDetails getDetails => await Handle(getDetails),
+                        _ => Task.FromException<object?>(new ArgumentOutOfRangeException(nameof(query)))
                     };
 
         /// <summary>

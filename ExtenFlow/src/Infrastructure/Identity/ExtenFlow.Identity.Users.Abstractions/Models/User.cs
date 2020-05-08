@@ -2,12 +2,12 @@
 
 using Microsoft.AspNetCore.Identity;
 
-namespace ExtenFlow.Identity.Models
+namespace ExtenFlow.Identity.Users.Models
 {
     /// <summary>
     /// The user class
     /// </summary>
-    public class User : IdentityUser<Guid>
+    public class User : IdentityUser<string>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="User"/> class.

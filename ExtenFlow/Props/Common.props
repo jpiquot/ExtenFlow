@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<!-- Set Paths -->
+	<Import Project="ManagedNetCore.props" />
+	<Import Project="Nuget.props" />
+	<Import Project="Dependencies.props" />
 	<PropertyGroup>
 		<RepoRoot>$(MSBuildThisFileDirectory)..\</RepoRoot>
 		<RequestedVerbosity Condition=" '$(RequestedVerbosity)' == '' ">minimal</RequestedVerbosity>
@@ -15,6 +18,8 @@
 		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<AssemblyFileVersion>$(Version)</AssemblyFileVersion>
 		<FileVersion>$(Version)</FileVersion>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<WarningsNotAsErrors>612,618</WarningsNotAsErrors>
 
 		<!-- Nuget package versions -->
 		<NupkgMajorVersion>$(MajorVersion)</NupkgMajorVersion>
@@ -22,5 +27,9 @@
 		<NupkgPatchVersion>$(BuildVersion)</NupkgPatchVersion>
 		<NupkgPreviewTag Condition=" '$(BUILD_ADDBUILDTAG)' != 'release' ">-preview$(Revision)</NupkgPreviewTag>
 		<NupkgVersion>$(NupkgMajorVersion).$(NupkgMinorVersion).$(NupkgPatchVersion)$(NupkgPreviewTag)</NupkgVersion>
+		<!-- Common Nuget properties-->
+
+		<!-- This is used by GitHub Repository to find which repository should contain the package when updloaded -->
+		<RepositoryUrl>https://github.com/jpiquot/ExtenFlow</RepositoryUrl>
 	</PropertyGroup>
 </Project>

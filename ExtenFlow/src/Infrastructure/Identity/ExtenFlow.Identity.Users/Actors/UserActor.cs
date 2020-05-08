@@ -8,11 +8,11 @@ using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
 using ExtenFlow.EventStorage;
-using ExtenFlow.Identity.Models;
-using ExtenFlow.Identity.Properties;
 using ExtenFlow.Identity.Users.Commands;
 using ExtenFlow.Identity.Users.Events;
 using ExtenFlow.Identity.Users.Exceptions;
+using ExtenFlow.Identity.Users.Models;
+using ExtenFlow.Identity.Users.Properties;
 using ExtenFlow.Identity.Users.Queries;
 using ExtenFlow.Messages;
 using ExtenFlow.Messages.Dispatcher;
@@ -63,12 +63,18 @@ namespace ExtenFlow.Identity.Users.Actors
             return Task.FromResult(
                 new User()
                 {
-                    Id = new Guid(Id.GetId()),
+                    Id = Id.GetId(),
                     UserName = State.UserName,
                     NormalizedUserName = State.NormalizedName,
                     ConcurrencyStamp = State.ConcurrencyStamp
                 });
         }
+
+        /// <summary>
+        /// Creates new state.
+        /// </summary>
+        /// <returns>TState.</returns>
+        protected override UserState NewState() => new UserState();
 
         /// <summary>
         /// Executes the specified command.
@@ -142,7 +148,7 @@ namespace ExtenFlow.Identity.Users.Actors
             {
                 throw new UserNotFoundException(CultureInfo.CurrentCulture, nameof(Id), Id.GetId());
             }
-            return Task.FromResult(new UserDetailsModel(new Guid(Id.GetId()), State.UserName ?? string.Empty, State.NormalizedName ?? string.Empty, State.ConcurrencyStamp));
+            return Task.FromResult(new UserDetailsModel(Id.GetId(), State.UserName ?? string.Empty, State.NormalizedName ?? string.Empty, State.ConcurrencyStamp));
         }
 
         /// <summary>

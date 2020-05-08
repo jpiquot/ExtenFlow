@@ -113,12 +113,14 @@ namespace ExtenFlow.Actors.Tests
         {
         }
 
+        protected override FakeState NewState() => new FakeState();
+
         protected override async Task<IList<IEvent>> ReceiveCommand(ICommand command)
-             => command switch
-             {
-                 CreateFakeDispatch create => await Handle(create),
-                 _ => await base.ReceiveCommand(command)
-             };
+                     => command switch
+                     {
+                         CreateFakeDispatch create => await Handle(create),
+                         _ => await base.ReceiveCommand(command)
+                     };
 
         protected override Task ReceiveEvent(IEvent eventMessage, bool batchSave = false)
             => eventMessage switch

@@ -2,12 +2,12 @@
 
 using Microsoft.AspNetCore.Identity;
 
-namespace ExtenFlow.Identity.Models
+namespace ExtenFlow.Identity.Users.Models
 {
     /// <summary>
     /// The user class
     /// </summary>
-    public class UserRole : IdentityUserRole<Guid>
+    public class UserToken : IdentityUserToken<string>
     {
     }
 }

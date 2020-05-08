@@ -1,4 +1,4 @@
-﻿using ExtenFlow.Identity.Models;
+﻿using ExtenFlow.Identity.Roles.Models;
 
 using FluentValidation;
 

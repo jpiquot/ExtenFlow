@@ -1,7 +1,7 @@
 ﻿using System;
 
 using ExtenFlow.ApplicationDictionary.FieldDefinitions;
-using ExtenFlow.Identity.Models;
+using ExtenFlow.Identity.Roles.Models;
 
 namespace ExtenFlow.Identity.Roles.FieldDefinitions
 {

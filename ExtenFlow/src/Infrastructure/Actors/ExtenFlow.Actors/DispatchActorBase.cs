@@ -17,7 +17,6 @@ namespace ExtenFlow.Actors
     /// <typeparam name="T"></typeparam>
     /// <seealso cref="ExtenFlow.Actors.ActorBase{T}"/>
     public abstract class DispatchActorBase<T> : ActorBase<T>, IDispatchActor, IRemindable
-        where T : class, new()
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DispatchActorBase{T}"/> class.

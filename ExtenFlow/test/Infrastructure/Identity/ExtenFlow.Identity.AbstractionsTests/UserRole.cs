@@ -1,6 +1,4 @@
-﻿using System;
-
-using ExtenFlow.Identity.Models;
+﻿using ExtenFlow.Identity.Users.Models;
 
 using FluentAssertions;
 
@@ -16,23 +14,12 @@ namespace ExtenFlow.Identity.AbstractionsTests
         [Fact]
         public void UserSetRoleId_ExpectsValue()
         {
-            var value = Guid.NewGuid();
+            var value = "test1";
             var user = new UserRole
             {
                 RoleId = value
             };
             user.RoleId.Should().Be(value);
-        }
-
-        [Fact]
-        public void UserSetUserId_ExpectsValue()
-        {
-            var value = Guid.NewGuid();
-            var user = new UserRole
-            {
-                UserId = value
-            };
-            user.UserId.Should().Be(value);
         }
     }
 }

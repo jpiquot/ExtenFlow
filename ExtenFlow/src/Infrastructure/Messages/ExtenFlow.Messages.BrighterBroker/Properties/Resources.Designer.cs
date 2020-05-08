@@ -61,7 +61,16 @@ namespace ExtenFlow.Messages.BrighterBroker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Minimum value is {0} for argument {1}..
+        ///   Looks up a localized string similar to Falling back from {0} to {1}.
+        /// </summary>
+        internal static string FallingBackTo {
+            get {
+                return ResourceManager.GetString("FallingBackTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The minimum value is : {0}..
         /// </summary>
         internal static string MinimimValueForArgument {
             get {
@@ -70,11 +79,11 @@ namespace ExtenFlow.Messages.BrighterBroker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Passing request from {0} to {1}.
         /// </summary>
-        internal static string Test {
+        internal static string PassingTo {
             get {
-                return ResourceManager.GetString("Test", resourceCulture);
+                return ResourceManager.GetString("PassingTo", resourceCulture);
             }
         }
     }

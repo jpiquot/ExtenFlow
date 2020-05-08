@@ -66,5 +66,11 @@ namespace ExtenFlow.EventStorage.DaprActors
             }
             return Task.FromResult(State.Read(afterId, take));
         }
+
+        /// <summary>
+        /// Creates new state.
+        /// </summary>
+        /// <returns>TState.</returns>
+        protected override EventStoreStreamState NewState() => new EventStoreStreamState();
     }
 }

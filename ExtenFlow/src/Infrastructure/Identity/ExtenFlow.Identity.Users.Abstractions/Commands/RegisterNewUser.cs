@@ -1,6 +1,6 @@
 ﻿using System;
 
-using ExtenFlow.Identity.Models;
+using ExtenFlow.Identity.Users.Models;
 
 namespace ExtenFlow.Identity.Users.Commands
 {
@@ -58,7 +58,7 @@ namespace ExtenFlow.Identity.Users.Commands
         /// <param name="user">The user.</param>
         /// <param name="userId">The user identifier.</param>
         public RegisterNewUser(User user, string userId)
-            : this((user == null) ? throw new ArgumentNullException(nameof(user)) : user.Id.ToString(), user.UserName, user.NormalizedUserName, userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+            : this((user == null) ? throw new ArgumentNullException(nameof(user)) : user.Id, user.UserName, user.NormalizedUserName, userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
         {
         }
 

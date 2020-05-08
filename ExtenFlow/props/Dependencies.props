@@ -1,0 +1,40 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<Import Project="Dependencies.AspNetCore.props" />
+
+	<PropertyGroup>
+		<NetCoreTargetFramework>netstandard2.1</NetCoreTargetFramework>
+		<NetCoreAppTargetFramework>netcoreapp3.1</NetCoreAppTargetFramework>
+		<!-- Special case - this property is used by a DotNetCliToolReference -->
+		<DotNetXunitVersion>2.3.0</DotNetXunitVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageManagement Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8" />
+		<PackageManagement Include="System.Text.Json" Version="4.7.1" />
+		<PackageManagement Include="FluentValidation" Version="9.0.0-preview4" />
+		<PackageManagement Include="Paramore.Brighter" Version="8.1.1036" />
+		<PackageManagement Include="Dapr.Actors" Version="0.7.0-preview01" />
+		<PackageManagement Include="Dapr.Actors.AspNetCore" Version="0.7.0-preview01" />
+		<PackageManagement Include="Lucene.Net" Version="4.8.0-beta00007" />
+		<PackageManagement Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00007" />
+		<PackageManagement Include="Lucene.Net.QueryParser" Version="4.8.0-beta00007" />
+		<PackageManagement Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+		<PackageManagement Include="Moq" Version="4.13.1" />
+		<PackageManagement Include="ncrontab" Version="3.3.1" />
+		<PackageManagement Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageManagement Include="NLog.Web.AspNetCore" Version="4.9.0" />
+		<PackageManagement Include="NodaTime" Version="2.4.7" />
+		<PackageManagement Include="FluentAssertions" Version="5.10.2" />
+		<PackageManagement Include="xunit" Version="2.4.1" />
+		<PackageManagement Include="xunit.assert" Version="2.4.1" />
+		<PackageManagement Include="xunit.extensions" Version="2.4.1" />
+		<PackageManagement Include="xunit.core" Version="2.4.1" />
+		<PackageManagement Include="xunit.runner.visualstudio" Version="2.4.1" />
+		<PackageManagement Include="xunit.analyzers" Version="0.10.0" />
+		<PackageManagement Include="coverlet.collector" Version="1.2.1" />
+		<PackageManagement Include="Xbehave" Version="2.4.1" />
+		<PackageManagement Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
+		<PackageManagement Include="Microsoft.VisualStudio.Azure.Kubernetes.Tools.Targets" Version="1.1.0" />
+	</ItemGroup>
+</Project>

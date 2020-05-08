@@ -1,4 +1,4 @@
-﻿using ExtenFlow.Identity.Models;
+﻿using ExtenFlow.Identity.Users.Models;
 
 using Microsoft.AspNetCore.Identity;
 

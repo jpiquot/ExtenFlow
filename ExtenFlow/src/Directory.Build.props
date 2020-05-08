@@ -1,6 +1,5 @@
 <Project>
-	<Import Project="$(MSBuildThisFileDirectory)..\Props\ManagedNetCore.props" />
-	<Import Project="$(MSBuildThisFileDirectory)..\Props\Nuget.props" />
+	<Import Project="$(MSBuildThisFileDirectory)..\props\Common.props" />
 
 	<PropertyGroup>
 		<LangVersion>latest</LangVersion>

@@ -117,10 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MinimimValueForArgument" xml:space="preserve">
-    <value>Minimum value is {0} for argument {1}.</value>
+  <data name="FallingBackTo" xml:space="preserve">
+    <value>Falling back from {0} to {1}</value>
   </data>
-  <data name="Test" xml:space="preserve">
-    <value />
+  <data name="MinimimValueForArgument" xml:space="preserve">
+    <value>The minimum value is : {0}.</value>
+  </data>
+  <data name="PassingTo" xml:space="preserve">
+    <value>Passing request from {0} to {1}</value>
   </data>
 </root>

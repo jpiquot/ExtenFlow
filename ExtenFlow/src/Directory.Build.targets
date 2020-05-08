@@ -1,0 +1,4 @@
+<Project>
+	<Import Project="$(MSBuildThisFileDirectory)..\Props\Common.targets" />
+
+</Project>

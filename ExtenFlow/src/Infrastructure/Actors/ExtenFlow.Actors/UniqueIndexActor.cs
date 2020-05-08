@@ -134,5 +134,11 @@ namespace ExtenFlow.Actors
             }
             return SetStateData();
         }
+
+        /// <summary>
+        /// Creates new state.
+        /// </summary>
+        /// <returns>TState.</returns>
+        protected override Dictionary<string, string> NewState() => new Dictionary<string, string>();
     }
 }

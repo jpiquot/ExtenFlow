@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
+
 using ExtenFlow.Infrastructure;
 
 namespace ExtenFlow.Actors.Tests
@@ -15,6 +17,8 @@ namespace ExtenFlow.Actors.Tests
         public FakeBaseActor(ActorService actorService, ActorId actorId, IActorStateManager actorStateManager = null) : base(actorService, actorId, actorStateManager)
         {
         }
+
+        protected override FakeState NewState() => new FakeState();
     }
 
     internal class FakeState : ValueObject

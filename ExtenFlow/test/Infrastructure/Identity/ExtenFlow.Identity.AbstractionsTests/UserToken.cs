@@ -1,6 +1,4 @@
-﻿using System;
-
-using ExtenFlow.Identity.Models;
+﻿using ExtenFlow.Identity.Users.Models;
 
 using FluentAssertions;
 
@@ -13,7 +11,7 @@ namespace ExtenFlow.Identity.AbstractionsTests
         [Fact]
         public void UserSetUserId_ExpectsValue()
         {
-            var value = Guid.NewGuid();
+            var value = "test1";
             var user = new UserToken
             {
                 UserId = value

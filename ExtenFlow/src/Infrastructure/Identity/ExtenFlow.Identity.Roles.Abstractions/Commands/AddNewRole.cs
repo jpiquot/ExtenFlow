@@ -1,6 +1,6 @@
 ﻿using System;
 
-using ExtenFlow.Identity.Models;
+using ExtenFlow.Identity.Roles.Models;
 
 namespace ExtenFlow.Identity.Roles.Commands
 {
@@ -58,7 +58,7 @@ namespace ExtenFlow.Identity.Roles.Commands
         /// <param name="role">The role.</param>
         /// <param name="userId">The user identifier.</param>
         public AddNewRole(Role role, string userId)
-            : this((role == null) ? throw new ArgumentNullException(nameof(role)) : role.Id.ToString(), role.Name, role.NormalizedName, userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+            : this((role == null) ? throw new ArgumentNullException(nameof(role)) : role.Id, role.Name, role.NormalizedName, userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
         {
         }
 

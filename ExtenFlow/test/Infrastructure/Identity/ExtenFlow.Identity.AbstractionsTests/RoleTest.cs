@@ -1,6 +1,6 @@
 ﻿using System;
 
-using ExtenFlow.Identity.Models;
+using ExtenFlow.Identity.Roles.Models;
 
 using FluentAssertions;
 
@@ -48,7 +48,7 @@ namespace ExtenFlow.Identity.AbstractionsTests
         [Fact]
         public void RoleSetId_ExpectsValue()
         {
-            var value = Guid.NewGuid();
+            var value = "test1";
             var role = new Role
             {
                 Id = value

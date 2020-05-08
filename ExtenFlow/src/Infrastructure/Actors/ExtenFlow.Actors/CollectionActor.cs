@@ -93,5 +93,11 @@ namespace ExtenFlow.Actors
             }
             return SetStateData();
         }
+
+        /// <summary>
+        /// Creates new state.
+        /// </summary>
+        /// <returns>TState.</returns>
+        protected override HashSet<string> NewState() => new HashSet<string>();
     }
 }

@@ -24,7 +24,7 @@ namespace ExtenFlow.Identity.Users.Queries
         public UserDetailsModel()
         {
             Name = NormalizedName = ConcurrencyStamp = string.Empty;
-            Id = Guid.Empty;
+            Id = string.Empty;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace ExtenFlow.Identity.Users.Queries
         /// <exception cref="ArgumentException">Id is not defined</exception>
         /// <exception cref="ArgumentNullException">name</exception>
         /// <exception cref="ArgumentNullException">normalizedName</exception>
-        public UserDetailsModel(Guid id, string name, string normalizedName, string? concurrencyStamp)
+        public UserDetailsModel(string id, string name, string normalizedName, string? concurrencyStamp)
         {
             if (id == default)
             {
@@ -59,7 +59,7 @@ namespace ExtenFlow.Identity.Users.Queries
         /// Gets the identifier.
         /// </summary>
         /// <value>The identifier.</value>
-        public Guid Id { get; }
+        public string Id { get; }
 
         /// <summary>
         /// Gets the name.

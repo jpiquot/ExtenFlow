@@ -19,13 +19,13 @@ namespace ExtenFlow.Identity.Roles.Actors
         /// </summary>
         /// <param name="roleId">The role identifier.</param>
         /// <returns>The actor instance interface</returns>
-        public static IRoleActor Role(Guid roleId) => ActorProxy.Create<IRoleActor>(new ActorId(roleId.ToString()), "RoleActor");
+        public static IRoleActor Role(string roleId) => ActorProxy.Create<IRoleActor>(new ActorId(roleId), "RoleActor");
 
         /// <summary>
         /// Roles the claims.
         /// </summary>
         /// <param name="roleId">The role identifier.</param>
         /// <returns>IRoleClaimsActor.</returns>
-        public static IRoleClaimsActor RoleClaims(Guid roleId) => ActorProxy.Create<IRoleClaimsActor>(new ActorId(roleId.ToString()), "RoleClaimsActor");
+        public static IRoleClaimsActor RoleClaims(string roleId) => ActorProxy.Create<IRoleClaimsActor>(new ActorId(roleId), "RoleClaimsActor");
     }
 }

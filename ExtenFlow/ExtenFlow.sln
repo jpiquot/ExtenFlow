@@ -40,14 +40,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Build", "_Build", "{08DFBC
 	ProjectSection(SolutionItems) = preProject
 		..\azure-pipelines.yml = ..\azure-pipelines.yml
 		Props\Common.props = Props\Common.props
+		props\Common.targets = props\Common.targets
+		props\Dependencies.AspNetCore.props = props\Dependencies.AspNetCore.props
+		props\Dependencies.props = props\Dependencies.props
 		Props\logo-transparent.png = Props\logo-transparent.png
 		Props\ManagedNetCore.props = Props\ManagedNetCore.props
 		Props\Nuget.props = Props\Nuget.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{4DBB4614-3603-4AD8-834E-7FA9C70CE404}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Abstractions", "src\Infrastructure\Identity\ExtenFlow.Identity.Abstractions\ExtenFlow.Identity.Abstractions.csproj", "{37D1FE3F-47C5-4100-AD27-08D3C063652D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7231E4E9-48F9-4A13-BCC5-9047C71E7A0E}"
 	ProjectSection(SolutionItems) = preProject
@@ -128,10 +129,6 @@ Global
 		{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{37D1FE3F-47C5-4100-AD27-08D3C063652D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37D1FE3F-47C5-4100-AD27-08D3C063652D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37D1FE3F-47C5-4100-AD27-08D3C063652D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37D1FE3F-47C5-4100-AD27-08D3C063652D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{63B36D55-091C-432E-BD2D-40C2B30C7785}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{63B36D55-091C-432E-BD2D-40C2B30C7785}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63B36D55-091C-432E-BD2D-40C2B30C7785}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -238,7 +235,6 @@ Global
 		{0A889E74-C7C6-492A-B0F1-BFF824509C59} = {BBF5054D-08B1-4663-8213-C5358F98DB47}
 		{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA} = {EB7CEF1C-7C74-4F33-8BBF-3F4874880145}
 		{4DBB4614-3603-4AD8-834E-7FA9C70CE404} = {6F124834-E622-4CD8-B4C5-A6C73F611F14}
-		{37D1FE3F-47C5-4100-AD27-08D3C063652D} = {4DBB4614-3603-4AD8-834E-7FA9C70CE404}
 		{63B36D55-091C-432E-BD2D-40C2B30C7785} = {86F38A60-E77B-4002-9A85-8CEDD15C0140}
 		{B05D005F-7835-4854-9A2B-DE2E24C3F01B} = {86F38A60-E77B-4002-9A85-8CEDD15C0140}
 		{E13C34F6-4EA7-462E-AB3E-D10D02772A95} = {D9501120-8225-4C15-A2AB-D0C20F593B22}

@@ -111,6 +111,12 @@ namespace ExtenFlow.Identity.Users.Actors
             return SetStateData();
         }
 
+        /// <summary>
+        /// Creates new state.
+        /// </summary>
+        /// <returns>TState.</returns>
+        protected override UserClaimsState NewState() => new UserClaimsState();
+
         private HashSet<string> ClaimValues(string claimType)
         {
             if (State == null)

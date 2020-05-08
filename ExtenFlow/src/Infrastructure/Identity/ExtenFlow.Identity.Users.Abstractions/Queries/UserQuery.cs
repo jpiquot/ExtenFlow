@@ -10,7 +10,7 @@
 // ***********************************************************************
 using System;
 
-using ExtenFlow.Identity.Models;
+using ExtenFlow.Identity.Users.Models;
 using ExtenFlow.Messages;
 
 namespace ExtenFlow.Identity.Users.Queries

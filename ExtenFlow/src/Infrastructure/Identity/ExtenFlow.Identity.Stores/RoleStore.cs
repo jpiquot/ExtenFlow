@@ -7,8 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using ExtenFlow.Identity.Actors;
-using ExtenFlow.Identity.Models;
-using ExtenFlow.Identity.Properties;
+using ExtenFlow.Identity.Roles.Models;
+using ExtenFlow.Identity.Roles.Properties;
 
 using Microsoft.AspNetCore.Identity;
 

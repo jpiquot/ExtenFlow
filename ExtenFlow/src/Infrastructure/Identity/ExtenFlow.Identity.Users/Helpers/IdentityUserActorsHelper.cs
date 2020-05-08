@@ -6,8 +6,8 @@ using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
 using ExtenFlow.EventStorage;
-using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Users.Actors;
+using ExtenFlow.Identity.Users.Models;
 using ExtenFlow.Messages.Dispatcher;
 
 namespace ExtenFlow.Identity.Users.Helpers

@@ -1,30 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<TargetFramework>$(NetCoreAppTargetFramework)</TargetFramework>
 
 		<IsPackable>false</IsPackable>
 		<NoWarn>NU1608</NoWarn>
 	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="coverlet.collector" />
+		<PackageReference Include="Xbehave" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.runner.visualstudio" />
+		<PackageReference Include="xunit.analyzers" />
+		<PackageReference Include="xunit.assert" />
+		<PackageReference Include="xunit.core" />
+	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Identity.Specification.Tests" Version="3.1.3" />
-		<PackageReference Include="Microsoft.Extensions.Identity.Core" Version="3.1.3" />
-		<PackageReference Include="Moq" Version="4.14.1" />
-		<PackageReference Include="xunit.analyzers" Version="0.10.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
-		<PackageReference Include="xunit" Version="2.4.1" />
-		<PackageReference Include="xunit.assert" Version="2.4.1" />
-		<PackageReference Include="xunit.core" Version="2.4.1" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="coverlet.collector" Version="1.2.1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+		<PackageReference Include="Microsoft.AspNetCore.Identity.Specification.Tests" />
+		<PackageReference Include="Microsoft.Extensions.Identity.Core" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\src\Infrastructure\Actors\ExtenFlow.Actors\ExtenFlow.Actors.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Infrastructure\Messages\ExtenFlow.Messages.Abstractions\ExtenFlow.Messages.Abstractions.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Infrastructure\Persistence\ExtenFlow.EventStorage.DaprActors\ExtenFlow.EventStorage.DaprActors.csproj" />
-		<PackageReference Update="FluentAssertions" Version="5.10.3" />
 	</ItemGroup>
 </Project>

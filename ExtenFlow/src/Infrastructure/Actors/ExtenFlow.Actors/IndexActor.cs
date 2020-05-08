@@ -13,7 +13,7 @@ using ExtenFlow.Services;
 namespace ExtenFlow.Actors
 {
     /// <summary>
-    /// The index actor base class
+    /// The index actor base class TODO : needs to be replaced by a hashed B/Tree Actor
     /// </summary>
     /// <seealso cref="Actor"/>
     public class IndexActor : ActorBase<Dictionary<string, HashSet<string>>>, IIndexActor, IIndexService
@@ -146,5 +146,11 @@ namespace ExtenFlow.Actors
             }
             return SetStateData();
         }
+
+        /// <summary>
+        /// Creates new state.
+        /// </summary>
+        /// <returns>TState.</returns>
+        protected override Dictionary<string, HashSet<string>> NewState() => new Dictionary<string, HashSet<string>>();
     }
 }

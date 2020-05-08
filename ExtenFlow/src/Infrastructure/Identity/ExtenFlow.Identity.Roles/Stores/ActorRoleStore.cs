@@ -7,10 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using ExtenFlow.Actors;
-using ExtenFlow.Identity.Models;
 using ExtenFlow.Identity.Roles.Actors;
 using ExtenFlow.Identity.Roles.Commands;
 using ExtenFlow.Identity.Roles.Exceptions;
+using ExtenFlow.Identity.Roles.Models;
 using ExtenFlow.Identity.Roles.Queries;
 using ExtenFlow.Infrastructure;
 
@@ -26,8 +26,8 @@ namespace ExtenFlow.Identity.Roles.Stores
     {
         private readonly ICollectionActor _collection;
         private readonly IdentityErrorDescriber _describer;
-        private readonly Func<Guid, IRoleActor> _getRoleActor;
-        private readonly Func<Guid, IRoleClaimsActor> _getRoleClaimsActor;
+        private readonly Func<string, IRoleActor> _getRoleActor;
+        private readonly Func<string, IRoleClaimsActor> _getRoleClaimsActor;
         private readonly ILogger<ActorRoleStore> _log;
         private readonly IUniqueIndexActor _normaliedNameIndex;
         private readonly IUser _user;
@@ -46,10 +46,10 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// <param name="describer">The describer.</param>
         public ActorRoleStore(
             IUser user,
-            Func<Guid, IRoleActor> getRoleActor,
+            Func<string, IRoleActor> getRoleActor,
             ICollectionActor collection,
             IUniqueIndexActor normalizedNameIndex,
-            Func<Guid, IRoleClaimsActor> getRoleClaimsActor,
+            Func<string, IRoleClaimsActor> getRoleClaimsActor,
             ILogger<ActorRoleStore> logger,
             IdentityErrorDescriber? describer = null
             )
@@ -99,11 +99,11 @@ namespace ExtenFlow.Identity.Roles.Stores
             IRoleActor roleActor = _getRoleActor(role.Id);
             if (!await roleActor.IsInitialized())
             {
-                throw new RoleNotFoundException(CultureInfo.CurrentCulture, nameof(Role.Id), role.Id.ToString());
+                throw new RoleNotFoundException(CultureInfo.CurrentCulture, nameof(Role.Id), role.Id);
             }
             IRoleClaimsActor claimActor = _getRoleClaimsActor(role.Id);
 
-            await claimActor.Tell(new AddRoleClaim(role.Id.ToString(), claim.Type, claim.Value, _user.Name));
+            await claimActor.Tell(new AddRoleClaim(role.Id, claim.Type, claim.Value, _user.Name));
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace ExtenFlow.Identity.Roles.Stores
                 _log.LogWarning(e.Message);
                 return IdentityResult.Failed(_describer.InvalidRoleName(e.Message));
             }
-            RoleDetailsModel details = await actor.Ask(new GetRoleDetails(role.Id.ToString(), _user.Name));
+            var details = (RoleDetailsModel)await actor.Ask(new GetRoleDetails(role.Id, _user.Name));
             SetRoleValues(role, details);
             return IdentityResult.Success;
         }
@@ -168,7 +168,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             IRoleActor actor = _getRoleActor(role.Id);
             try
             {
-                await actor.Tell(new RemoveRole(role.Id.ToString(), role.ConcurrencyStamp, _user.Name));
+                await actor.Tell(new RemoveRole(role.Id, role.ConcurrencyStamp, _user.Name));
             }
             catch (RoleConcurrencyFailureException e)
             {
@@ -199,7 +199,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(roleId));
             }
-            IRoleActor actor = _getRoleActor(new Guid(roleId));
+            IRoleActor actor = _getRoleActor(roleId);
             return ToRole(await actor.Ask(new GetRoleDetails(roleId, _user.Name)));
         }
 
@@ -249,7 +249,7 @@ namespace ExtenFlow.Identity.Roles.Stores
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
             IRoleClaimsActor actor = _getRoleClaimsActor(role.Id);
-            return actor.Ask<IList<Claim>>(new GetRoleClaims(role.Id.ToString(), _user.Name));
+            return actor.Ask<IList<Claim>>(new GetRoleClaims(role.Id, _user.Name));
         }
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
-            return Task.FromResult(role.Id.ToString());
+            return Task.FromResult(role.Id);
         }
 
         /// <summary>
@@ -342,11 +342,11 @@ namespace ExtenFlow.Identity.Roles.Stores
             IRoleActor roleActor = _getRoleActor(role.Id);
             if (!await roleActor.IsInitialized())
             {
-                throw new RoleNotFoundException(CultureInfo.CurrentCulture, nameof(Role.Id), role.Id.ToString());
+                throw new RoleNotFoundException(CultureInfo.CurrentCulture, nameof(Role.Id), role.Id);
             }
             IRoleClaimsActor claimActor = _getRoleClaimsActor(role.Id);
 
-            await claimActor.Tell(new RemoveRoleClaim(role.Id.ToString(), claim.Type, claim.Value, _user.Name));
+            await claimActor.Tell(new RemoveRoleClaim(role.Id, claim.Type, claim.Value, _user.Name));
         }
 
         /// <summary>
@@ -368,8 +368,8 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
-            await actor.Tell(new RenameRole(role.Id.ToString(), role.Name, normalizedName, role.ConcurrencyStamp, _user.Name));
-            SetRoleValues(role, await actor.Ask(new GetRoleDetails(role.Id.ToString(), _user.Name)));
+            await actor.Tell(new RenameRole(role.Id, role.Name, normalizedName, role.ConcurrencyStamp, _user.Name));
+            SetRoleValues(role, await actor.Ask(new GetRoleDetails(role.Id, _user.Name)));
         }
 
         /// <summary>
@@ -391,8 +391,8 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
-            await actor.Tell(new RenameRole(role.Id.ToString(), roleName, role.NormalizedName, role.ConcurrencyStamp, _user.Name));
-            SetRoleValues(role, await actor.Ask(new GetRoleDetails(role.Id.ToString(), _user.Name)));
+            await actor.Tell(new RenameRole(role.Id, roleName, role.NormalizedName, role.ConcurrencyStamp, _user.Name));
+            SetRoleValues(role, await actor.Ask(new GetRoleDetails(role.Id, _user.Name)));
         }
 
         /// <summary>

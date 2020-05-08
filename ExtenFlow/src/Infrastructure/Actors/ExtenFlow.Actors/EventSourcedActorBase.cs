@@ -12,7 +12,6 @@ namespace ExtenFlow.Actors
     /// <typeparam name="T"></typeparam>
     /// <seealso cref="ExtenFlow.Actors.DispatchActorBase{T}"/>
     public abstract class EventSourcedActorBase<T> : DispatchActorBase<T>
-        where T : class, new()
     {
         private readonly IEventStore _eventStore;
 
