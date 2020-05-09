@@ -86,5 +86,14 @@ namespace ExtenFlow.Infrastructure.Properties {
                 return ResourceManager.GetString("EmailUndefinedUserName", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occured while writing to memory..
+        /// </summary>
+        internal static string MemoryWriteError {
+            get {
+                return ResourceManager.GetString("MemoryWriteError", resourceCulture);
+            }
+        }
     }
 }

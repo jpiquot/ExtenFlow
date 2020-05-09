@@ -1,12 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<TargetFramework>$(NetCoreAppTargetFramework)</TargetFramework>
-
-		<IsPackable>false</IsPackable>
-		<NoWarn>NU1608</NoWarn>
 	</PropertyGroup>
-
+	<ItemGroup>
+		<None Include="..\..\..\..\.editorconfig" Link=".editorconfig" />
+	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="FluentAssertions" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
@@ -20,12 +18,6 @@
 		<PackageReference Include="xunit.core" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Identity.Specification.Tests" />
-		<PackageReference Include="Microsoft.Extensions.Identity.Core" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\src\Infrastructure\Identity\ExtenFlow.Identity.Roles\ExtenFlow.Identity.Roles.csproj" />
-		<ProjectReference Include="..\..\..\..\src\Infrastructure\Identity\ExtenFlow.Identity.Users\ExtenFlow.Identity.Users.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Infrastructure\Infrastructure\ExtenFlow.Infrastructure.Abstractions\ExtenFlow.Infrastructure.Abstractions.csproj" />
 	</ItemGroup>
 </Project>

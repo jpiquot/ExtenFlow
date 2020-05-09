@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.Identity.Actors;
-using ExtenFlow.Identity.Models;
+using ExtenFlow.Identity.Users.Actors;
+using ExtenFlow.Identity.Users.Models;
 
 using FluentAssertions;
 

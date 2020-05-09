@@ -2,8 +2,8 @@ using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-using ExtenFlow.Identity.Models;
-using ExtenFlow.Identity.Stores;
+using ExtenFlow.Identity.Roles.Models;
+using ExtenFlow.Identity.Users.Models;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Test;

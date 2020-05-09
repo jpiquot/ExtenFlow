@@ -126,4 +126,7 @@
   <data name="EmailUndefinedUserName" xml:space="preserve">
     <value>The email user name is not defined.</value>
   </data>
+  <data name="MemoryWriteError" xml:space="preserve">
+    <value>An error occured while writing to memory.</value>
+  </data>
 </root>
