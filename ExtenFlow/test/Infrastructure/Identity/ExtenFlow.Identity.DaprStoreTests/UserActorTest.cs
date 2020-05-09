@@ -29,7 +29,7 @@ namespace ExtenFlow.Security.DaprStoreTests
         public async Task CreateUser_ExpectSetStateAsync()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var user = new User { Id = Guid.NewGuid(), UserName = "User name", NormalizedUserName = "username" };
+            var user = new User { Id = "user id", UserName = "User name", NormalizedUserName = "username" };
             stateManager.Setup(manager => manager.SetStateAsync("User", user, It.IsAny<CancellationToken>())).Verifiable();
             UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
 
@@ -131,25 +131,25 @@ namespace ExtenFlow.Security.DaprStoreTests
         public async Task SetUserWithInvalidId_ThrowsException()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var user = new User { Id = Guid.NewGuid(), UserName = "User name", NormalizedUserName = "username" };
+            var user = new User { Id = "user id", UserName = "User name", NormalizedUserName = "username" };
             stateManager.Setup(manager => manager.GetStateAsync<User>("User", It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(user));
             UserActor testDemoActor = await CreateUserActor(stateManager.Object, user.Id);
 
-            await Invoking(async () => await testDemoActor.SetUser(new User { Id = default, UserName = "User name", NormalizedUserName = "username" }))
+            await Invoking(async () => await testDemoActor.SetUser(new User { Id = " ", UserName = "User name", NormalizedUserName = "username" }))
                 .Should()
                 .ThrowAsync<ArgumentOutOfRangeException>();
 
             stateManager.VerifyAll();
         }
 
-        private async Task<UserActor> CreateUserActor(IActorStateManager actorStateManager, Guid id)
+        private async Task<UserActor> CreateUserActor(IActorStateManager actorStateManager, string userId)
         {
             var actorTypeInformation = ActorTypeInformation.Get(typeof(UserActor));
             UserActor actorFactory(ActorService service, ActorId id) =>
                 new UserActor(service, id, actorStateManager);
             var actorService = new ActorService(actorTypeInformation, actorFactory);
-            UserActor actor = actorFactory(actorService, new ActorId(id.ToString()));
+            UserActor actor = actorFactory(actorService, new ActorId(userId));
             MethodInfo OnActivate = actor.GetType().GetMethod("OnActivateAsync", BindingFlags.NonPublic | BindingFlags.Instance);
             await (Task)OnActivate.Invoke(actor, Array.Empty<object>());
             return actor;

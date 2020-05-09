@@ -22,7 +22,7 @@ namespace ExtenFlow.Identity.Roles.Stores
     /// <summary>
     /// The Dapr role store
     /// </summary>
-    public sealed class ActorRoleStore : IRoleStore
+    public sealed class ActorRoleStore : RoleStoreBase<Role, string, UserRole, RoleClaim>, IRoleStore
     {
         private readonly ICollectionActor _collection;
         private readonly IdentityErrorDescriber _describer;
@@ -31,8 +31,6 @@ namespace ExtenFlow.Identity.Roles.Stores
         private readonly ILogger<ActorRoleStore> _log;
         private readonly IUniqueIndexActor _normaliedNameIndex;
         private readonly IUser _user;
-
-        private bool _disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActorRoleStore"/> class.
@@ -52,7 +50,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             Func<string, IRoleClaimsActor> getRoleClaimsActor,
             ILogger<ActorRoleStore> logger,
             IdentityErrorDescriber? describer = null
-            )
+            ) : base(describer ?? new IdentityErrorDescriber())
         {
             _user = user ?? throw new ArgumentNullException(nameof(user));
             _getRoleActor = getRoleActor;
@@ -67,7 +65,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// Gets the roles.
         /// </summary>
         /// <value>The roles.</value>
-        public IQueryable<Role> Roles => GetAllRoles().GetAwaiter().GetResult().AsQueryable();
+        public override IQueryable<Role> Roles => GetAllRoles().GetAwaiter().GetResult().AsQueryable();
 
         /// <summary>
         /// add claim as an asynchronous operation.
@@ -82,7 +80,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// <exception cref="ArgumentException">role</exception>
         /// <exception cref="ArgumentException">claim</exception>
         /// <exception cref="RoleNotFoundException">Id</exception>
-        public async Task AddClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default)
+        public override async Task AddClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -114,7 +112,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;IdentityResult&gt;.</returns>
-        public async Task<IdentityResult> CreateAsync(Role role, CancellationToken cancellationToken)
+        public override async Task<IdentityResult> CreateAsync(Role role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -156,7 +154,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;IdentityResult&gt;.</returns>
-        public async Task<IdentityResult> DeleteAsync(Role role, CancellationToken cancellationToken)
+        public override async Task<IdentityResult> DeleteAsync(Role role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -179,11 +177,6 @@ namespace ExtenFlow.Identity.Roles.Stores
         }
 
         /// <summary>
-        /// Dispose the store
-        /// </summary>
-        public void Dispose() => _disposed = true;
-
-        /// <summary>
         /// Finds the by identifier asynchronous.
         /// </summary>
         /// <param name="roleId">The role identifier.</param>
@@ -191,7 +184,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;Role&gt;.</returns>
-        public async Task<Role> FindByIdAsync(string roleId, CancellationToken cancellationToken)
+        public override async Task<Role> FindByIdAsync(string roleId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -211,7 +204,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;Role&gt;.</returns>
-        public async Task<Role> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
+        public override async Task<Role> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -239,7 +232,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// <returns>Task&lt;IList&lt;Claim&gt;&gt;.</returns>
         /// <exception cref="ArgumentNullException">role</exception>
         /// <exception cref="ArgumentException">role</exception>
-        public Task<IList<Claim>> GetClaimsAsync(Role role, CancellationToken cancellationToken = default)
+        public override Task<IList<Claim>> GetClaimsAsync(Role role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -249,7 +242,7 @@ namespace ExtenFlow.Identity.Roles.Stores
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
             IRoleClaimsActor actor = _getRoleClaimsActor(role.Id);
-            return actor.Ask<IList<Claim>>(new GetRoleClaims(role.Id, _user.Name));
+            return actor.Ask(new GetRoleClaims(role.Id, _user.Name));
         }
 
         /// <summary>
@@ -260,7 +253,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;System.String&gt;.</returns>
-        public Task<string> GetNormalizedRoleNameAsync(Role role, CancellationToken cancellationToken)
+        public override Task<string> GetNormalizedRoleNameAsync(Role role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -280,7 +273,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;System.String&gt;.</returns>
-        public Task<string> GetRoleIdAsync(Role role, CancellationToken cancellationToken)
+        public override Task<string> GetRoleIdAsync(Role role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -300,7 +293,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;System.String&gt;.</returns>
-        public Task<string> GetRoleNameAsync(Role role, CancellationToken cancellationToken)
+        public override Task<string> GetRoleNameAsync(Role role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -325,7 +318,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// <exception cref="ArgumentException">role</exception>
         /// <exception cref="ArgumentException">claim</exception>
         /// <exception cref="RoleNotFoundException">Id</exception>
-        public async Task RemoveClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default)
+        public override async Task RemoveClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -358,7 +351,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task.</returns>
-        public async Task SetNormalizedRoleNameAsync(Role role, string normalizedName, CancellationToken cancellationToken)
+        public override async Task SetNormalizedRoleNameAsync(Role role, string normalizedName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -381,7 +374,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task.</returns>
-        public async Task SetRoleNameAsync(Role role, string roleName, CancellationToken cancellationToken)
+        public override async Task SetRoleNameAsync(Role role, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -403,7 +396,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;IdentityResult&gt;.</returns>
-        public async Task<IdentityResult> UpdateAsync(Role role, CancellationToken cancellationToken)
+        public override async Task<IdentityResult> UpdateAsync(Role role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -457,17 +450,6 @@ namespace ExtenFlow.Identity.Roles.Stores
                     .Select(p => FindByIdAsync(p, default))
                     .ToList()
                );
-        }
-
-        /// <summary>
-        /// Throws if this class has been disposed.
-        /// </summary>
-        private void ThrowIfDisposed()
-        {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().Name);
-            }
         }
     }
 }

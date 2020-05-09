@@ -12,7 +12,7 @@ namespace ExtenFlow.Infrastructure.AbstractionsTests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("                      ")]
-        public void CreateDefaultId10WithNoDuplicateCheck_ExpectsGuid(string proposedId)
+        public void CreateDefaultId10WithNoDuplicateCheck_ExpectsTruncatedGuid(string proposedId)
         {
             string id = proposedId.GenerateId(null, 10);
             id.Should().NotBeNullOrWhiteSpace();

@@ -20,11 +20,11 @@ namespace ExtenFlow.Identity.Roles.Actors
 {
     /// <summary>
     /// Class NormalizedRoleNameActor. Implements the <see cref="EventSourcedActorBase{String}"/>
-    /// Implements the <see cref="INormalizedRoleNameActor"/>
+    /// Implements the <see cref="IRoleNameRegistryEntryActor"/>
     /// </summary>
     /// <seealso cref="EventSourcedActorBase{String}"/>
-    /// <seealso cref="INormalizedRoleNameActor"/>
-    public class NormalizedRoleNameActor : EventSourcedActorBase<string>, INormalizedRoleNameActor
+    /// <seealso cref="IRoleNameRegistryEntryActor"/>
+    public class NormalizedRoleNameRegistryEntryActor : EventSourcedActorBase<string>, IRoleNameRegistryEntryActor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleActor"/> class.
@@ -36,7 +36,7 @@ namespace ExtenFlow.Identity.Roles.Actors
         /// <param name="messageQueue">The message queue used to publish events.</param>
         /// <param name="eventStore">The event store used to persist events.</param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
-        public NormalizedRoleNameActor(
+        public NormalizedRoleNameRegistryEntryActor(
             ActorService actorService,
             ActorId actorId,
             IEventBus messageQueue,

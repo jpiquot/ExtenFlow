@@ -7,10 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using ExtenFlow.Actors;
-using ExtenFlow.Identity.Users.Models;
 using ExtenFlow.Identity.Users.Actors;
 using ExtenFlow.Identity.Users.Commands;
 using ExtenFlow.Identity.Users.Exceptions;
+using ExtenFlow.Identity.Users.Models;
 using ExtenFlow.Identity.Users.Queries;
 using ExtenFlow.Infrastructure;
 
@@ -22,7 +22,7 @@ namespace ExtenFlow.Identity.Users.Stores
     /// <summary>
     /// The Dapr user store
     /// </summary>
-    public sealed class ActorUserStore : IUserStore
+    public sealed class ActorUserStore : UserStoreBase<User, string, UserClaim, UserLogin, UserToken>, IUserStore
     {
         private readonly ICollectionActor _collection;
         private readonly IdentityErrorDescriber _describer;
@@ -52,7 +52,7 @@ namespace ExtenFlow.Identity.Users.Stores
             Func<string, IUserClaimsActor> getUserClaimsActor,
             ILogger<ActorUserStore> logger,
             IdentityErrorDescriber? describer = null
-            )
+            ) : base(describer ?? new IdentityErrorDescriber())
         {
             _user = user ?? throw new ArgumentNullException(nameof(user));
             _getUserActor = getUserActor;
@@ -67,7 +67,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// Gets the users.
         /// </summary>
         /// <value>The users.</value>
-        public IQueryable<User> Users => GetAllUsers().GetAwaiter().GetResult().AsQueryable();
+        public override IQueryable<User> Users => GetAllUsers().GetAwaiter().GetResult().AsQueryable();
 
         /// <summary>
         /// add claims as an asynchronous operation.
@@ -82,7 +82,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// <exception cref="System.ArgumentException">user</exception>
         /// <exception cref="System.ArgumentException">claims</exception>
         /// <exception cref="ExtenFlow.Identity.Users.Exceptions.UserNotFoundException">Id</exception>
-        public async Task AddClaimsAsync(User user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        public override async Task AddClaimsAsync(User user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -106,6 +106,8 @@ namespace ExtenFlow.Identity.Users.Stores
             await claimActor.Tell(new AddUserClaims(user.Id, claims.ToDictionary(p => p.Type, t => t.Value), _user.Name));
         }
 
+        public override Task AddLoginAsync(User user, UserLoginInfo login, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
         /// <summary>
         /// Creates the asynchronous.
         /// </summary>
@@ -114,7 +116,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;IdentityResult&gt;.</returns>
-        public async Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken)
+        public override async Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -156,7 +158,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;IdentityResult&gt;.</returns>
-        public async Task<IdentityResult> DeleteAsync(User user, CancellationToken cancellationToken)
+        public override async Task<IdentityResult> DeleteAsync(User user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -178,10 +180,7 @@ namespace ExtenFlow.Identity.Users.Stores
             return IdentityResult.Success;
         }
 
-        /// <summary>
-        /// Dispose the store
-        /// </summary>
-        public void Dispose() => _disposed = true;
+        public override Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
         /// <summary>
         /// Finds the by identifier asynchronous.
@@ -191,7 +190,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;User&gt;.</returns>
-        public async Task<User> FindByIdAsync(string userId, CancellationToken cancellationToken)
+        public override async Task<User> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -211,7 +210,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;User&gt;.</returns>
-        public async Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+        public override async Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -239,7 +238,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// <returns>Task&lt;IList&lt;Claim&gt;&gt;.</returns>
         /// <exception cref="ArgumentNullException">user</exception>
         /// <exception cref="ArgumentException">user</exception>
-        public Task<IList<Claim>> GetClaimsAsync(User user, CancellationToken cancellationToken = default)
+        public override Task<IList<Claim>> GetClaimsAsync(User user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -252,6 +251,8 @@ namespace ExtenFlow.Identity.Users.Stores
             return actor.Ask<IList<Claim>>(new GetUserClaims(user.Id, _user.Name));
         }
 
+        public override Task<IList<UserLoginInfo>> GetLoginsAsync(User user, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
         /// <summary>
         /// Gets the normalized user name asynchronous.
         /// </summary>
@@ -260,7 +261,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;System.String&gt;.</returns>
-        public Task<string> GetNormalizedUserNameAsync(User user, CancellationToken cancellationToken)
+        public override Task<string> GetNormalizedUserNameAsync(User user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -280,7 +281,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;System.String&gt;.</returns>
-        public Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
+        public override Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -300,7 +301,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;System.String&gt;.</returns>
-        public Task<string> GetUserNameAsync(User user, CancellationToken cancellationToken)
+        public override Task<string> GetUserNameAsync(User user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -320,7 +321,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>IList&lt;User&gt;.</returns>
-        public async Task<IList<User>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+        public override async Task<IList<User>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
         {
             var list = (await _collection.All())
                 .Select(p => new
@@ -330,8 +331,8 @@ namespace ExtenFlow.Identity.Users.Stores
                                 .Exist(claim.Type, claim.Value)
                 })
                 .ToList();
-            var result = await Task.WhenAll(list.Select(p => p.Exist).ToList());
-            var details = await Task.WhenAll(list
+            bool[] result = await Task.WhenAll(list.Select(p => p.Exist).ToList());
+            UserDetailsModel[] details = await Task.WhenAll(list
                 .Where(p => p.Exist.Result)
                 .Select(p => _getUserActor(p.Id).Ask(new GetUserDetails(p.Id, _user.Name))));
             return details.Select(p => new User
@@ -356,7 +357,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// <exception cref="System.ArgumentException">user</exception>
         /// <exception cref="System.ArgumentException">claims</exception>
         /// <exception cref="ExtenFlow.Identity.Users.Exceptions.UserNotFoundException">Id</exception>
-        public async Task RemoveClaimsAsync(User user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        public override async Task RemoveClaimsAsync(User user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -380,6 +381,8 @@ namespace ExtenFlow.Identity.Users.Stores
             await claimActor.Tell(new RemoveUserClaims(user.Id, claims.ToDictionary(p => p.Type, p => p.Value), _user.Name));
         }
 
+        public override Task RemoveLoginAsync(User user, string loginProvider, string providerKey, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
         /// <summary>
         /// replace claim as an asynchronous operation.
         /// </summary>
@@ -396,7 +399,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// <exception cref="System.ArgumentException">claim</exception>
         /// <exception cref="System.ArgumentException">newClaim</exception>
         /// <exception cref="ExtenFlow.Identity.Users.Exceptions.UserNotFoundException">Id</exception>
-        public async Task ReplaceClaimAsync(User user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+        public override async Task ReplaceClaimAsync(User user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -435,7 +438,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task.</returns>
-        public async Task SetNormalizedUserNameAsync(User user, string normalizedName, CancellationToken cancellationToken)
+        public override async Task SetNormalizedUserNameAsync(User user, string normalizedName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -458,7 +461,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task.</returns>
-        public async Task SetUserNameAsync(User user, string userName, CancellationToken cancellationToken)
+        public override async Task SetUserNameAsync(User user, string userName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -480,7 +483,7 @@ namespace ExtenFlow.Identity.Users.Stores
         /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
         /// </param>
         /// <returns>Task&lt;IdentityResult&gt;.</returns>
-        public async Task<IdentityResult> UpdateAsync(User user, CancellationToken cancellationToken)
+        public override async Task<IdentityResult> UpdateAsync(User user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -513,6 +516,18 @@ namespace ExtenFlow.Identity.Users.Stores
             return IdentityResult.Success;
         }
 
+        protected override Task AddUserTokenAsync(UserToken token) => throw new NotImplementedException();
+
+        protected override Task<UserToken> FindTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken) => throw new NotImplementedException();
+
+        protected override Task<User> FindUserAsync(string userId, CancellationToken cancellationToken) => throw new NotImplementedException();
+
+        protected override Task<UserLogin> FindUserLoginAsync(string userId, string loginProvider, string providerKey, CancellationToken cancellationToken) => throw new NotImplementedException();
+
+        protected override Task<UserLogin> FindUserLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken) => throw new NotImplementedException();
+
+        protected override Task RemoveUserTokenAsync(UserToken token) => throw new NotImplementedException();
+
         private static void SetUserValues(User user, UserDetailsModel details)
         {
             user.UserName = details.Name;
@@ -534,17 +549,6 @@ namespace ExtenFlow.Identity.Users.Stores
                     .Select(p => FindByIdAsync(p, default))
                     .ToList()
                );
-        }
-
-        /// <summary>
-        /// Throws if this class has been disposed.
-        /// </summary>
-        private void ThrowIfDisposed()
-        {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(GetType().Name);
-            }
         }
     }
 }

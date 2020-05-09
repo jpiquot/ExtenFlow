@@ -26,8 +26,6 @@ namespace ExtenFlow.Identity.Roles.Actors
     /// <seealso cref="IRoleActor"/>
     public class RoleActor : EventSourcedActorBase<RoleState>, IRoleActor
     {
-        private readonly IUniqueIndexActor _normalizedNameIndexActor;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleActor"/> class.
         /// </summary>
@@ -35,19 +33,16 @@ namespace ExtenFlow.Identity.Roles.Actors
         /// The <see cref="ActorService"/> that will host this actor instance.
         /// </param>
         /// <param name="actorId">The Id of the actor.</param>
-        /// <param name="normalizedNameIndexActor"></param>
         /// <param name="messageQueue">The message queue used to publish events.</param>
         /// <param name="eventStore">The event store used to persist events.</param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
         public RoleActor(
             ActorService actorService,
             ActorId actorId,
-            IUniqueIndexActor normalizedNameIndexActor,
             IEventBus messageQueue,
             IEventStore eventStore,
             IActorStateManager? actorStateManager = null) : base(actorService, actorId, messageQueue, eventStore, actorStateManager)
         {
-            _normalizedNameIndexActor = normalizedNameIndexActor ?? throw new ArgumentNullException(nameof(normalizedNameIndexActor));
         }
 
         /// <summary>
@@ -202,17 +197,20 @@ namespace ExtenFlow.Identity.Roles.Actors
         /// <param name="command">The command.</param>
         /// <returns>IList&lt;IEvent&gt;.</returns>
         /// <exception cref="DuplicateRoleException">Id</exception>
-        private async Task<IList<IEvent>> Handle(AddNewRole command)
+        private Task<IList<IEvent>> Handle(AddNewRole command)
         {
             if (!StateIsNull())
             {
-                throw new DuplicateRoleException(CultureInfo.CurrentCulture, nameof(Id), Id.GetId());
+                Task.FromException<IList<IEvent>>(new DuplicateRoleException(CultureInfo.CurrentCulture, nameof(Id), Id.GetId()));
             }
-            if (await _normalizedNameIndexActor.Exist(command.NormalizedName))
-            {
-                throw new DuplicateRoleException(CultureInfo.CurrentCulture, nameof(RoleState.NormalizedName), command.NormalizedName);
-            }
-            return new[] { new NewRoleAdded(Id.GetId(), command.Name, command.NormalizedName, command.UserId, command.CorrelationId) };
+            return Task.FromResult<IList<IEvent>>(
+                new[] { new NewRoleAdded(
+                    Id.GetId(),
+                    command.Name,
+                    command.NormalizedName,
+                    command.UserId,
+                    command.CorrelationId)
+                });
         }
     }
 }

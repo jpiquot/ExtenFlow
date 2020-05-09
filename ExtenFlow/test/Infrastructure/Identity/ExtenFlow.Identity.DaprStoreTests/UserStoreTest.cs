@@ -13,7 +13,7 @@ using Xunit;
 
 namespace ExtenFlow.Identity.DaprActorsStore
 {
-    public class UserStoreTest : IdentitySpecificationTestBase<User, Role, Guid>
+    public class UserStoreTest : IdentitySpecificationTestBase<User, Role, string>
     {
         [Fact]
         public async Task AddUserToUnknownRoleFails()

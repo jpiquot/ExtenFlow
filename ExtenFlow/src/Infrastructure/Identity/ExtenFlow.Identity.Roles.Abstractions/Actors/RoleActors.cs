@@ -1,5 +1,4 @@
-﻿using System;
-using System.Resources;
+﻿using System.Resources;
 
 using Dapr.Actors;
 using Dapr.Actors.Client;
@@ -14,6 +13,13 @@ namespace ExtenFlow.Identity.Roles.Actors
     /// </summary>
     public static class RoleActors
     {
+        /// <summary>
+        /// Creates the role actor.
+        /// </summary>
+        /// <param name="normalizedRoleName">The normalized role name.</param>
+        /// <returns>The actor instance interface</returns>
+        public static IRoleNameRegistryEntryActor NormalizedRoleNameRegistryEntry(string normalizedRoleName) => ActorProxy.Create<IRoleNameRegistryEntryActor>(new ActorId(normalizedRoleName), "RoleNameRegistryEntryActor");
+
         /// <summary>
         /// Creates the role actor.
         /// </summary>
