@@ -1,14 +1,4 @@
-﻿// *********************************************************************** Assembly :
-// ExtenFlow.Identity.Users.Abstractions Author : jpiquot Created : 04-12-2020
-//
-// Last Modified By : jpiquot Last Modified On : 04-12-2020 ***********************************************************************
-// <copyright file="UserQuery.cs" company="Fiveforty">
-//     Copyright (c) Fiveforty Corporation. All rights reserved.
-// </copyright>
-// <summary>
-// </summary>
-// ***********************************************************************
-using System;
+﻿using System;
 
 using ExtenFlow.Identity.Users.Models;
 using ExtenFlow.Messages;

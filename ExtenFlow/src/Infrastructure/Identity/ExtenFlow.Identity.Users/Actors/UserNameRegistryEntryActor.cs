@@ -8,26 +8,24 @@ using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
 using ExtenFlow.EventStorage;
-using ExtenFlow.Identity.Roles.Commands;
-using ExtenFlow.Identity.Roles.Events;
-using ExtenFlow.Identity.Roles.Exceptions;
-using ExtenFlow.Identity.Roles.Models;
-using ExtenFlow.Identity.Roles.Queries;
+using ExtenFlow.Identity.Users.Commands;
+using ExtenFlow.Identity.Users.Exceptions;
+using ExtenFlow.Identity.Users.Models;
 using ExtenFlow.Messages;
 using ExtenFlow.Messages.Dispatcher;
 
-namespace ExtenFlow.Identity.Roles.Actors
+namespace ExtenFlow.Identity.Users.Actors
 {
     /// <summary>
-    /// Class NormalizedRoleNameActor. Implements the <see cref="EventSourcedActorBase{String}"/>
-    /// Implements the <see cref="IRoleNameRegistryEntryActor"/>
+    /// Class NormalizedUserNameActor. Implements the <see cref="EventSourcedActorBase{String}"/>
+    /// Implements the <see cref="IUserNameRegistryEntryActor"/>
     /// </summary>
     /// <seealso cref="EventSourcedActorBase{String}"/>
-    /// <seealso cref="IRoleNameRegistryEntryActor"/>
-    public class NormalizedRoleNameRegistryEntryActor : EventSourcedActorBase<string>, IRoleNameRegistryEntryActor
+    /// <seealso cref="IUserNameRegistryEntryActor"/>
+    public class UserNameRegistryEntryActor : EventSourcedActorBase<string>, IUserNameRegistryEntryActor
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleActor"/> class.
+        /// Initializes a new instance of the <see cref="UserActor"/> class.
         /// </summary>
         /// <param name="actorService">
         /// The <see cref="ActorService"/> that will host this actor instance.
@@ -36,7 +34,7 @@ namespace ExtenFlow.Identity.Roles.Actors
         /// <param name="messageQueue">The message queue used to publish events.</param>
         /// <param name="eventStore">The event store used to persist events.</param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
-        public NormalizedRoleNameRegistryEntryActor(
+        public UserNameRegistryEntryActor(
             ActorService actorService,
             ActorId actorId,
             IEventBus messageQueue,
@@ -60,8 +58,8 @@ namespace ExtenFlow.Identity.Roles.Actors
         protected override Task<IList<IEvent>> ReceiveCommand(ICommand command)
             => command switch
             {
-                RegisterNormalizedRoleName register => Handle(register),
-                DeregisterNormalizedRoleName deregister => Handle(deregister),
+                RegisterNormalizedUserName register => Handle(register),
+                DeregisterNormalizedUserName deregister => Handle(deregister),
                 _ => base.ReceiveCommand(command)
             };
 
@@ -75,11 +73,11 @@ namespace ExtenFlow.Identity.Roles.Actors
         {
             switch (@event)
             {
-                case NormalizedRoleNameRegistred registered:
+                case NormalizedUserNameRegistred registered:
                     Apply(registered);
                     break;
 
-                case NormalizedRoleNameDeregistred deregistered:
+                case NormalizedUserNameDeregistred deregistered:
                     Apply(deregistered);
                     break;
 
@@ -97,34 +95,34 @@ namespace ExtenFlow.Identity.Roles.Actors
         protected override async Task<object> ReceiveQuery(IQuery query)
                     => query switch
                     {
-                        GetRoleIdByName getId => await Handle(getId),
-                        IsRoleNameRegistered exist => await Handle(exist),
+                        GetUserIdByName getId => await Handle(getId),
+                        IsUserNameRegistered exist => await Handle(exist),
                         _ => Task.FromException<object>(new ArgumentOutOfRangeException(nameof(query)))
                     };
 
-        private void Apply(NormalizedRoleNameRegistred registred)
+        private void Apply(NormalizedUserNameRegistred registred)
         {
-            if (registred.RoleId == null)
+            if (registred.UserId == null)
             {
                 ClearState();
                 return;
             }
-            State = registred.RoleId;
+            State = registred.UserId;
         }
 
-        private void Apply(NormalizedRoleNameDeregistred _)
+        private void Apply(NormalizedUserNameDeregistred _)
             => ClearState();
 
-        private Task<string> Handle(GetRoleIdByName _)
+        private Task<string> Handle(GetUserIdByName _)
         {
             if (StateIsNull())
             {
-                throw new RoleNotFoundException(CultureInfo.CurrentCulture, nameof(Id), Id.GetId());
+                throw new UserNotFoundException(CultureInfo.CurrentCulture, nameof(Id), Id.GetId());
             }
             return Task.FromResult(State);
         }
 
-        private Task<bool> Handle(IsRoleNameRegistered _)
+        private Task<bool> Handle(IsUserNameRegistered _)
         {
             if (StateIsNull())
             {
@@ -133,22 +131,22 @@ namespace ExtenFlow.Identity.Roles.Actors
             return Task.FromResult(true);
         }
 
-        private Task<IList<IEvent>> Handle(RegisterNormalizedRoleName command)
+        private Task<IList<IEvent>> Handle(RegisterNormalizedUserName command)
         {
             if (!StateIsNull())
             {
-                throw new DuplicateRoleException(CultureInfo.CurrentCulture, nameof(Role.NormalizedName), Id.GetId());
+                throw new DuplicateUserException(CultureInfo.CurrentCulture, nameof(User.NormalizedName), Id.GetId());
             }
-            return Task.FromResult<IList<IEvent>>(new[] { new NormalizedRoleNameRegistred(Id.GetId(), command.RoleId, command.UserId, command.CorrelationId) });
+            return Task.FromResult<IList<IEvent>>(new[] { new NormalizedUserNameRegistred(Id.GetId(), command.UserId, command.UserId, command.CorrelationId) });
         }
 
-        private Task<IList<IEvent>> Handle(DeregisterNormalizedRoleName command)
+        private Task<IList<IEvent>> Handle(DeregisterNormalizedUserName command)
         {
             if (StateIsNull())
             {
-                throw new RoleNotFoundException(CultureInfo.CurrentCulture, nameof(Id), State);
+                throw new UserNotFoundException(CultureInfo.CurrentCulture, nameof(Id), State);
             }
-            return Task.FromResult<IList<IEvent>>(new[] { new NormalizedRoleNameDeregistred(Id.GetId(), command.RoleId, command.UserId, command.CorrelationId) });
+            return Task.FromResult<IList<IEvent>>(new[] { new NormalizedUserNameDeregistred(Id.GetId(), command.UserId, command.UserId, command.CorrelationId) });
         }
     }
 }

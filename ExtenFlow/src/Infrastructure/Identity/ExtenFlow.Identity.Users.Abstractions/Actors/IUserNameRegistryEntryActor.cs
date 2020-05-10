@@ -8,7 +8,7 @@ namespace ExtenFlow.Identity.Users.Actors
     /// The role actor interface
     /// </summary>
     /// <seealso cref="IActor"/>
-    public interface INormalizedUserNameActor : IActor, IDispatchActor
+    public interface IUserNameRegistryEntryActor : IActor, IDispatchActor
     {
     }
 }

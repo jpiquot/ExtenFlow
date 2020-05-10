@@ -5,8 +5,6 @@ using ExtenFlow.ApplicationDictionary.FieldDefinitions;
 
 using FluentValidation.Validators;
 
-[assembly: NeutralResourcesLanguage("en")]
-
 namespace ExtenFlow.ApplicationDictionary.FieldValidators
 {
     /// <summary>

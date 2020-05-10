@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Globalization;
-using System.Resources;
 using System.Threading.Tasks;
 
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Messages;
-
-[assembly: NeutralResourcesLanguage("en")]
 
 namespace ExtenFlow.Actors
 {

@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 
 using ExtenFlow.Messages;
 
-[assembly: NeutralResourcesLanguage("en")]
-
 namespace ExtenFlow.EventStorage
 {
     /// <summary>

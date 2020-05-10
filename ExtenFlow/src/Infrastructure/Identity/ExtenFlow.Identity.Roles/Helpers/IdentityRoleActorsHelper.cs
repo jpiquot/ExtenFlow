@@ -48,7 +48,6 @@ namespace ExtenFlow.Identity.Roles.Helpers
                     => new RoleActor(
                         service,
                         id,
-                        GetRoleNormalizedNameIndexActor(),
                         eventBus,
                         eventStore
                         )

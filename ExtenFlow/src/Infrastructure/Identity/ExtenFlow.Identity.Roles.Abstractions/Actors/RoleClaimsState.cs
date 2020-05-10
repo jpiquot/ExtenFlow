@@ -19,7 +19,7 @@ namespace ExtenFlow.Identity.Roles.Actors
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleClaimsState"/> class.
         /// </summary>
-        public RoleClaimsState(string roleId, Dictionary<string, HashSet<string>> claims)
+        public RoleClaimsState(Dictionary<string, HashSet<string>> claims)
         {
             _claims = claims;
         }
