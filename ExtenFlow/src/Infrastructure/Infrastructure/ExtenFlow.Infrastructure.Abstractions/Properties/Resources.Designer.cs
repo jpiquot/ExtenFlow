@@ -88,11 +88,47 @@ namespace ExtenFlow.Infrastructure.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Empty string values are not supported..
+        /// </summary>
+        internal static string EmptyStringValueNotSupported {
+            get {
+                return ResourceManager.GetString("EmptyStringValueNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value can&apos;t be retreived from a failed result..
+        /// </summary>
+        internal static string FailedResultValueAccess {
+            get {
+                return ResourceManager.GetString("FailedResultValueAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occured while writing to memory..
         /// </summary>
         internal static string MemoryWriteError {
             get {
                 return ResourceManager.GetString("MemoryWriteError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The failed result does not contain failure messages..
+        /// </summary>
+        internal static string MissingFailureMessages {
+            get {
+                return ResourceManager.GetString("MissingFailureMessages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The result contains a null value..
+        /// </summary>
+        internal static string ResultValueIsNull {
+            get {
+                return ResourceManager.GetString("ResultValueIsNull", resourceCulture);
             }
         }
     }

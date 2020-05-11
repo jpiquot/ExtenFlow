@@ -126,7 +126,19 @@
   <data name="EmailUndefinedUserName" xml:space="preserve">
     <value>The email user name is not defined.</value>
   </data>
+  <data name="EmptyStringValueNotSupported" xml:space="preserve">
+    <value>Empty string values are not supported.</value>
+  </data>
+  <data name="FailedResultValueAccess" xml:space="preserve">
+    <value>The value can't be retreived from a failed result.</value>
+  </data>
   <data name="MemoryWriteError" xml:space="preserve">
     <value>An error occured while writing to memory.</value>
+  </data>
+  <data name="MissingFailureMessages" xml:space="preserve">
+    <value>The failed result does not contain failure messages.</value>
+  </data>
+  <data name="ResultValueIsNull" xml:space="preserve">
+    <value>The result contains a null value.</value>
   </data>
 </root>
