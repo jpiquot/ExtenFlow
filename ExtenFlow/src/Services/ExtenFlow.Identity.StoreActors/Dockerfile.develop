@@ -9,7 +9,7 @@ WORKDIR /src
 COPY ["src/Infrastructure/Identity/ExtenFlow.Identity.Abstractions/ExtenFlow.Identity.Abstractions.csproj", "src/Infrastructure/Identity/ExtenFlow.Identity.Abstractions/"]
 COPY ["src/Infrastructure/Identity/ExtenFlow.Identity.Actors.Abstractions/ExtenFlow.Identity.Actors.Abstractions.csproj", "src/Infrastructure/Identity/ExtenFlow.Identity.Actors.Abstractions/"]
 COPY ["src/Infrastructure/Identity/ExtenFlow.Identity.Actors/ExtenFlow.Identity.Actors.csproj", "src/Infrastructure/Identity/ExtenFlow.Identity.Actors/"]
-COPY ["src/Infrastructure/Messages/ExtenFlow.Messages.Abstractions/ExtenFlow.Messages.Abstractions.csproj", "src/Infrastructure/Messages/ExtenFlow.Messages.Abstractions/"]
+COPY ["src/Infrastructure/Messages/ExtenFlow.Domain.Abstractions/ExtenFlow.Domain.Abstractions.csproj", "src/Infrastructure/Messages/ExtenFlow.Domain.Abstractions/"]
 COPY ["src/Services/ExtenFlow.Identity.StoreActors/ExtenFlow.Identity.StoreActors.csproj", "src/Services/ExtenFlow.Identity.StoreActors/"]
 
 RUN dotnet restore "src/Services/ExtenFlow.Identity.StoreActors/ExtenFlow.Identity.StoreActors.csproj"

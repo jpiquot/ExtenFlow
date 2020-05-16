@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>$(NetCoreAppTargetFramework)</TargetFramework>
+	</PropertyGroup>
+	<PropertyGroup>
+		<Description>This package contains the reference assemblies for ExtenFlow role management.</Description>
+		<PackageTags>$(PackageTags);Identity;Authorization;Autentication;Role;Claim;Login</PackageTags>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Dapr.Actors" />
+		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Actors\ExtenFlow.Actors\ExtenFlow.Actors.csproj" />
+		<ProjectReference Include="..\..\Infrastructure\ExtenFlow.Infrastructure.Abstractions\ExtenFlow.Infrastructure.Abstractions.csproj" />
+		<ProjectReference Include="..\ExtenFlow.Identity.Roles.Abstractions\ExtenFlow.Identity.Roles.Abstractions.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="CommandHandlers\" />
+	</ItemGroup>
+</Project>

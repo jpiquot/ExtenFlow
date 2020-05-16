@@ -18,7 +18,7 @@
 		<Folder Include="charts\extenflowidentitystoreactors\charts\" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Infrastructure\Identity\ExtenFlow.Identity.Roles\ExtenFlow.Identity.Roles.csproj" />
-		<ProjectReference Include="..\..\Infrastructure\Identity\ExtenFlow.Identity.Users\ExtenFlow.Identity.Users.csproj" />
+		<ProjectReference Include="..\..\Core\Identity\ExtenFlow.Identity.Roles\ExtenFlow.Identity.Roles.csproj" />
+		<ProjectReference Include="..\..\Core\Identity\ExtenFlow.Identity.Users\ExtenFlow.Identity.Users.csproj" />
 	</ItemGroup>
 </Project>

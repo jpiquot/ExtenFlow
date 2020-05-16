@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messages", "Messages", "{5397EB2E-9060-4664-9CC0-DCBFB5939152}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Messages.AbstractionsTests", "test\Infrastructure\Messages\ExtenFlow.Messages.AbstractionsTests\ExtenFlow.Messages.AbstractionsTests.csproj", "{F8BF743F-11DF-44CB-B4A3-EFCE602BF873}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Messages.AbstractionsTests", "test\Core\Messages\ExtenFlow.Messages.AbstractionsTests\ExtenFlow.Messages.AbstractionsTests.csproj", "{F8BF743F-11DF-44CB-B4A3-EFCE602BF873}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{86F38A60-E77B-4002-9A85-8CEDD15C0140}"
 EndProject
@@ -33,8 +33,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0A889E74-C
 	ProjectSection(SolutionItems) = preProject
 		..\Docs\documentation.md = ..\Docs\documentation.md
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Messages.Abstractions", "src\Infrastructure\Messages\ExtenFlow.Messages.Abstractions\ExtenFlow.Messages.Abstractions.csproj", "{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Build", "_Build", "{08DFBCAA-67EE-4B74-A96D-9BAF4BDEBF64}"
 	ProjectSection(SolutionItems) = preProject
@@ -55,9 +53,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.AbstractionsTests", "test\Infrastructure\Identity\ExtenFlow.Identity.AbstractionsTests\ExtenFlow.Identity.AbstractionsTests.csproj", "{63B36D55-091C-432E-BD2D-40C2B30C7785}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.DaprStoreTests", "test\Infrastructure\Identity\ExtenFlow.Identity.DaprStoreTests\ExtenFlow.Identity.DaprStoreTests.csproj", "{B05D005F-7835-4854-9A2B-DE2E24C3F01B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.DaprStoreTests", "test\Core\Identity\ExtenFlow.Identity.DaprStoreTests\ExtenFlow.Identity.DaprStoreTests.csproj", "{B05D005F-7835-4854-9A2B-DE2E24C3F01B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{D9501120-8225-4C15-A2AB-D0C20F593B22}"
 EndProject
@@ -65,53 +61,59 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.StoreAct
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actors", "Actors", "{CE105CB0-C593-45D2-B372-5C7624FD01EC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Actors.Abstractions", "src\Infrastructure\Actors\ExtenFlow.Actors.Abstractions\ExtenFlow.Actors.Abstractions.csproj", "{D29D074C-3A04-4BDC-AEE7-726776687F3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Actors.Abstractions", "src\Core\Actors\ExtenFlow.Actors.Abstractions\ExtenFlow.Actors.Abstractions.csproj", "{D29D074C-3A04-4BDC-AEE7-726776687F3E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Actors", "src\Infrastructure\Actors\ExtenFlow.Actors\ExtenFlow.Actors.csproj", "{2C7EBE4A-1E01-4632-A0FD-ECD86380383B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Actors", "src\Core\Actors\ExtenFlow.Actors\ExtenFlow.Actors.csproj", "{2C7EBE4A-1E01-4632-A0FD-ECD86380383B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{97851168-534B-4874-B4CF-416D1A1EFCC2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Services.Abstractions", "src\Infrastructure\Services\ExtenFlow.Services.Abstractions\ExtenFlow.Services.Abstractions.csproj", "{8CF52AED-F56E-427A-AE79-DA7ED183D9E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Services.Abstractions", "src\Core\Services\ExtenFlow.Services.Abstractions\ExtenFlow.Services.Abstractions.csproj", "{8CF52AED-F56E-427A-AE79-DA7ED183D9E9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Messages.BrighterBroker", "src\Infrastructure\Messages\ExtenFlow.Messages.BrighterBroker\ExtenFlow.Messages.BrighterBroker.csproj", "{B06476E8-3E27-4786-8338-568F3F1AF35C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Messages.BrighterBroker", "src\Core\Messages\ExtenFlow.Messages.BrighterBroker\ExtenFlow.Messages.BrighterBroker.csproj", "{B06476E8-3E27-4786-8338-568F3F1AF35C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{DE3F634F-310D-4BB8-BF4E-01CFDADAD828}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Infrastructure.Abstractions", "src\Infrastructure\Infrastructure\ExtenFlow.Infrastructure.Abstractions\ExtenFlow.Infrastructure.Abstractions.csproj", "{5D43ACB6-6317-4AE1-9CEA-FB6AF0870D27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Infrastructure.Abstractions", "src\Core\Infrastructure\ExtenFlow.Infrastructure.Abstractions\ExtenFlow.Infrastructure.Abstractions.csproj", "{5D43ACB6-6317-4AE1-9CEA-FB6AF0870D27}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actors", "Actors", "{456D8E36-C45A-4E6F-8DFA-26264C70B316}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Actors.Tests", "test\Infrastructure\Actors\ExtenFlow.Actors.Tests\ExtenFlow.Actors.Tests.csproj", "{8DB3896F-AE8D-494E-AE30-FCF4EA941061}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Actors.Tests", "test\Core\Actors\ExtenFlow.Actors.Tests\ExtenFlow.Actors.Tests.csproj", "{8DB3896F-AE8D-494E-AE30-FCF4EA941061}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Roles", "src\Infrastructure\Identity\ExtenFlow.Identity.Roles\ExtenFlow.Identity.Roles.csproj", "{E5D5DE4C-2A38-48AC-8FB5-0D380A425B7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Roles", "src\Core\Identity\ExtenFlow.Identity.Roles\ExtenFlow.Identity.Roles.csproj", "{E5D5DE4C-2A38-48AC-8FB5-0D380A425B7A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Roles.Abstractions", "src\Infrastructure\Identity\ExtenFlow.Identity.Roles.Abstractions\ExtenFlow.Identity.Roles.Abstractions.csproj", "{4C08D916-4FF8-46D1-8AD4-12C1DFFE4A9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Roles.Abstractions", "src\Core\Identity\ExtenFlow.Identity.Roles.Abstractions\ExtenFlow.Identity.Roles.Abstractions.csproj", "{4C08D916-4FF8-46D1-8AD4-12C1DFFE4A9A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{12A84D95-F5E1-4242-9F5B-C8C59B175209}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.EventStorage.Abstractions", "src\Infrastructure\Persistence\ExtenFlow.EventStorage.Abstractions\ExtenFlow.EventStorage.Abstractions.csproj", "{9F4AE31D-5979-45FA-9AE4-370F1BD08AC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.EventStorage.Abstractions", "src\Core\Persistence\ExtenFlow.EventStorage.Abstractions\ExtenFlow.EventStorage.Abstractions.csproj", "{9F4AE31D-5979-45FA-9AE4-370F1BD08AC5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.EventStorage.DaprActors", "src\Infrastructure\Persistence\ExtenFlow.EventStorage.DaprActors\ExtenFlow.EventStorage.DaprActors.csproj", "{932676F9-D488-4000-86D4-844AEA51AD2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.EventStorage.DaprActors", "src\Core\Persistence\ExtenFlow.EventStorage.DaprActors\ExtenFlow.EventStorage.DaprActors.csproj", "{932676F9-D488-4000-86D4-844AEA51AD2B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.EventStorage.GetEventStore", "src\Infrastructure\Persistence\ExtenFlow.EventStorage.GetEventStore\ExtenFlow.EventStorage.GetEventStore.csproj", "{EE418A4A-92F6-444F-B9E7-DD0E5281F839}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.EventStorage.GetEventStore", "src\Core\Persistence\ExtenFlow.EventStorage.GetEventStore\ExtenFlow.EventStorage.GetEventStore.csproj", "{EE418A4A-92F6-444F-B9E7-DD0E5281F839}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{B9F0BED0-CED1-41A7-899E-57964CDF3B56}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.EventStorage.DaprActors.Tests", "test\Infrastructure\Persistence\ExtenFlow.EventStorage.DaprActors.Tests\ExtenFlow.EventStorage.DaprActors.Tests.csproj", "{08089861-BF94-43EC-AE6C-3373AC93E9A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.EventStorage.DaprActors.Tests", "test\Core\Persistence\ExtenFlow.EventStorage.DaprActors.Tests\ExtenFlow.EventStorage.DaprActors.Tests.csproj", "{08089861-BF94-43EC-AE6C-3373AC93E9A6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Users.Abstractions", "src\Infrastructure\Identity\ExtenFlow.Identity.Users.Abstractions\ExtenFlow.Identity.Users.Abstractions.csproj", "{493083C7-DF33-4F0A-9C5D-2A14CFB21473}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Users.Abstractions", "src\Core\Identity\ExtenFlow.Identity.Users.Abstractions\ExtenFlow.Identity.Users.Abstractions.csproj", "{493083C7-DF33-4F0A-9C5D-2A14CFB21473}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Roles.AbstractionsTests", "test\Infrastructure\Identity\ExtenFlow.Identity.Roles.AbstractionsTests\ExtenFlow.Identity.Roles.AbstractionsTests.csproj", "{7592525F-2FAE-48BF-8176-B929618E028B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Roles.AbstractionsTests", "test\Core\Identity\ExtenFlow.Identity.Roles.AbstractionsTests\ExtenFlow.Identity.Roles.AbstractionsTests.csproj", "{7592525F-2FAE-48BF-8176-B929618E028B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Users", "src\Infrastructure\Identity\ExtenFlow.Identity.Users\ExtenFlow.Identity.Users.csproj", "{F6F33759-3EE3-4A0B-9869-64B2E8BB8D32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Users", "src\Core\Identity\ExtenFlow.Identity.Users\ExtenFlow.Identity.Users.csproj", "{F6F33759-3EE3-4A0B-9869-64B2E8BB8D32}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.RolesTests", "test\Infrastructure\Identity\ExtenFlow.Identity.RolesTests\ExtenFlow.Identity.RolesTests.csproj", "{70765F51-3BAC-4F63-AACB-09524020A89D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.RolesTests", "test\Core\Identity\ExtenFlow.Identity.RolesTests\ExtenFlow.Identity.RolesTests.csproj", "{70765F51-3BAC-4F63-AACB-09524020A89D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.ApplicationDictionary.Abstractions", "src\Infrastructure\Infrastructure\ExtenFlow.ApplicationDictionary.Abstractions\ExtenFlow.ApplicationDictionary.Abstractions.csproj", "{05107AB1-1916-4F4E-B212-5E2307F1EF52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.ApplicationDictionary.Abstractions", "src\Core\Infrastructure\ExtenFlow.ApplicationDictionary.Abstractions\ExtenFlow.ApplicationDictionary.Abstractions.csproj", "{05107AB1-1916-4F4E-B212-5E2307F1EF52}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{C268A5B5-80F2-439D-BF20-4B1F7CC0E7D9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Infrastructure.AbstractionsTests", "test\Infrastructure\Infrastructure\ExtenFlow.Infrastructure.AbstractionsTests\ExtenFlow.Infrastructure.AbstractionsTests.csproj", "{7F34FF78-C269-4261-8BC8-DEA8F755AC53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Infrastructure.AbstractionsTests", "test\Core\Infrastructure\ExtenFlow.Infrastructure.AbstractionsTests\ExtenFlow.Infrastructure.AbstractionsTests.csproj", "{7F34FF78-C269-4261-8BC8-DEA8F755AC53}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Identity.Users.AbstractionsTests", "test\Core\Identity\ExtenFlow.Identity.Users.AbstractionsTests\ExtenFlow.Identity.Users.AbstractionsTests.csproj", "{1761C5A6-9635-4B03-BC35-0FB607904252}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{ABDC14E0-BB16-4A2C-9A4C-9582222C7D73}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Domain.Abstractions", "src\Core\Domain\ExtenFlow.Domain.Abstractions\ExtenFlow.Domain.Abstractions.csproj", "{DE1FFD54-8A07-4442-80A8-A7D8A84AB628}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -123,14 +125,6 @@ Global
 		{F8BF743F-11DF-44CB-B4A3-EFCE602BF873}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8BF743F-11DF-44CB-B4A3-EFCE602BF873}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8BF743F-11DF-44CB-B4A3-EFCE602BF873}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{63B36D55-091C-432E-BD2D-40C2B30C7785}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63B36D55-091C-432E-BD2D-40C2B30C7785}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63B36D55-091C-432E-BD2D-40C2B30C7785}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63B36D55-091C-432E-BD2D-40C2B30C7785}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B05D005F-7835-4854-9A2B-DE2E24C3F01B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B05D005F-7835-4854-9A2B-DE2E24C3F01B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B05D005F-7835-4854-9A2B-DE2E24C3F01B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -211,6 +205,14 @@ Global
 		{7F34FF78-C269-4261-8BC8-DEA8F755AC53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F34FF78-C269-4261-8BC8-DEA8F755AC53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F34FF78-C269-4261-8BC8-DEA8F755AC53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1761C5A6-9635-4B03-BC35-0FB607904252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1761C5A6-9635-4B03-BC35-0FB607904252}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1761C5A6-9635-4B03-BC35-0FB607904252}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1761C5A6-9635-4B03-BC35-0FB607904252}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE1FFD54-8A07-4442-80A8-A7D8A84AB628}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE1FFD54-8A07-4442-80A8-A7D8A84AB628}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE1FFD54-8A07-4442-80A8-A7D8A84AB628}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE1FFD54-8A07-4442-80A8-A7D8A84AB628}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -223,9 +225,7 @@ Global
 		{F8BF743F-11DF-44CB-B4A3-EFCE602BF873} = {5397EB2E-9060-4664-9CC0-DCBFB5939152}
 		{86F38A60-E77B-4002-9A85-8CEDD15C0140} = {B07A3618-298A-42A3-B9C6-6D2181D125EE}
 		{0A889E74-C7C6-492A-B0F1-BFF824509C59} = {BBF5054D-08B1-4663-8213-C5358F98DB47}
-		{5A9ACFBE-B56F-45CE-89AD-BB63CAC11CCA} = {EB7CEF1C-7C74-4F33-8BBF-3F4874880145}
 		{4DBB4614-3603-4AD8-834E-7FA9C70CE404} = {6F124834-E622-4CD8-B4C5-A6C73F611F14}
-		{63B36D55-091C-432E-BD2D-40C2B30C7785} = {86F38A60-E77B-4002-9A85-8CEDD15C0140}
 		{B05D005F-7835-4854-9A2B-DE2E24C3F01B} = {86F38A60-E77B-4002-9A85-8CEDD15C0140}
 		{E13C34F6-4EA7-462E-AB3E-D10D02772A95} = {D9501120-8225-4C15-A2AB-D0C20F593B22}
 		{CE105CB0-C593-45D2-B372-5C7624FD01EC} = {6F124834-E622-4CD8-B4C5-A6C73F611F14}
@@ -253,6 +253,9 @@ Global
 		{05107AB1-1916-4F4E-B212-5E2307F1EF52} = {DE3F634F-310D-4BB8-BF4E-01CFDADAD828}
 		{C268A5B5-80F2-439D-BF20-4B1F7CC0E7D9} = {B07A3618-298A-42A3-B9C6-6D2181D125EE}
 		{7F34FF78-C269-4261-8BC8-DEA8F755AC53} = {C268A5B5-80F2-439D-BF20-4B1F7CC0E7D9}
+		{1761C5A6-9635-4B03-BC35-0FB607904252} = {86F38A60-E77B-4002-9A85-8CEDD15C0140}
+		{ABDC14E0-BB16-4A2C-9A4C-9582222C7D73} = {6F124834-E622-4CD8-B4C5-A6C73F611F14}
+		{DE1FFD54-8A07-4442-80A8-A7D8A84AB628} = {ABDC14E0-BB16-4A2C-9A4C-9582222C7D73}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B174E5CA-DE64-416A-B7A6-338036C49BF5}
