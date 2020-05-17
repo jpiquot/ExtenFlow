@@ -25,8 +25,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\src\Core\Actors\ExtenFlow.Actors\ExtenFlow.Actors.csproj" />
-		<ProjectReference Include="..\..\..\..\src\Core\Domain\ExtenFlow.Domain.Abstractions\ExtenFlow.Domain.Abstractions.csproj" />
-		<ProjectReference Include="..\..\..\..\src\Core\Persistence\ExtenFlow.EventStorage.DaprActors\ExtenFlow.EventStorage.DaprActors.csproj" />
+	  <ProjectReference Include="..\..\..\..\src\Core\Persistence\ExtenFlow.EventStorage.InMemory\ExtenFlow.EventStorage.InMemory.csproj" />
 	</ItemGroup>
 </Project>

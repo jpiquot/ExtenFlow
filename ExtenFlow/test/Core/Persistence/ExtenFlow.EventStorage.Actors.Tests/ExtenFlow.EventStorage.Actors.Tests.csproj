@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>$(NetCoreAppTargetFramework)</TargetFramework>
+
+		<IsPackable>false</IsPackable>
+		<NoWarn>NU1608</NoWarn>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="coverlet.collector" />
+		<PackageReference Include="Xbehave" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.runner.visualstudio" />
+		<PackageReference Include="xunit.analyzers" />
+		<PackageReference Include="xunit.assert" />
+		<PackageReference Include="xunit.core" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Identity.Specification.Tests" />
+		<PackageReference Include="Microsoft.Extensions.Identity.Core" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\src\Core\Persistence\ExtenFlow.EventStorage.Actors\ExtenFlow.EventStorage.Actors.csproj" />
+	</ItemGroup>
+</Project>

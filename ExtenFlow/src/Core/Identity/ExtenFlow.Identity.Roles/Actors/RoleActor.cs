@@ -7,15 +7,13 @@ using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
+using ExtenFlow.Domain;
+using ExtenFlow.Domain.Dispatcher;
 using ExtenFlow.EventStorage;
 using ExtenFlow.Identity.Roles.Commands;
 using ExtenFlow.Identity.Roles.Events;
 using ExtenFlow.Identity.Roles.Exceptions;
-using ExtenFlow.Identity.Roles.Models;
-using ExtenFlow.Identity.Roles.Properties;
 using ExtenFlow.Identity.Roles.Queries;
-using ExtenFlow.Domain;
-using ExtenFlow.Domain.Dispatcher;
 
 namespace ExtenFlow.Identity.Roles.Actors
 {
@@ -43,26 +41,6 @@ namespace ExtenFlow.Identity.Roles.Actors
             IEventStore eventStore,
             IActorStateManager? actorStateManager = null) : base(actorService, actorId, messageQueue, eventStore, actorStateManager)
         {
-        }
-
-        /// <summary>
-        /// Gets the role.
-        /// </summary>
-        /// <returns>The role object</returns>
-        public Task<Role> GetRole()
-        {
-            if (StateIsNull())
-            {
-                return Task.FromException<Role>(new KeyNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.RoleNotFound, Id.GetId())));
-            }
-            return Task.FromResult(
-                new Role()
-                {
-                    Id = Id.GetId(),
-                    Name = State.Name,
-                    NormalizedName = State.NormalizedName,
-                    ConcurrencyStamp = State.ConcurrencyStamp
-                });
         }
 
         /// <summary>

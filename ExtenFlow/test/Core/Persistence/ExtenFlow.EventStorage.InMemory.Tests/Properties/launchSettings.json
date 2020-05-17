@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ExtenFlow.Identity.DaprStoreTests": {
+      "commandName": "Project",
+      "commandLineArgs": "run dotnet test"
+    }
+  }
+}

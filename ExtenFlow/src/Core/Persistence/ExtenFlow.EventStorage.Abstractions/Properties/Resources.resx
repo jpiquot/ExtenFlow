@@ -117,8 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DuplicateEventStoreSession" xml:space="preserve">
+    <value>Duplicate event store session '%1'. The stream version number may be corrupted.  </value>
+  </data>
   <data name="EventNotFoundInStore" xml:space="preserve">
     <value>The event with Id='{0}' not found in the event store.</value>
+  </data>
+  <data name="EventStoreSessionNotFound" xml:space="preserve">
+    <value>The event store session '%1' not found.</value>
+  </data>
+  <data name="EventStreamVersionMismatch" xml:space="preserve">
+    <value>The given '%1' version does not match the event storage stream version : '%2'. </value>
+  </data>
+  <data name="InvalidStreamNumberNotLong" xml:space="preserve">
+    <value>Invalid stream version '%1'. It should be a long integer value.</value>
   </data>
   <data name="NullOrEmptyEventList" xml:space="preserve">
     <value>List of events empty or null.</value>

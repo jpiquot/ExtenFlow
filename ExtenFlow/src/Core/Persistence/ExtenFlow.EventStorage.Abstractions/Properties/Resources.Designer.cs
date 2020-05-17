@@ -61,11 +61,47 @@ namespace ExtenFlow.EventStorage.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Duplicate event store session &apos;%1&apos;. The stream version number may be corrupted.  .
+        /// </summary>
+        public static string DuplicateEventStoreSession {
+            get {
+                return ResourceManager.GetString("DuplicateEventStoreSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The event with Id=&apos;{0}&apos; not found in the event store..
         /// </summary>
         public static string EventNotFoundInStore {
             get {
                 return ResourceManager.GetString("EventNotFoundInStore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The event store session &apos;%1&apos; not found..
+        /// </summary>
+        public static string EventStoreSessionNotFound {
+            get {
+                return ResourceManager.GetString("EventStoreSessionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given &apos;%1&apos; version does not match the event storage stream version : &apos;%2&apos;. .
+        /// </summary>
+        public static string EventStreamVersionMismatch {
+            get {
+                return ResourceManager.GetString("EventStreamVersionMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid stream version &apos;%1&apos;. It should be a long integer value..
+        /// </summary>
+        public static string InvalidStreamNumberNotLong {
+            get {
+                return ResourceManager.GetString("InvalidStreamNumberNotLong", resourceCulture);
             }
         }
         

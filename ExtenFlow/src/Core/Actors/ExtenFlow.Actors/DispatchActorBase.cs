@@ -58,6 +58,11 @@ namespace ExtenFlow.Actors
             {
                 throw new ArgumentOutOfRangeException(nameof(envelope), Properties.Resources.MessageNotQuery);
             }
+            if (Id.GetId() != query.AggregateId)
+            {
+                // Message aggregate identifier mismatch. Expected='{0}; Message='{1}'.
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.MessageAggregateIdMismatch, Id.GetId(), query.AggregateId));
+            }
             await ReceiveAndProcessQueueMessages();
             return await ReceiveQuery(query);
         }
@@ -75,6 +80,11 @@ namespace ExtenFlow.Actors
             if (!(envelope.Message is IMessage message))
             {
                 throw new ArgumentOutOfRangeException(nameof(envelope), Properties.Resources.ObjectNotMessage);
+            }
+            if (Id.GetId() != message.AggregateId)
+            {
+                // Message aggregate identifier mismatch. Expected='{0}; Message='{1}'.
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.MessageAggregateIdMismatch, Id.GetId(), message.AggregateId));
             }
             await ReceiveAndProcessQueueMessages();
             await ReceiveQueueMessage(message);
@@ -113,6 +123,11 @@ namespace ExtenFlow.Actors
             if (!(envelope.Message is ICommand command))
             {
                 throw new ArgumentOutOfRangeException(nameof(envelope), Properties.Resources.MessageNotCommand);
+            }
+            if (Id.GetId() != command.AggregateId)
+            {
+                // Message aggregate identifier mismatch. Expected='{0}; Message='{1}'.
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.MessageAggregateIdMismatch, Id.GetId(), command.AggregateId));
             }
             await ReceiveAndProcessQueueMessages();
             await HandleCommand(command);
@@ -215,11 +230,6 @@ namespace ExtenFlow.Actors
 
         private async Task HandleCommand(ICommand command)
         {
-            if (Id.GetId() != command.AggregateId)
-            {
-                // Message aggregate identifier mismatch. Expected='{0}; Message='{1}'.
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.MessageAggregateIdMismatch, Id.GetId(), command.AggregateId));
-            }
             var events = await ReceiveCommand(command);
             Guid batchId = await MessageQueue.Send(events);
             foreach (IEvent anEvent in events)
