@@ -1,37 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
-using ExtenFlow.EventStorage;
-using ExtenFlow.Domain.Dispatcher;
 
-namespace ExtenFlow.Identity.Roles.Actors
+namespace ExtenFlow.Identity.Roles.Domain
 {
     /// <summary>
     /// The role claims class
     /// </summary>
     /// <seealso cref="Actor"/>
-    /// <seealso cref="IRoleClaimsActor"/>
-    public class RoleClaimsActor : EventSourcedActorBase<RoleClaimsState>, IRoleClaimsActor
+    public class RoleClaimsEntity : EntityState<Dictionary<string, HashSet<string>>>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleClaimsActor"/> class.
+        /// Initializes a new instance of the <see cref="RoleClaimsEntity"/> class.
         /// </summary>
-        /// <param name="actorService">
-        /// The <see cref="ActorService"/> that will host this actor instance.
-        /// </param>
-        /// <param name="actorId">The Id of the actor.</param>
-        /// <param name="eventBus"></param>
-        /// <param name="eventStore"></param>
-        /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
-        public RoleClaimsActor(ActorService actorService, ActorId actorId, IEventBus eventBus, IEventStore eventStore, IActorStateManager? actorStateManager = null)
-            : base(actorService, actorId, eventBus, eventStore, actorStateManager)
+        /// <param name="actorStateManager">The aggregate root actor state manager.</param>
+        public RoleClaimsEntity(IActorStateManager actorStateManager)
+            : base("Claims", actorStateManager, new Dictionary<string, HashSet<string>>())
         {
         }
 
@@ -48,7 +37,7 @@ namespace ExtenFlow.Identity.Roles.Actors
                 return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
             ClaimValues(claimType).Add(claimValue);
-            return SetStateData();
+            return Save();
         }
 
         /// <summary>
@@ -64,10 +53,6 @@ namespace ExtenFlow.Identity.Roles.Actors
             {
                 return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
-            if (State == null)
-            {
-                return Task.FromResult(false);
-            }
             return Task.FromResult(ClaimValues(claimType).Any(p => p == claimValue));
         }
 
@@ -78,14 +63,11 @@ namespace ExtenFlow.Identity.Roles.Actors
         public Task<IList<Tuple<string, string>>> GetAll()
         {
             var list = new List<Tuple<string, string>>();
-            if (State != null)
+            foreach (KeyValuePair<string, HashSet<string>> entry in State)
             {
-                foreach (KeyValuePair<string, HashSet<string>> entry in State.Claims)
+                foreach (string value in entry.Value)
                 {
-                    foreach (string value in entry.Value)
-                    {
-                        list.Add(new Tuple<string, string>(entry.Key, value));
-                    }
+                    list.Add(new Tuple<string, string>(entry.Key, value));
                 }
             }
             return Task.FromResult<IList<Tuple<string, string>>>(list);
@@ -108,26 +90,14 @@ namespace ExtenFlow.Identity.Roles.Actors
                 return Task.CompletedTask;
             }
             ClaimValues(claimType).Remove(claimValue);
-            return SetStateData();
+            return Save();
         }
-
-        /// <summary>
-        /// Creates new state.
-        /// </summary>
-        /// <returns>TState.</returns>
-        protected override RoleClaimsState NewState() => new RoleClaimsState();
 
         private HashSet<string> ClaimValues(string claimType)
         {
-            if (State == null)
+            if (!State.TryGetValue(claimType, out HashSet<string>? values))
             {
-                // The actor state has not been initialized for actor {0} with Id '{1}'.
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, ExtenFlow.Actors.Properties.Resources.ActorStateNotInitialized, this.ActorName(), Id.GetId()));
-            }
-            if (!State.Claims.TryGetValue(claimType, out HashSet<string>? values))
-            {
-                values = new HashSet<string>();
-                State.Claims.Add(claimType, values);
+                return new HashSet<string>();
             }
             return values;
         }

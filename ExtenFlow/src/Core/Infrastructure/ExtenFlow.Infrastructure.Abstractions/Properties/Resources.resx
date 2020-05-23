@@ -138,7 +138,19 @@
   <data name="MissingFailureMessages" xml:space="preserve">
     <value>The failed result does not contain failure messages.</value>
   </data>
+  <data name="NullValueNotSupported" xml:space="preserve">
+    <value>Null value is not supported.</value>
+  </data>
   <data name="ResultValueIsNull" xml:space="preserve">
     <value>The result contains a null value.</value>
+  </data>
+  <data name="StringLengthNotSupported" xml:space="preserve">
+    <value>The string '%1' length is '%2'. String length must be in the range : [%3-%4].</value>
+  </data>
+  <data name="TypeMismatch" xml:space="preserve">
+    <value>The value type is '%1', but the expected type is : '%2'.</value>
+  </data>
+  <data name="WhiteSpacesNotSupported" xml:space="preserve">
+    <value>Values containing only white spaces are not supported.</value>
   </data>
 </root>

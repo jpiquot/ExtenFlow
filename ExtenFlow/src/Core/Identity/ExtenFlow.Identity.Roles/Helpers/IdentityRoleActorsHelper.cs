@@ -43,9 +43,9 @@ namespace ExtenFlow.Identity.Roles.Helpers
             {
                 throw new ArgumentNullException(nameof(actorRuntime));
             }
-            actorRuntime.RegisterActor<RoleActor>(information
+            actorRuntime.RegisterActor<RoleAggregateRoot>(information
                 => new ActorService(information, (service, id)
-                    => new RoleActor(
+                    => new RoleAggregateRoot(
                         service,
                         id,
                         eventBus,

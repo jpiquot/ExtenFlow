@@ -23,7 +23,7 @@ namespace ExtenFlow.Identity.Roles.Actors
     public class RoleDetailsActor : EventSourcedActorBase<RoleDetailsModel>, IRoleActor
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleActor"/> class.
+        /// Initializes a new instance of the <see cref="RoleAggregateRoot"/> class.
         /// </summary>
         /// <param name="actorService">
         /// The <see cref="ActorService"/> that will host this actor instance.

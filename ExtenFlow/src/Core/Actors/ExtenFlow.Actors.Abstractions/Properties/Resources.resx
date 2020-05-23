@@ -135,6 +135,12 @@
   <data name="DuplicateIndexKey" xml:space="preserve">
     <value>Item with Key='{0}' already exist in unique index {1} with another Id='{2}'.</value>
   </data>
+  <data name="EntityStateAlreadyInitialized" xml:space="preserve">
+    <value>The entity state is already initialized.</value>
+  </data>
+  <data name="EntityStateNotInitialized" xml:space="preserve">
+    <value>The entity state is not initialized.</value>
+  </data>
   <data name="IdIsNullEmptyOrWhiteSpace" xml:space="preserve">
     <value>Id is null, empty or white spaces.</value>
   </data>

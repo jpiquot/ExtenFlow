@@ -14,12 +14,11 @@ namespace ExtenFlow.Actors
     /// <summary>
     /// Dispatch actor
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <seealso cref="ExtenFlow.Actors.ActorBase{T}"/>
-    public abstract class DispatchActorBase<T> : ActorBase<T>, IDispatchActor, IRemindable
+    /// <seealso cref="ExtenFlow.Actors.DispatchActorBase"/>
+    public abstract class DispatchActorBase : Actor, IDispatchActor
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DispatchActorBase{T}"/> class.
+        /// Initializes a new instance of the <see cref="DispatchActorBase"/> class.
         /// </summary>
         /// <param name="actorService">
         /// The <see cref="ActorService"/> that will host this actor instance.
@@ -103,13 +102,6 @@ namespace ExtenFlow.Actors
             }
         }
 
-        /// <inheriteddoc/>
-        public override async Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
-        {
-            await ReceiveNotification(new ActorReminderCallback(this, reminderName, state, dueTime, period));
-            await base.ReceiveReminderAsync(reminderName, state, dueTime, period);
-        }
-
         /// <summary>
         /// Tells to execute the command in the envelope.
         /// </summary>
@@ -132,38 +124,6 @@ namespace ExtenFlow.Actors
             await ReceiveAndProcessQueueMessages();
             await HandleCommand(command);
         }
-
-        /// <summary>
-        /// Handles a timer callback.
-        /// </summary>
-        /// <param name="timer">The timer.</param>
-        /// <returns></returns>
-        /// <exception cref="System.NotImplementedException"></exception>
-        protected virtual Task Handle(ActorTimerCallback timer) => ReceiveAndProcessQueueMessages();
-
-        /// <summary>
-        /// Handles a reminder callback.
-        /// </summary>
-        /// <param name="reminder">The reminder.</param>
-        /// <returns></returns>
-        /// <exception cref="System.NotImplementedException"></exception>
-        protected virtual Task Handle(ActorReminderCallback reminder) => ReceiveAndProcessQueueMessages();
-
-        /// <summary>
-        /// Handles the actor desactivation.
-        /// </summary>
-        /// <param name="desactivation">The desactivation.</param>
-        /// <returns></returns>
-        /// <exception cref="System.NotImplementedException"></exception>
-        protected virtual Task Handle(ActorDesactivation desactivation) => Task.CompletedTask;
-
-        /// <summary>
-        /// Handles the actor activation.
-        /// </summary>
-        /// <param name="activation">The activation.</param>
-        /// <returns></returns>
-        /// <exception cref="System.NotImplementedException"></exception>
-        protected virtual Task Handle(ActorActivation activation) => Task.CompletedTask;
 
         /// <summary>
         /// This method is called whenever an actor is activated. An actor is activated the first
@@ -191,9 +151,7 @@ namespace ExtenFlow.Actors
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns></returns>
-        protected virtual Task<IList<IEvent>> ReceiveCommand(ICommand command)
-            // The command '{0}' is not supported by '{1}'.
-            => Task.FromException<IList<IEvent>>(new NotSupportedException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.CommandNotSupported, command?.GetType().Name, this.ActorName())));
+        protected abstract Task<IList<IEvent>> ReceiveCommand(ICommand command);
 
         /// <summary>
         /// Receives the specified event.
@@ -202,31 +160,21 @@ namespace ExtenFlow.Actors
         /// <param name="batchSave">
         /// if set to <c>true</c> do not save data. It will be done at the end of the batch.
         /// </param>
-        protected virtual Task ReceiveEvent(IEvent eventMessage, bool batchSave = false)
-            => Task.FromResult<IList<IEvent>>(Array.Empty<IEvent>());
+        protected abstract Task ReceiveEvent(IEvent eventMessage, bool batchSave = false);
 
         /// <summary>
         /// Receive a notification message.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <returns>List of generated events.</returns>
-        protected virtual Task ReceiveNotification(IMessage message)
-            => message switch
-            {
-                ActorActivation activation => Handle(activation),
-                ActorDesactivation desactivation => Handle(desactivation),
-                ActorReminderCallback reminder => Handle(reminder),
-                ActorTimerCallback timer => Handle(timer),
-                _ => Task.CompletedTask
-            };
+        protected abstract Task ReceiveNotification(IMessage message);
 
         /// <summary>
         /// Receive a query.
         /// </summary>
         /// <param name="query">The query.</param>
         /// <returns>The query result.</returns>
-        protected virtual Task<object> ReceiveQuery(IQuery query)
-            => Task.FromException<object>(new NotSupportedException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.QueryNotSupported, query?.GetType().Name, this.ActorName())));
+        protected abstract Task<object> ReceiveQuery(IQuery query);
 
         private async Task HandleCommand(ICommand command)
         {
@@ -236,7 +184,6 @@ namespace ExtenFlow.Actors
             {
                 await ReceiveEvent(anEvent, true);
             }
-            await SetStateData();
             await MessageQueue.ConfirmSend(batchId);
             return;
         }

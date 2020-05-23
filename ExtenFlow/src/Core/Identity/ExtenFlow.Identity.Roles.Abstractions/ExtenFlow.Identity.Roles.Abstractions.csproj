@@ -22,6 +22,7 @@
 		<ProjectReference Include="..\..\Actors\ExtenFlow.Actors.Abstractions\ExtenFlow.Actors.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Infrastructure\ExtenFlow.ApplicationDictionary.Abstractions\ExtenFlow.ApplicationDictionary.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Domain\ExtenFlow.Domain.Abstractions\ExtenFlow.Domain.Abstractions.csproj" />
+		<ProjectReference Include="..\..\Infrastructure\ExtenFlow.Infrastructure.Abstractions\ExtenFlow.Infrastructure.Abstractions.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">

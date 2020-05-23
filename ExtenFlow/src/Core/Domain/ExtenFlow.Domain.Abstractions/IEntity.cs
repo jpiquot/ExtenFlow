@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ExtenFlow.Domain
+﻿namespace ExtenFlow.Domain
 {
     /// <summary>
     /// Interface IDomainEntity
@@ -8,9 +6,9 @@ namespace ExtenFlow.Domain
     public interface IEntity
     {
         /// <summary>
-        /// Gets the events.
+        /// Gets the name of the entity.
         /// </summary>
-        /// <value>The events.</value>
-        ICollection<IEvent> Events { get; }
+        /// <value>The name of the entity.</value>
+        string EntityTypeName { get; }
     }
 }

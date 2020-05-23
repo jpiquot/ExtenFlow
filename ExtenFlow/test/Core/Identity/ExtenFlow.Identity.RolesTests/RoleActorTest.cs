@@ -7,10 +7,10 @@ using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
+using ExtenFlow.Domain.Dispatcher;
 using ExtenFlow.EventStorage;
 using ExtenFlow.Identity.Roles.Actors;
 using ExtenFlow.Identity.Roles.Commands;
-using ExtenFlow.Domain.Dispatcher;
 
 using FluentAssertions;
 
@@ -32,7 +32,7 @@ namespace ExtenFlow.Identity.RolesTests
             stateManager.Setup(manager => manager.GetStateAsync<RoleState>(_stateName, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(state))
                 .Verifiable();
-            RoleActor testDemoActor = await CreateActor(stateManager.Object, Guid.NewGuid().ToString());
+            RoleAggregateRoot testDemoActor = await CreateActor(stateManager.Object, Guid.NewGuid().ToString());
 
             object result = await testDemoActor.GetStateValue();
             result.Should().NotBeNull();
@@ -60,7 +60,7 @@ namespace ExtenFlow.Identity.RolesTests
                     It.IsAny<CancellationToken>()))
                 .Verifiable();
             string id = Guid.NewGuid().ToString();
-            RoleActor testDemoActor = await CreateActor(stateManager.Object, id);
+            RoleAggregateRoot testDemoActor = await CreateActor(stateManager.Object, id);
 
             await testDemoActor.Tell(new AddNewRole(id, state1.Name, state1.NormalizedName, "user"));
             stateManager.VerifyAll();
@@ -79,7 +79,7 @@ namespace ExtenFlow.Identity.RolesTests
                 .RemoveStateAsync(_stateName, It.IsAny<CancellationToken>()))
                 .Verifiable();
             string id = Guid.NewGuid().ToString();
-            RoleActor testDemoActor = await CreateActor(stateManager.Object, id);
+            RoleAggregateRoot testDemoActor = await CreateActor(stateManager.Object, id);
 
             await testDemoActor.Tell(new RemoveRole(id, oldState.ConcurrencyStamp, "user"));
             stateManager.VerifyAll();
@@ -105,21 +105,21 @@ namespace ExtenFlow.Identity.RolesTests
                     It.IsAny<CancellationToken>()))
                 .Verifiable();
             string id = Guid.NewGuid().ToString();
-            RoleActor testDemoActor = await CreateActor(stateManager.Object, id);
+            RoleAggregateRoot testDemoActor = await CreateActor(stateManager.Object, id);
 
             await testDemoActor.Tell(new RenameRole(id, newState.Name, newState.NormalizedName, oldState.ConcurrencyStamp, "user"));
             stateManager.VerifyAll();
         }
 
-        private async Task<RoleActor> CreateActor(IActorStateManager actorStateManager, string id)
+        private async Task<RoleAggregateRoot> CreateActor(IActorStateManager actorStateManager, string id)
         {
             var eventBus = new Mock<IEventBus>();
             var eventStore = new Mock<IEventStore>();
-            var actorTypeInformation = ActorTypeInformation.Get(typeof(RoleActor));
-            RoleActor actorFactory(ActorService service, ActorId id) =>
-                new RoleActor(service, id, eventBus.Object, eventStore.Object, actorStateManager);
+            var actorTypeInformation = ActorTypeInformation.Get(typeof(RoleAggregateRoot));
+            RoleAggregateRoot actorFactory(ActorService service, ActorId id) =>
+                new RoleAggregateRoot(service, id, eventBus.Object, eventStore.Object, actorStateManager);
             var actorService = new ActorService(actorTypeInformation, actorFactory);
-            RoleActor actor = actorFactory(actorService, new ActorId(id));
+            RoleAggregateRoot actor = actorFactory(actorService, new ActorId(id));
             MethodInfo OnActivate = actor.GetType().GetMethod("OnActivateAsync", BindingFlags.NonPublic | BindingFlags.Instance);
             await (Task)OnActivate.Invoke(actor, Array.Empty<object>());
             return actor;

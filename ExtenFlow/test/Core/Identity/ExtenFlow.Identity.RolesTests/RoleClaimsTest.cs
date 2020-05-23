@@ -29,11 +29,11 @@ namespace ExtenFlow.Identity.RolesTests
         public async Task RoleClaimsActorAdd_ExpectGetStateAsync()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var state = new RoleClaimsState("testrole", new Dictionary<string, HashSet<string>>
+            var state = new RoleClaimsEntity("testrole", new Dictionary<string, HashSet<string>>
             {
                 { "type 1", new HashSet<string>{"type 1 value" } }
             });
-            stateManager.Setup(manager => manager.GetStateAsync<RoleClaimsState>(_stateName, It.IsAny<CancellationToken>()))
+            stateManager.Setup(manager => manager.GetStateAsync<RoleClaimsEntity>(_stateName, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(state))
                 .Verifiable();
             RoleClaimsActor testDemoActor = await CreateActor(stateManager.Object, Guid.NewGuid().ToString());

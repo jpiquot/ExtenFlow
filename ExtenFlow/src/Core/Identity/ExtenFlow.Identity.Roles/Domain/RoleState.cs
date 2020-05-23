@@ -1,9 +1,4 @@
-﻿using System;
-using System.Globalization;
-
-using ExtenFlow.Identity.Roles.Exceptions;
-
-namespace ExtenFlow.Identity.Roles.Actors
+﻿namespace ExtenFlow.Identity.Roles.Domain
 {
     /// <summary>
     /// Class RoleActorState.
@@ -13,17 +8,10 @@ namespace ExtenFlow.Identity.Roles.Actors
         /// <summary>
         /// Constructor
         /// </summary>
-        public RoleState()
-        {
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
         /// <param name="name"></param>
         /// <param name="normalizedName"></param>
         /// <param name="concurrencyStamp"></param>
-        public RoleState(string name, string normalizedName, string? concurrencyStamp)
+        public RoleState(string name, string normalizedName, string concurrencyStamp)
         {
             Name = name;
             NormalizedName = normalizedName;
@@ -35,28 +23,18 @@ namespace ExtenFlow.Identity.Roles.Actors
         /// persisted to the store.
         /// </summary>
         /// <value>The concurrency stamp.</value>
-        public string? ConcurrencyStamp { get; private set; }
+        public string ConcurrencyStamp { get; }
 
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
         /// <value>The name.</value>
-        public string? Name { get; internal set; }
+        public string Name { get; }
 
         /// <summary>
         /// Gets or sets the normalized name of the role.
         /// </summary>
         /// <value>The normalized name.</value>
-        public string? NormalizedName { get; internal set; }
-
-        internal void ConcurrencyCheck(string? concurrencyStamp)
-        {
-            if (!string.IsNullOrWhiteSpace(ConcurrencyStamp) && concurrencyStamp != ConcurrencyStamp)
-            {
-                throw new RoleConcurrencyFailureException(CultureInfo.CurrentCulture, concurrencyStamp, ConcurrencyStamp);
-            }
-        }
-
-        internal void InitNewConcurrencyStamp() => ConcurrencyStamp = Guid.NewGuid().ToString();
+        public string NormalizedName { get; }
     }
 }

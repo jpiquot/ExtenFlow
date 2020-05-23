@@ -115,6 +115,24 @@ namespace ExtenFlow.Actors.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The entity state is already initialized..
+        /// </summary>
+        public static string EntityStateAlreadyInitialized {
+            get {
+                return ResourceManager.GetString("EntityStateAlreadyInitialized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The entity state is not initialized..
+        /// </summary>
+        public static string EntityStateNotInitialized {
+            get {
+                return ResourceManager.GetString("EntityStateNotInitialized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Id is null, empty or white spaces..
         /// </summary>
         public static string IdIsNullEmptyOrWhiteSpace {

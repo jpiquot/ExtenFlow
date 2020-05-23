@@ -14,8 +14,8 @@ namespace ExtenFlow.Actors
     /// <seealso cref="Actor"/>
     public abstract class ActorBase<TState> : Actor, IRemindable, IBaseActor
     {
+        private string? _name;
         private object? _state;
-        private string? _stateName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActorBase{TState}"/> class.
@@ -28,6 +28,12 @@ namespace ExtenFlow.Actors
         protected ActorBase(ActorService actorService, ActorId actorId, IActorStateManager? actorStateManager = null) : base(actorService, actorId, actorStateManager)
         {
         }
+
+        /// <summary>
+        /// Gets the name of the state.
+        /// </summary>
+        /// <value>The name of the state.</value>
+        protected string Name => _name ?? (_name = this.ActorName());
 
         /// <summary>
         /// Gets or sets the state.
@@ -51,12 +57,6 @@ namespace ExtenFlow.Actors
             }
             set => _state = value;
         }
-
-        /// <summary>
-        /// Gets the name of the state.
-        /// </summary>
-        /// <value>The name of the state.</value>
-        protected string StateName => _stateName ?? (_stateName = this.ActorName());
 
         /// <summary>
         /// Gets the state.
@@ -114,13 +114,13 @@ namespace ExtenFlow.Actors
         /// Gets the actor state.
         /// </summary>
         protected virtual async Task ReadStateData()
-            => _state = await StateManager.GetOrAddStateAsync(StateName, NewState());
+            => _state = await StateManager.GetOrAddStateAsync(Name, NewState());
 
         /// <summary>
         /// Saves the actor state.
         /// </summary>
         protected virtual Task SetStateData()
-            => (_state == null) ? StateManager.RemoveStateAsync(StateName) : StateManager.SetStateAsync(StateName, State);
+            => (_state == null) ? StateManager.RemoveStateAsync(Name) : StateManager.SetStateAsync(Name, State);
 
         /// <summary>
         /// Clears the state.

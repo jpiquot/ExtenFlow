@@ -162,4 +162,7 @@
   <data name="RoleNotFound" xml:space="preserve">
     <value>Role with '{0}'='{1}' not found.</value>
   </data>
+  <data name="RoleNotInitialized" xml:space="preserve">
+    <value>Role not initialized.</value>
+  </data>
 </root>

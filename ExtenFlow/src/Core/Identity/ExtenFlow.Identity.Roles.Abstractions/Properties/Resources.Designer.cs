@@ -194,5 +194,14 @@ namespace ExtenFlow.Identity.Roles.Properties {
                 return ResourceManager.GetString("RoleNotFound", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Role not initialized..
+        /// </summary>
+        public static string RoleNotInitialized {
+            get {
+                return ResourceManager.GetString("RoleNotInitialized", resourceCulture);
+            }
+        }
     }
 }

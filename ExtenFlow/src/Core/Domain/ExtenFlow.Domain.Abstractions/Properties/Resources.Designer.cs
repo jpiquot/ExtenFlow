@@ -97,6 +97,24 @@ namespace ExtenFlow.Domain.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;%1&apos; is not a valid command for &apos;%2&apos;..
+        /// </summary>
+        internal static string InvalidCommand {
+            get {
+                return ResourceManager.GetString("InvalidCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;%1&apos; is not a valid query for &apos;%2&apos;..
+        /// </summary>
+        internal static string InvalidQuery {
+            get {
+                return ResourceManager.GetString("InvalidQuery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The message creation date and time are not defined..
         /// </summary>
         internal static string MessageDateTimeNotDefined {

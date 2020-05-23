@@ -7,14 +7,14 @@ using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
+using ExtenFlow.Domain;
+using ExtenFlow.Domain.Dispatcher;
 using ExtenFlow.EventStorage;
 using ExtenFlow.Identity.Roles.Commands;
 using ExtenFlow.Identity.Roles.Events;
 using ExtenFlow.Identity.Roles.Exceptions;
 using ExtenFlow.Identity.Roles.Models;
 using ExtenFlow.Identity.Roles.Queries;
-using ExtenFlow.Domain;
-using ExtenFlow.Domain.Dispatcher;
 
 namespace ExtenFlow.Identity.Roles.Actors
 {
@@ -27,7 +27,7 @@ namespace ExtenFlow.Identity.Roles.Actors
     public class NormalizedRoleNameRegistryEntryActor : EventSourcedActorBase<string>, IRoleNameRegistryEntryActor
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleActor"/> class.
+        /// Initializes a new instance of the <see cref="RoleAggregateRoot"/> class.
         /// </summary>
         /// <param name="actorService">
         /// The <see cref="ActorService"/> that will host this actor instance.

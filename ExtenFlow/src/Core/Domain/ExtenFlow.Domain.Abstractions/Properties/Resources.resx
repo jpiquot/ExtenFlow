@@ -138,4 +138,10 @@
   <data name="UserIdNotDefined" xml:space="preserve">
     <value>The user identifier is not defined.</value>
   </data>
+  <data name="InvalidCommand" xml:space="preserve">
+    <value>'%1' is not a valid command for '%2'.</value>
+  </data>
+  <data name="InvalidQuery" xml:space="preserve">
+    <value>'%1' is not a valid query for '%2'.</value>
+  </data>
 </root>

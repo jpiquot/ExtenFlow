@@ -124,11 +124,47 @@ namespace ExtenFlow.Infrastructure.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Null value is not supported..
+        /// </summary>
+        internal static string NullValueNotSupported {
+            get {
+                return ResourceManager.GetString("NullValueNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The result contains a null value..
         /// </summary>
         internal static string ResultValueIsNull {
             get {
                 return ResourceManager.GetString("ResultValueIsNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The string &apos;%1&apos; length is &apos;%2&apos;. String length must be in the range : [%3-%4]..
+        /// </summary>
+        internal static string StringLengthNotSupported {
+            get {
+                return ResourceManager.GetString("StringLengthNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value type is &apos;%1&apos;, but the expected type is : &apos;%2&apos;..
+        /// </summary>
+        internal static string TypeMismatch {
+            get {
+                return ResourceManager.GetString("TypeMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Values containing only white spaces are not supported..
+        /// </summary>
+        internal static string WhiteSpacesNotSupported {
+            get {
+                return ResourceManager.GetString("WhiteSpacesNotSupported", resourceCulture);
             }
         }
     }
