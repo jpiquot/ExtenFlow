@@ -6,43 +6,22 @@ using System.Threading.Tasks;
 namespace ExtenFlow.Domain.Aggregates
 {
     /// <summary>
-    /// Class AggregateRoot. Implements the <see cref="ExtenFlow.Domain.IAggregateRoot"/>
+    /// Class AggregateRoot. Implements the <see cref="Entity"/> Implements the <see cref="IAggregateRoot"/>
     /// </summary>
-    /// <seealso cref="ExtenFlow.Domain.IAggregateRoot"/>
-    public abstract class AggregateRoot : IAggregateRoot
+    /// <seealso cref="Entity"/>
+    /// <seealso cref="IAggregateRoot"/>
+    public abstract class AggregateRoot : Entity, IAggregateRoot
     {
-        private readonly IRepository _repository;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AggregateRoot"/> class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="id">The identifier.</param>
         /// <param name="repository"></param>
-        public AggregateRoot(string name, string id, IRepository repository)
+        protected AggregateRoot(string name, string id, IRepository repository)
+            : base(name, id, repository)
         {
-            Id = id ?? throw new ArgumentNullException(nameof(id));
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            Name = name ?? throw new ArgumentNullException(nameof(name));
         }
-
-        /// <summary>
-        /// Gets the aggregate identifier.
-        /// </summary>
-        /// <value>The identifier.</value>
-        public string Id { get; }
-
-        /// <summary>
-        /// Gets aggregate name.
-        /// </summary>
-        /// <value>The name.</value>
-        public string Name { get; }
-
-        /// <summary>
-        /// Gets the repository.
-        /// </summary>
-        /// <value>The repository.</value>
-        protected IRepository Repository => _repository;
 
         /// <summary>
         /// Handles commands.
@@ -52,17 +31,6 @@ namespace ExtenFlow.Domain.Aggregates
         /// <exception cref="System.InvalidOperationException"></exception>
         public virtual Task<IList<IEvent>> HandleCommand(ICommand command)
             => throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, Properties.Resources.InvalidCommand, command?.GetType().Name, GetType().Name));
-
-        /// <summary>
-        /// Handles events.
-        /// </summary>
-        /// <param name="event">The event.</param>
-        /// <returns>Task.</returns>
-#pragma warning disable CA1716 // Identifiers should not match keywords
-
-        public abstract Task HandleEvent(IEvent @event);
-
-#pragma warning restore CA1716 // Identifiers should not match keywords
 
         /// <summary>
         /// Handles notifications.

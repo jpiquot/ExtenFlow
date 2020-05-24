@@ -5,7 +5,11 @@ using System.Threading.Tasks;
 
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.Actors;
+using ExtenFlow.Domain;
+using ExtenFlow.Domain.Aggregates;
+using ExtenFlow.Domain.Exceptions;
+using ExtenFlow.Identity.Roles.Events;
+using ExtenFlow.Identity.Roles.ValueObjects;
 
 namespace ExtenFlow.Identity.Roles.Domain
 {
@@ -13,30 +17,52 @@ namespace ExtenFlow.Identity.Roles.Domain
     /// The role claims class
     /// </summary>
     /// <seealso cref="Actor"/>
-    public class RoleClaimsEntity : EntityState<Dictionary<string, HashSet<string>>>
+    public sealed class RoleClaimsEntity : Entity<Dictionary<string, HashSet<string?>>>
     {
+        private Dictionary<ClaimType, HashSet<ClaimValue?>>? _claims;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleClaimsEntity"/> class.
         /// </summary>
-        /// <param name="actorStateManager">The aggregate root actor state manager.</param>
-        public RoleClaimsEntity(IActorStateManager actorStateManager)
-            : base("Claims", actorStateManager, new Dictionary<string, HashSet<string>>())
+        /// <param name="id">The identifier.</param>
+        /// <param name="repository">The repository.</param>
+        public RoleClaimsEntity(string id, IRepository repository)
+            : base("RoleClaims", id, repository)
         {
         }
 
+        private Dictionary<ClaimType, HashSet<ClaimValue?>> Claims
+                    => _claims ?? throw new EntityStateNotInitializedException(this, nameof(Claims));
+
         /// <summary>
-        /// Adds the role's Claim.
+        /// Applies the role claim added event.
+        /// </summary>
+        /// <param name="event">The event.</param>
+        /// <returns>Task.</returns>
+        public Task Apply(RoleClaimAdded @event)
+        {
+            Init
+            ClaimValues(claimType).Add(claimValue);
+            return Save();
+        }
+
+        /// <summary>
+        /// Removes the Claim.
         /// </summary>
         /// <param name="claimType">Type of the claim</param>
         /// <param name="claimValue">Value of the claim</param>
         /// <exception cref="ArgumentNullException">claimType</exception>
-        public Task Add(string claimType, string claimValue)
+        public Task Apply(RoleClaimRemoved @event)
         {
             if (string.IsNullOrWhiteSpace(claimType))
             {
                 return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
-            ClaimValues(claimType).Add(claimValue);
+            if (State == null)
+            {
+                return Task.CompletedTask;
+            }
+            ClaimValues(claimType).Remove(claimValue);
             return Save();
         }
 
@@ -74,32 +100,68 @@ namespace ExtenFlow.Identity.Roles.Domain
         }
 
         /// <summary>
-        /// Removes the Claim.
+        /// Handles events.
         /// </summary>
-        /// <param name="claimType">Type of the claim</param>
-        /// <param name="claimValue">Value of the claim</param>
-        /// <exception cref="ArgumentNullException">claimType</exception>
-        public Task Remove(string claimType, string claimValue)
+        /// <param name="event">The event.</param>
+        /// <returns>Task.</returns>
+        public override Task HandleEvent(IEvent @event)
+            => @event switch
+            {
+                RoleClaimAdded claimAdded => Apply(claimAdded),
+                RoleClaimRemoved claimRemoved => Apply(claimRemoved),
+                _ => Task.CompletedTask
+            };
+
+        /// <summary>
+        /// Gets the state object.
+        /// </summary>
+        /// <returns>The state object initialized with the instance values.</returns>
+        protected override Dictionary<string, HashSet<string?>> GetState()
         {
-            if (string.IsNullOrWhiteSpace(claimType))
+            var dictionary = new Dictionary<string, HashSet<string?>>(Claims.Count);
+            foreach (KeyValuePair<ClaimType, HashSet<ClaimValue?>> claimType in Claims)
             {
-                return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
+                if (claimType.Value != null)
+                {
+                    dictionary.Add(
+                        claimType.Key.Value,
+                        new HashSet<string?>(claimType.Value.Select(p => p?.Value).ToList()
+                        ));
+                }
             }
-            if (State == null)
-            {
-                return Task.CompletedTask;
-            }
-            ClaimValues(claimType).Remove(claimValue);
-            return Save();
+            return dictionary;
         }
 
-        private HashSet<string> ClaimValues(string claimType)
+        /// <summary>
+        /// Sets the data values from the persisted state object.
+        /// </summary>
+        /// <param name="state">The state.</param>
+        protected override void SetValues(Dictionary<string, HashSet<string?>> state)
         {
-            if (!State.TryGetValue(claimType, out HashSet<string>? values))
+            _ = state ?? throw new ArgumentNullException(nameof(state));
+            _claims = new Dictionary<ClaimType, HashSet<ClaimValue?>>(state.Count);
+            foreach (KeyValuePair<string, HashSet<string?>> claimType in state)
             {
-                return new HashSet<string>();
+                if (claimType.Value != null)
+                {
+                    _claims.Add(
+                        new ClaimType(claimType.Key),
+                        claimType
+                            .Value
+                            .Select(p => (p == null) ? null : new ClaimValue(p))
+                            .ToHashSet()
+                        );
+                }
             }
-            return values;
+        }
+
+        private HashSet<string?> ClaimValues(string claimType)
+        {
+            if (!Claims.TryGetValue(new ClaimType(claimType), out HashSet<ClaimValue?>? values))
+            {
+                return new HashSet<string?>();
+            }
+            return values.Select(p => p?.Value).ToHashSet();
         }
     }
 }

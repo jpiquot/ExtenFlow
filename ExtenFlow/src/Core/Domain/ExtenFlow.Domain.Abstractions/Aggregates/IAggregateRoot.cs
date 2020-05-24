@@ -1,38 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ExtenFlow.Domain
+namespace ExtenFlow.Domain.Aggregates
 {
     /// <summary>
     /// Interface IDomainAggregateRoot
     /// </summary>
-    public interface IAggregateRoot
+    public interface IAggregateRoot : IEntity
     {
-        /// <summary>
-        /// Gets the aggregate identifier.
-        /// </summary>
-        /// <value>The identifier.</value>
-        string Id { get; }
-
-        /// <summary>
-        /// Gets aggregate name.
-        /// </summary>
-        /// <value>The name.</value>
-        string Name { get; }
-
         /// <summary>
         /// Handles commands.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>Task&lt;IList&lt;IEvent&gt;&gt;.</returns>
         Task<IList<IEvent>> HandleCommand(ICommand command);
-
-        /// <summary>
-        /// Handles events.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <returns>Task.</returns>
-        Task HandleEvent(IEvent message);
 
         /// <summary>
         /// Handles notifications.

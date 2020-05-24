@@ -88,6 +88,24 @@ namespace ExtenFlow.Domain.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The &apos;%2&apos; property state is not initialized in &apos;%1&apos; entity..
+        /// </summary>
+        internal static string EntityPropertyStateNotInitialized {
+            get {
+                return ResourceManager.GetString("EntityPropertyStateNotInitialized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;%1&apos; entity state is not initialized..
+        /// </summary>
+        internal static string EntityStateNotInitialized {
+            get {
+                return ResourceManager.GetString("EntityStateNotInitialized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The message identifier is not defined..
         /// </summary>
         internal static string IdNotDefined {

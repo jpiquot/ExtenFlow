@@ -12,7 +12,7 @@ namespace ExtenFlow.Identity.Roles.Application
     /// Class RoleActor. Implements the <see cref="ExtenFlow.Actors.AggregateRootActor"/>
     /// </summary>
     /// <seealso cref="ExtenFlow.Actors.AggregateRootActor"/>
-    public class RoleActor : AggregateRootActor
+    public class RoleNameActor : AggregateRootActor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleActor"/> class.
@@ -22,7 +22,7 @@ namespace ExtenFlow.Identity.Roles.Application
         /// <param name="eventBus">The event bus.</param>
         /// <param name="eventStore">The event store.</param>
         /// <param name="actorStateManager">The actor state manager.</param>
-        public RoleActor(
+        public RoleNameActor(
              ActorService actorService,
              ActorId actorId,
              IEventBus eventBus,
@@ -31,7 +31,7 @@ namespace ExtenFlow.Identity.Roles.Application
             : base(
                   actorService,
                   actorId,
-                  (id, stateManager) => new RoleAggregateRoot(id, new ActorRepository(stateManager)),
+                  (id, stateManager) => new RoleNameRegistryAggregateRoot(id, new ActorRepository(stateManager)),
                   eventBus,
                   eventStore,
                   actorStateManager)

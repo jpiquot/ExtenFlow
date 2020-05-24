@@ -17,7 +17,7 @@ namespace ExtenFlow.Infrastructure
         /// <param name="left">The left value.</param>
         /// <param name="right">The right value.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator !=(ValueObject left, ValueObject right) => !EqualOperator(left, right);
+        public static bool operator !=(ValueObject? left, ValueObject? right) => !EqualOperator(left, right);
 
         /// <summary>
         /// Implements the operator ==.
@@ -25,7 +25,7 @@ namespace ExtenFlow.Infrastructure
         /// <param name="left">The left value.</param>
         /// <param name="right">The right value.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator ==(ValueObject left, ValueObject right) => EqualOperator(left, right);
+        public static bool operator ==(ValueObject? left, ValueObject? right) => EqualOperator(left, right);
 
         /// <summary>
         /// Determines whether the specified <see cref="object"/> is equal to this instance.
@@ -85,7 +85,7 @@ namespace ExtenFlow.Infrastructure
         /// <param name="left">The left value.</param>
         /// <param name="right">The right value.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        protected static bool EqualOperator(ValueObject left, ValueObject right)
+        protected static bool EqualOperator(ValueObject? left, ValueObject? right)
         {
             if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
             {

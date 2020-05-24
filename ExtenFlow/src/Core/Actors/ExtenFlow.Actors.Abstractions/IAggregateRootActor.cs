@@ -7,9 +7,9 @@ using ExtenFlow.Domain;
 namespace ExtenFlow.Actors
 {
     /// <summary>
-    /// Interface IAggregateRootActor Implements the <see cref="ExtenFlow.Domain.IAggregateRoot"/>
+    /// Interface IAggregateRootActor Implements the <see cref="Dapr.Actors.IActor"/>
     /// </summary>
-    /// <seealso cref="ExtenFlow.Domain.IAggregateRoot"/>
+    /// <seealso cref="Dapr.Actors.IActor"/>
     public interface IAggregateRootActor : IActor
     {
         /// <summary>

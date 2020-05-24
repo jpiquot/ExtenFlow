@@ -44,6 +44,6 @@ namespace ExtenFlow.Domain
         /// <typeparam name="T"></typeparam>
         /// <param name="name">The name.</param>
         /// <returns>Task&lt;ConditionalValue&lt;T&gt;&gt;.</returns>
-        Task<(bool, T)> TryGetData<T>(string name);
+        Task<(bool succeded, T state)> TryGetData<T>(string name);
     }
 }
