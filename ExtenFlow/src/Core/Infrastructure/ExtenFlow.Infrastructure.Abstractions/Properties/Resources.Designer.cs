@@ -61,6 +61,42 @@ namespace ExtenFlow.Infrastructure.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The value &apos;%1&apos; is after the maximum UTC date and time : &apos;%2&apos;..
+        /// </summary>
+        internal static string AfterMaximumDateTime {
+            get {
+                return ResourceManager.GetString("AfterMaximumDateTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value &apos;%1&apos; is more in the future than the maximum from now: &apos;%2&apos;..
+        /// </summary>
+        internal static string AfterMaximumFuture {
+            get {
+                return ResourceManager.GetString("AfterMaximumFuture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value &apos;%1&apos; is more in the past than the maximum from now : &apos;%2&apos;..
+        /// </summary>
+        internal static string BeforeMaximumPast {
+            get {
+                return ResourceManager.GetString("BeforeMaximumPast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value &apos;%1&apos; is before the minimum UTC date and time : &apos;%2&apos;.
+        /// </summary>
+        internal static string BeforeMininumDateTime {
+            get {
+                return ResourceManager.GetString("BeforeMininumDateTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The email should have two parts, seperated by &apos;@&apos;. Email=&apos;{0}&apos;..
         /// </summary>
         internal static string EmailShouldHaveTwoParts {
@@ -151,11 +187,20 @@ namespace ExtenFlow.Infrastructure.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The value type is &apos;%1&apos;, but the expected type is : &apos;%2&apos;..
+        ///   Looks up a localized string similar to The value type is &apos;%2&apos;, but the expected type is : &apos;%3&apos; for &apos;%1&apos;..
         /// </summary>
         internal static string TypeMismatch {
             get {
                 return ResourceManager.GetString("TypeMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value is null..
+        /// </summary>
+        internal static string ValueIsNull {
+            get {
+                return ResourceManager.GetString("ValueIsNull", resourceCulture);
             }
         }
         

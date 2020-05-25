@@ -6,7 +6,7 @@ namespace ExtenFlow.Infrastructure.Validators
     /// <summary>
     /// Class StringValidator.
     /// </summary>
-    public abstract class StringValidator : Validator
+    public abstract class StringValidator : PropertyValidator
     {
         private readonly bool _canBeWhiteSpaces;
         private readonly int _maxLength;
@@ -15,7 +15,14 @@ namespace ExtenFlow.Infrastructure.Validators
         /// <summary>
         /// Initializes a new instance of the <see cref="StringValidator"/> class.
         /// </summary>
-        protected StringValidator(bool nullable, int minLength, int maxLength, bool canBeWhiteSpaces) : base(nullable)
+        protected StringValidator(
+            string? parentName,
+            string? propertyName,
+            bool nullable,
+            int minLength,
+            int maxLength,
+            bool canBeWhiteSpaces)
+            : base(parentName, propertyName, nullable ? ValidatorMessageLevel.Information : ValidatorMessageLevel.Error)
         {
             _minLength = minLength;
             _maxLength = maxLength;

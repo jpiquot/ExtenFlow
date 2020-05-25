@@ -10,12 +10,12 @@
         /// </summary>
         /// <param name="name"></param>
         /// <param name="normalizedName"></param>
-        /// <param name="concurrencyStamp"></param>
-        public RoleState(string name, string normalizedName, string concurrencyStamp)
+        /// <param name="concurrencyCheckStamp"></param>
+        public RoleState(string name, string normalizedName, string concurrencyCheckStamp)
         {
             Name = name;
             NormalizedName = normalizedName;
-            ConcurrencyStamp = concurrencyStamp;
+            ConcurrencyCheckStamp = concurrencyCheckStamp;
         }
 
         /// <summary>
@@ -23,7 +23,7 @@
         /// persisted to the store.
         /// </summary>
         /// <value>The concurrency stamp.</value>
-        public string ConcurrencyStamp { get; }
+        public string ConcurrencyCheckStamp { get; }
 
         /// <summary>
         /// Gets or sets the name.

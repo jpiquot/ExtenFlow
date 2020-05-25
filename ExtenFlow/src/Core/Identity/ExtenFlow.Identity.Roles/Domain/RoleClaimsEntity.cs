@@ -19,7 +19,7 @@ namespace ExtenFlow.Identity.Roles.Domain
     /// <seealso cref="Actor"/>
     public sealed class RoleClaimsEntity : Entity<Dictionary<string, HashSet<string?>>>
     {
-        private Dictionary<ClaimType, HashSet<ClaimValue?>>? _claims;
+        private Dictionary<RoleClaimType, HashSet<RoleClaimValue?>>? _claims;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleClaimsEntity"/> class.
@@ -31,40 +31,8 @@ namespace ExtenFlow.Identity.Roles.Domain
         {
         }
 
-        private Dictionary<ClaimType, HashSet<ClaimValue?>> Claims
-                    => _claims ?? throw new EntityStateNotInitializedException(this, nameof(Claims));
-
-        /// <summary>
-        /// Applies the role claim added event.
-        /// </summary>
-        /// <param name="event">The event.</param>
-        /// <returns>Task.</returns>
-        public Task Apply(RoleClaimAdded @event)
-        {
-            Init
-            ClaimValues(claimType).Add(claimValue);
-            return Save();
-        }
-
-        /// <summary>
-        /// Removes the Claim.
-        /// </summary>
-        /// <param name="claimType">Type of the claim</param>
-        /// <param name="claimValue">Value of the claim</param>
-        /// <exception cref="ArgumentNullException">claimType</exception>
-        public Task Apply(RoleClaimRemoved @event)
-        {
-            if (string.IsNullOrWhiteSpace(claimType))
-            {
-                return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
-            }
-            if (State == null)
-            {
-                return Task.CompletedTask;
-            }
-            ClaimValues(claimType).Remove(claimValue);
-            return Save();
-        }
+        private Dictionary<RoleClaimType, HashSet<RoleClaimValue?>> Claims
+            => _claims ?? throw new EntityStateNotInitializedException(this, nameof(Claims));
 
         /// <summary>
         /// Determines whether the role has the specified Claim.
@@ -99,18 +67,42 @@ namespace ExtenFlow.Identity.Roles.Domain
             return Task.FromResult<IList<Tuple<string, string>>>(list);
         }
 
+        #region Events
+
         /// <summary>
         /// Handles events.
         /// </summary>
         /// <param name="event">The event.</param>
         /// <returns>Task.</returns>
-        public override Task HandleEvent(IEvent @event)
-            => @event switch
+        public override async Task HandleEvent(IEvent @event)
+        {
+            switch (@event)
             {
-                RoleClaimAdded claimAdded => Apply(claimAdded),
-                RoleClaimRemoved claimRemoved => Apply(claimRemoved),
-                _ => Task.CompletedTask
+                case RoleClaimAdded claimAdded:
+                    await InitializeState();
+                    Apply(claimAdded);
+                    break;
+
+                case RoleClaimRemoved claimRemoved:
+                    await InitializeState();
+                    Apply(claimRemoved);
+                    break;
+
+                default:
+                    return;
             };
+            await Save();
+        }
+
+        private void Apply(RoleClaimRemoved @event)
+            => ClaimValues(new RoleClaimType(@event.ClaimType))
+                .Remove((@event.ClaimValue == null) ? null : new RoleClaimValue(@event.ClaimValue));
+
+        private void Apply(RoleClaimAdded @event)
+            => ClaimValues(new RoleClaimType(@event.ClaimType))
+                .Add((@event.ClaimValue == null) ? null : new RoleClaimValue(@event.ClaimValue));
+
+        #endregion Events
 
         /// <summary>
         /// Gets the state object.
@@ -119,7 +111,7 @@ namespace ExtenFlow.Identity.Roles.Domain
         protected override Dictionary<string, HashSet<string?>> GetState()
         {
             var dictionary = new Dictionary<string, HashSet<string?>>(Claims.Count);
-            foreach (KeyValuePair<ClaimType, HashSet<ClaimValue?>> claimType in Claims)
+            foreach (KeyValuePair<RoleClaimType, HashSet<RoleClaimValue?>> claimType in Claims)
             {
                 if (claimType.Value != null)
                 {
@@ -136,32 +128,34 @@ namespace ExtenFlow.Identity.Roles.Domain
         /// Sets the data values from the persisted state object.
         /// </summary>
         /// <param name="state">The state.</param>
+        /// <exception cref="ArgumentNullException">state</exception>
         protected override void SetValues(Dictionary<string, HashSet<string?>> state)
         {
             _ = state ?? throw new ArgumentNullException(nameof(state));
-            _claims = new Dictionary<ClaimType, HashSet<ClaimValue?>>(state.Count);
+            _claims = new Dictionary<RoleClaimType, HashSet<RoleClaimValue?>>(state.Count);
             foreach (KeyValuePair<string, HashSet<string?>> claimType in state)
             {
                 if (claimType.Value != null)
                 {
                     _claims.Add(
-                        new ClaimType(claimType.Key),
+                        new RoleClaimType(claimType.Key),
                         claimType
                             .Value
-                            .Select(p => (p == null) ? null : new ClaimValue(p))
+                            .Select(p => (p == null) ? null : new RoleClaimValue(p))
                             .ToHashSet()
                         );
                 }
             }
         }
 
-        private HashSet<string?> ClaimValues(string claimType)
+        private HashSet<RoleClaimValue?> ClaimValues(RoleClaimType claimType)
         {
-            if (!Claims.TryGetValue(new ClaimType(claimType), out HashSet<ClaimValue?>? values))
+            if (!Claims.TryGetValue(claimType, out HashSet<RoleClaimValue?>? values))
             {
-                return new HashSet<string?>();
+                values = new HashSet<RoleClaimValue?>();
+                Claims.Add(claimType, values);
             }
-            return values.Select(p => p?.Value).ToHashSet();
+            return values;
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
@@ -11,21 +10,29 @@ namespace ExtenFlow.Infrastructure.Validators
     /// <seealso cref="ExtenFlow.Infrastructure.IValidator"/>
     public abstract class Validator : IValidator
     {
-        private readonly bool _nullable;
+        private readonly ValidatorMessageLevel _nullErrorLevel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Validator"/> class.
         /// </summary>
-        /// <param name="nullable">if set to <c>true</c> [nullable].</param>
-        protected Validator(bool nullable = true)
+        /// <param name="instanceName"></param>
+        /// <param name="nullErrorLevel">The null error level.</param>
+        protected Validator(string? instanceName, ValidatorMessageLevel nullErrorLevel = ValidatorMessageLevel.Error)
         {
-            _nullable = nullable;
+            _nullErrorLevel = nullErrorLevel;
+            InstanceName = instanceName;
         }
 
         /// <summary>
-        /// Checks the valid.
+        /// Gets the name.
         /// </summary>
-        /// <param name="value">The value.</param>
+        /// <value>The name.</value>
+        protected string? InstanceName { get; }
+
+        /// <summary>
+        /// Checks if the object is valid.
+        /// </summary>
+        /// <param name="value">The object instance.</param>
         /// <exception cref="ExtenFlow.Infrastructure.ValueValidationException"></exception>
         public void CheckValid(object? value)
         {
@@ -43,25 +50,27 @@ namespace ExtenFlow.Infrastructure.Validators
         /// <returns>IList&lt;ValidatorMessage&gt;.</returns>
         public virtual IList<ValidatorMessage> Validate(object? value)
         {
-            if (value == null && !_nullable)
+            var messages = new List<ValidatorMessage>();
+            if (value == null)
             {
-                return new[] { new ValidatorMessage(ValidatorMessageLevel.Error, Properties.Resources.NullValueNotSupported) };
+                messages.Add(new ValidatorMessage(_nullErrorLevel, Properties.Resources.ValueIsNull));
             }
-            return Array.Empty<ValidatorMessage>();
+            return messages;
         }
 
         /// <summary>
-        /// Types the mismatch error.
+        /// Creates a type mismatch error.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="value">The value.</param>
         /// <returns>ValidatorMessage.</returns>
-        protected static ValidatorMessage TypeMismatchError<T>(object value)
+        protected ValidatorMessage TypeMismatchError<T>(object value)
             => new ValidatorMessage(
                 ValidatorMessageLevel.Error,
                 string.Format(
                     CultureInfo.CurrentCulture,
                     Properties.Resources.TypeMismatch,
+                    InstanceName,
                     value?.GetType().Name,
                     typeof(string).Name
                 ));

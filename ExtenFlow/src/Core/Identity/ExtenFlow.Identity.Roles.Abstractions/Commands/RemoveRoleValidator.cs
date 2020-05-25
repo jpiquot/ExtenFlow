@@ -7,12 +7,12 @@ namespace ExtenFlow.Identity.Roles.Validators
     /// <summary>
     /// Remove role command validation
     /// </summary>
-    public class RemoveRoleValidator : RoleCommandValidator<RemoveRole>
+    public class RemoveRoleValidator : RoleCommandValidator
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        public RemoveRoleValidator() : base(true)
+        public RemoveRoleValidator() : base(nameof(RemoveRole))
         {
         }
     }

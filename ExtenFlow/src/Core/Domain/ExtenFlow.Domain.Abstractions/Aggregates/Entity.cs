@@ -17,11 +17,14 @@ namespace ExtenFlow.Domain.Aggregates
         private bool _initialized;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AggregateRoot"/> class.
+        /// Initializes a new instance of the <see cref="Entity{T}"/> class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="id">The identifier.</param>
-        /// <param name="repository"></param>
+        /// <param name="repository">The repository.</param>
+        /// <exception cref="ArgumentNullException">id</exception>
+        /// <exception cref="ArgumentNullException">repository</exception>
+        /// <exception cref="ArgumentNullException">name</exception>
         protected Entity(string name, string id, IRepository repository)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
@@ -101,12 +104,16 @@ namespace ExtenFlow.Domain.Aggregates
             }
         }
 
+        /// <summary>
+        /// Checks the exists.
+        /// </summary>
+        /// <exception cref="ExtenFlow.Domain.Exceptions.EntityNotFoundException"></exception>
         protected async Task CheckExists()
         {
             await InitializeState();
             if (!HasData)
             {
-                throw new EntityNotFoundException(this, Id);
+                throw new EntityNotFoundException(this);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 
@@ -15,15 +16,13 @@ using ExtenFlow.Infrastructure.ValueObjects;
 namespace ExtenFlow.Identity.Roles.Domain
 {
     /// <summary>
-    /// Class RoleAggregateRoot. Implements the <see cref="ExtenFlow.Domain.Aggregates.AggregateRoot"/>
+    /// Class RoleAggregateRoot. This class cannot be inherited. Implements the <see cref="AggregateRoot{RoleState}"/>
     /// </summary>
-    /// <seealso cref="ExtenFlow.Domain.Aggregates.AggregateRoot"/>
-    public sealed class RoleAggregateRoot : AggregateRoot
+    /// <seealso cref="AggregateRoot{RoleState}"/>
+    public sealed class RoleAggregateRoot : AggregateRoot<RoleState>
     {
-        private ConcurrencyStamp? _concurrencyStamp;
-        private Name? _name;
-        private NormalizedName? _normalizedName;
-        private bool _stateInitialized;
+        private RoleName? _name;
+        private RoleNormalizedName? _normalizedName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleAggregateRoot"/> class.
@@ -38,25 +37,17 @@ namespace ExtenFlow.Identity.Roles.Domain
         #region State
 
         /// <summary>
-        /// Gets the concurrency stamp. A random value that should change whenever a role is
-        /// persisted to the store.
-        /// </summary>
-        /// <value>The concurrency stamp.</value>
-        public ConcurrencyStamp ConcurrencyStamp
-            => _concurrencyStamp ?? throw new EntityStateNotInitializedException(this, nameof(ConcurrencyStamp));
-
-        /// <summary>
         /// Gets or sets the name.
         /// </summary>
         /// <value>The name.</value>
-        public Name Name
+        public RoleName Name
             => _name ?? throw new EntityStateNotInitializedException(this, nameof(Name));
 
         /// <summary>
         /// Gets or sets the normalized name of the role.
         /// </summary>
         /// <value>The normalized name.</value>
-        public NormalizedName NormalizedName
+        public RoleNormalizedName NormalizedName
             => _normalizedName ?? throw new EntityStateNotInitializedException(this, nameof(NormalizedName));
 
         #endregion State
@@ -147,25 +138,25 @@ namespace ExtenFlow.Identity.Roles.Domain
 
         private async Task Apply(RoleRenamed rename)
         {
-            _name = new Name(rename.Name);
-            _normalizedName = new NormalizedName(rename.NormalizedName);
-            await SaveRole();
+            _name = new RoleName(rename.Name);
+            _normalizedName = new RoleNormalizedName(rename.NormalizedName);
+            await Save();
         }
 
         private Task Apply(RoleRemoved _)
         {
             _name = null;
             _normalizedName = null;
-            _concurrencyStamp = null;
-            return SaveRole();
+            ConcurrencyStamp = null;
+            return Save();
         }
 
         private Task Apply(NewRoleAdded create)
         {
-            _name = new Name(create.Name);
-            _normalizedName = new NormalizedName(create.NormalizedName);
+            _name = new RoleName(create.Name);
+            _normalizedName = new RoleNormalizedName(create.NormalizedName);
             _concurrencyStamp = null;
-            return SaveRole();
+            return Save();
         }
 
         #endregion Events
@@ -187,7 +178,7 @@ namespace ExtenFlow.Identity.Roles.Domain
         private async Task<RoleDetailsModel> Handle(GetRoleDetails _)
         {
             await CheckState();
-            return new RoleDetailsModel(Id, Name.Value, NormalizedName.Value, ConcurrencyStamp.Value);
+            return new RoleDetailsModel(Id, Name.Value, NormalizedName.Value, ConcurrencyCheckStamp.Value);
         }
 
         #endregion Queries
@@ -202,53 +193,24 @@ namespace ExtenFlow.Identity.Roles.Domain
 
         #endregion Notifications
 
-        private async Task CheckConcurrencyStamp(string? concurrencyStamp)
-        {
-            await CheckState();
-            if (ConcurrencyStamp.Value != concurrencyStamp)
-            {
-                throw new RoleConcurrencyFailureException(CultureInfo.CurrentCulture, concurrencyStamp, ConcurrencyStamp.Value);
-            }
-        }
+        /// <summary>
+        /// Gets the state object.
+        /// </summary>
+        /// <returns>The state object initialized with the instance values.</returns>
+        protected override RoleState GetState()
+            => new RoleState(Name.Value, NormalizedName.Value, ConcurrencyCheckStamp.Value);
 
-        private async Task CheckState()
+        /// <summary>
+        /// Sets the data values from the persisted state object.
+        /// </summary>
+        /// <param name="state">The state.</param>
+        /// <exception cref="ArgumentNullException">state</exception>
+        protected override void SetValues(RoleState state)
         {
-            if (!_stateInitialized)
-            {
-                await ReadState();
-            }
-            if (_concurrencyStamp == null)
-            {
-                throw new RoleNotFoundException(CultureInfo.CurrentCulture, nameof(Id), Id);
-            }
-        }
-
-        private async Task ReadState()
-        {
-            (bool result, RoleState state) = await Repository.TryGetData<RoleState>(RoleEntity.EntityName);
-            if (result)
-            {
-                _concurrencyStamp = new ConcurrencyStamp(state.ConcurrencyStamp);
-                _name = new Name(state.Name);
-                _normalizedName = new NormalizedName(state.NormalizedName);
-            }
-            else
-            {
-                _concurrencyStamp = null;
-                _name = null;
-                _normalizedName = null;
-            }
-            _stateInitialized = true;
-        }
-
-        private Task SaveRole()
-        {
-            if (_concurrencyStamp == null && _name == null && _normalizedName == null)
-            {
-                return Repository.RemoveData(RoleEntity.EntityName);
-            }
-            _concurrencyStamp = new ConcurrencyStamp();
-            return Repository.SetData(RoleEntity.EntityName, new RoleState(Name.Value, NormalizedName.Value, ConcurrencyStamp.Value));
+            _ = state ?? throw new ArgumentNullException(nameof(state));
+            _name = new RoleName(state.Name);
+            _normalizedName = new RoleNormalizedName(state.NormalizedName);
+            ConcurrencyStamp = new ConcurrencyCheckStamp(state.ConcurrencyCheckStamp);
         }
     }
 }

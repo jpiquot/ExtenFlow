@@ -23,7 +23,7 @@ namespace ExtenFlow.Domain
         /// </summary>
         /// <param name="query">The query.</param>
         /// <param name="result">The result.</param>
-        public QueryResultEvent(IQuery query, object result) : base(query?.AggregateType ?? throw new ArgumentNullException(nameof(query)), query.AggregateId, query.UserId, query.CorrelationId, Guid.NewGuid(), DateTimeOffset.Now)
+        public QueryResultEvent(IQuery query, object result) : base(query?.AggregateType ?? throw new ArgumentNullException(nameof(query)), query.AggregateId, query.UserId, query.CorrelationId, null, DateTimeOffset.Now)
         {
             Result = result;
         }

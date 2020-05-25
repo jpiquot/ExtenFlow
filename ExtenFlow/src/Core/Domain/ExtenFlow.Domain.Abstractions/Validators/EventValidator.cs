@@ -3,14 +3,14 @@
 namespace ExtenFlow.Domain.Validators
 {
     /// <summary>
-    /// Request validation
+    /// Event validation
     /// </summary>
-    public abstract class RequestValidator<T> : MessageValidator<T> where T : IRequest
+    public abstract class EventValidator : MessageValidator
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        protected RequestValidator(bool aggregateIdRequired = true) : base(aggregateIdRequired)
+        protected EventValidator(string? instanceName) : base(instanceName)
         {
         }
     }

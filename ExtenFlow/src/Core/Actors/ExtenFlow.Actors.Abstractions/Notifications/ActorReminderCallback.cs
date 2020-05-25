@@ -17,7 +17,7 @@ namespace ExtenFlow.Actors
         /// Initializes a new instance of the <see cref="ActorReminderCallback"/> class.
         /// </summary>
         public ActorReminderCallback(Actor actor, string? reminderName, byte[]? state, TimeSpan? dueTime, TimeSpan? period)
-            : base(actor.ActorName(), actor.Id.GetId(), actor.GetType().Name, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+            : base(actor.ActorName(), actor.Id.GetId(), actor.GetType().Name)
         {
             Name = reminderName ?? string.Empty;
             State = state == null ? new List<byte>() : new List<byte>(state);

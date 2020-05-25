@@ -1,17 +1,18 @@
 ﻿using ExtenFlow.Infrastructure.Validators;
 
-namespace ExtenFlow.Identity.Roles.Validators
+namespace ExtenFlow.Domain.Validators
 {
     /// <summary>
     /// Class NameValidator. Implements the <see cref="ExtenFlow.Infrastructure.Validators.StringValidator"/>
     /// </summary>
     /// <seealso cref="ExtenFlow.Infrastructure.Validators.StringValidator"/>
-    public class IdentifierValidator : StringValidator
+    public class MessageUserIdValidator : StringValidator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="NameValidator"/> class.
+        /// Initializes a new instance of the <see cref="MessageUserIdValidator"/> class.
         /// </summary>
-        public IdentifierValidator() : base(false, 1, 22, false)
+        public MessageUserIdValidator(string? parentName = null, string? propertyName = null)
+            : base(parentName, propertyName, false, 1, 255, false)
         {
         }
     }

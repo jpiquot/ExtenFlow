@@ -29,7 +29,7 @@ namespace ExtenFlow.Domain
         /// <param name="correlationId">The correlation identifier. Used to link messages together.</param>
         /// <param name="id">The message unique identifier.</param>
         /// <param name="dateTime">The date time, the message was created.</param>
-        protected Query(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, id, dateTime)
+        protected Query(string aggregateType, string aggregateId, string userId, string? correlationId, string? id, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, id, dateTime)
         {
         }
     }

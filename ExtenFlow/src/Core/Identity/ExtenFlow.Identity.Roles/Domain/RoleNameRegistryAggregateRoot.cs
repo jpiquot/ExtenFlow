@@ -15,12 +15,12 @@ using ExtenFlow.Identity.Roles.ValueObjects;
 namespace ExtenFlow.Identity.Roles.Domain
 {
     /// <summary>
-    /// Class RoleNameRegistryAggregateRoot. Implements the <see cref="ExtenFlow.Domain.Aggregates.AggregateRoot"/>
+    /// Class RoleNameRegistryAggregateRoot. Implements the <see cref="ExtenFlow.Domain.Aggregates.AggregateRoot{T}"/>
     /// </summary>
-    /// <seealso cref="ExtenFlow.Domain.Aggregates.AggregateRoot"/>
-    public sealed class RoleNameRegistryAggregateRoot : AggregateRoot
+    /// <seealso cref="ExtenFlow.Domain.Aggregates.AggregateRoot{T}"/>
+    public sealed class RoleNameRegistryAggregateRoot : AggregateRoot<RoleNameRegistryState>
     {
-        private Identifier? _roleId;
+        private RoleId? _roleId;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleNameRegistryAggregateRoot"/> class.
@@ -31,10 +31,12 @@ namespace ExtenFlow.Identity.Roles.Domain
            : base("RoleNameRegistry", normalizedName, repository)
         {
             // Validate the aggregate identifier (normalized role name).
-            _ = new NormalizedName(normalizedName);
+            _ = new RoleNormalizedName(normalizedName);
         }
 
-        private Identifier RoleId => _roleId ?? throw new InvalidOperationException(Properties.Resources.RoleNotInitialized);
+        private RoleId RoleId => _roleId ?? throw new InvalidOperationException(Properties.Resources.RoleNotInitialized);
+
+        #region Commands
 
         /// <summary>
         /// Executes the specified command.
@@ -48,6 +50,10 @@ namespace ExtenFlow.Identity.Roles.Domain
                 DeregisterNormalizedRoleName deregister => Handle(deregister),
                 _ => base.HandleCommand(command)
             };
+
+        #endregion Commands
+
+        #region Events
 
         /// <summary>
         /// Receives the event.
@@ -63,6 +69,10 @@ namespace ExtenFlow.Identity.Roles.Domain
                 _ => Task.CompletedTask
             };
 
+        #endregion Events
+
+        #region Notifications
+
         /// <summary>
         /// Handles notifications.
         /// </summary>
@@ -70,6 +80,10 @@ namespace ExtenFlow.Identity.Roles.Domain
         /// <returns>Task.</returns>
         /// <exception cref="NotImplementedException"></exception>
         public override Task HandleNotification(IMessage message) => Task.CompletedTask;
+
+        #endregion Notifications
+
+        #region Queries
 
         /// <summary>
         /// Receive a query.
@@ -84,9 +98,29 @@ namespace ExtenFlow.Identity.Roles.Domain
                         _ => Task.FromException<object>(new ArgumentOutOfRangeException(nameof(query)))
                     };
 
+        #endregion Queries
+
+        /// <summary>
+        /// Gets the state object.
+        /// </summary>
+        /// <returns>The state object initialized with the instance values.</returns>
+        protected override RoleNameRegistryState GetState()
+            => new RoleNameRegistryState(RoleId.Value, ConcurrencyCheckStamp.Value);
+
+        /// <summary>
+        /// Sets the data values from the persisted state object.
+        /// </summary>
+        /// <param name="state">The state.</param>
+        /// <exception cref="ArgumentNullException">state</exception>
+        protected override void SetValues(RoleNameRegistryState state)
+        {
+            _ = state ?? throw new ArgumentNullException(nameof(state));
+            _roleId = new RoleId(state.RoleId);
+        }
+
         private Task Apply(NormalizedRoleNameRegistred registred)
         {
-            _roleId = new Identifier(registred.RoleId);
+            _roleId = new RoleId(registred.RoleId);
             return Save();
         }
 
@@ -157,10 +191,5 @@ namespace ExtenFlow.Identity.Roles.Domain
             await CheckRole();
             return new[] { new NormalizedRoleNameDeregistred(Id, command.RoleId, command.UserId, command.CorrelationId) };
         }
-
-        private Task Save()
-            => (_roleId == null) ?
-                Repository.RemoveData(EntityName) :
-                Repository.SetData(EntityName, _roleId);
     }
 }

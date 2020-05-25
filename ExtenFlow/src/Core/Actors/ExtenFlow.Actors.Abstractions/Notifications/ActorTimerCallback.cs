@@ -17,7 +17,7 @@ namespace ExtenFlow.Actors
         /// </summary>
         /// <param name="actor">The actor.</param>
         public ActorTimerCallback(Actor actor)
-            : base(actor.ActorName(), actor.Id.GetId(), actor.GetType().Name, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+            : base(actor.ActorName(), actor.Id.GetId(), actor.GetType().Name)
         {
         }
 

@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AfterMaximumDateTime" xml:space="preserve">
+    <value>The value '%1' is after the maximum UTC date and time : '%2'.</value>
+  </data>
+  <data name="AfterMaximumFuture" xml:space="preserve">
+    <value>The value '%1' is more in the future than the maximum from now: '%2'.</value>
+  </data>
+  <data name="BeforeMaximumPast" xml:space="preserve">
+    <value>The value '%1' is more in the past than the maximum from now : '%2'.</value>
+  </data>
+  <data name="BeforeMininumDateTime" xml:space="preserve">
+    <value>The value '%1' is before the minimum UTC date and time : '%2'</value>
+  </data>
   <data name="EmailShouldHaveTwoParts" xml:space="preserve">
     <value>The email should have two parts, seperated by '@'. Email='{0}'.</value>
   </data>
@@ -148,7 +160,10 @@
     <value>The string '%1' length is '%2'. String length must be in the range : [%3-%4].</value>
   </data>
   <data name="TypeMismatch" xml:space="preserve">
-    <value>The value type is '%1', but the expected type is : '%2'.</value>
+    <value>The value type is '%2', but the expected type is : '%3' for '%1'.</value>
+  </data>
+  <data name="ValueIsNull" xml:space="preserve">
+    <value>The value is null.</value>
   </data>
   <data name="WhiteSpacesNotSupported" xml:space="preserve">
     <value>Values containing only white spaces are not supported.</value>

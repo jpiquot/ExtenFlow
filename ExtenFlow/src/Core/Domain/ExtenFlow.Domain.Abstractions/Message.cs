@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 
+using ExtenFlow.Infrastructure;
+
 #pragma warning disable CA1041 // Provide ObsoleteAttribute message
 #pragma warning disable CS0612 // Type or member is obsolete
 
@@ -20,9 +22,9 @@ namespace ExtenFlow.Domain
         protected Message()
         {
             UserId = string.Empty;
-            CorrelationId = Guid.NewGuid();
             DateTime = DateTimeOffset.Now;
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid().ToBase64String();
+            CorrelationId = Id;
             AggregateType = string.Empty;
             AggregateId = null;
         }
@@ -40,7 +42,7 @@ namespace ExtenFlow.Domain
         /// <exception cref="ArgumentNullException">aggregateType</exception>
         /// <exception cref="ArgumentNullException">correlationId</exception>
         /// <exception cref="ArgumentNullException">id</exception>
-        protected Message(string aggregateType, string? aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+        protected Message(string aggregateType, string? aggregateId, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
         {
             if (string.IsNullOrWhiteSpace(userId))
             {
@@ -50,18 +52,18 @@ namespace ExtenFlow.Domain
             {
                 throw new ArgumentNullException(nameof(aggregateType));
             }
-            if (correlationId == null || correlationId == Guid.Empty)
+            if (string.IsNullOrWhiteSpace(correlationId))
             {
                 throw new ArgumentNullException(nameof(correlationId));
             }
-            if (id == null || id == Guid.Empty)
+            if (string.IsNullOrWhiteSpace(id))
             {
                 throw new ArgumentNullException(nameof(id));
             }
             UserId = userId;
-            CorrelationId = correlationId;
-            DateTime = dateTime;
-            Id = id;
+            DateTime = dateTime ?? DateTimeOffset.Now;
+            Id = string.IsNullOrWhiteSpace(id) ? Guid.NewGuid().ToBase64String() : id;
+            CorrelationId = string.IsNullOrWhiteSpace(correlationId) ? Id : correlationId;
             AggregateId = aggregateId;
             AggregateType = aggregateType;
         }
@@ -81,7 +83,7 @@ namespace ExtenFlow.Domain
         /// The correlation id that links all the related messages together. Can be assimilated to a
         /// transaction id.
         /// </summary>
-        public Guid CorrelationId { get; [Obsolete]set; }
+        public string CorrelationId { get; [Obsolete]set; }
 
         /// <summary>
         /// Message created date and time.
@@ -91,7 +93,7 @@ namespace ExtenFlow.Domain
         /// <summary>
         /// The message unique identifier.
         /// </summary>
-        public Guid Id { get; [Obsolete]set; }
+        public string Id { get; [Obsolete]set; }
 
         /// <summary>
         /// The id of the message creator.

@@ -22,7 +22,7 @@ namespace ExtenFlow.Domain.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace ExtenFlow.Domain.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ExtenFlow.Domain.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace ExtenFlow.Domain.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,16 +63,25 @@ namespace ExtenFlow.Domain.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The aggregate identifier is not defined..
         /// </summary>
-        internal static string AggregateIdNotDefined {
+        public static string AggregateIdNotDefined {
             get {
                 return ResourceManager.GetString("AggregateIdNotDefined", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The expected value for the aggregate type is &apos;%1&apos;. The actual type is &apos;%2&apos;..
+        /// </summary>
+        public static string AggregateTypeMismatch {
+            get {
+                return ResourceManager.GetString("AggregateTypeMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The aggregate type is not defined..
         /// </summary>
-        internal static string AggregateTypeNotDefined {
+        public static string AggregateTypeNotDefined {
             get {
                 return ResourceManager.GetString("AggregateTypeNotDefined", resourceCulture);
             }
@@ -81,16 +90,34 @@ namespace ExtenFlow.Domain.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The correlation identifier is not defined..
         /// </summary>
-        internal static string CorrelationIdNotDefined {
+        public static string CorrelationIdNotDefined {
             get {
                 return ResourceManager.GetString("CorrelationIdNotDefined", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update of &apos;%1&apos; with &apos;%2&apos;=&apos;%3&apos; failed. It has been modified by another user. .
+        /// </summary>
+        public static string EntityConcurrencyCheckFailed {
+            get {
+                return ResourceManager.GetString("EntityConcurrencyCheckFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;%1&apos; entity with key &apos;%2&apos;=&apos;%3&apos; was not found..
+        /// </summary>
+        public static string EntityNotFound {
+            get {
+                return ResourceManager.GetString("EntityNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The &apos;%2&apos; property state is not initialized in &apos;%1&apos; entity..
         /// </summary>
-        internal static string EntityPropertyStateNotInitialized {
+        public static string EntityPropertyStateNotInitialized {
             get {
                 return ResourceManager.GetString("EntityPropertyStateNotInitialized", resourceCulture);
             }
@@ -99,7 +126,7 @@ namespace ExtenFlow.Domain.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The &apos;%1&apos; entity state is not initialized..
         /// </summary>
-        internal static string EntityStateNotInitialized {
+        public static string EntityStateNotInitialized {
             get {
                 return ResourceManager.GetString("EntityStateNotInitialized", resourceCulture);
             }
@@ -108,7 +135,7 @@ namespace ExtenFlow.Domain.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The message identifier is not defined..
         /// </summary>
-        internal static string IdNotDefined {
+        public static string IdNotDefined {
             get {
                 return ResourceManager.GetString("IdNotDefined", resourceCulture);
             }
@@ -117,7 +144,7 @@ namespace ExtenFlow.Domain.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &apos;%1&apos; is not a valid command for &apos;%2&apos;..
         /// </summary>
-        internal static string InvalidCommand {
+        public static string InvalidCommand {
             get {
                 return ResourceManager.GetString("InvalidCommand", resourceCulture);
             }
@@ -126,7 +153,7 @@ namespace ExtenFlow.Domain.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &apos;%1&apos; is not a valid query for &apos;%2&apos;..
         /// </summary>
-        internal static string InvalidQuery {
+        public static string InvalidQuery {
             get {
                 return ResourceManager.GetString("InvalidQuery", resourceCulture);
             }
@@ -135,7 +162,7 @@ namespace ExtenFlow.Domain.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The message creation date and time are not defined..
         /// </summary>
-        internal static string MessageDateTimeNotDefined {
+        public static string MessageDateTimeNotDefined {
             get {
                 return ResourceManager.GetString("MessageDateTimeNotDefined", resourceCulture);
             }
@@ -144,7 +171,7 @@ namespace ExtenFlow.Domain.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Unknown object type..
         /// </summary>
-        internal static string UnkownType {
+        public static string UnkownType {
             get {
                 return ResourceManager.GetString("UnkownType", resourceCulture);
             }
@@ -153,7 +180,7 @@ namespace ExtenFlow.Domain.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The user identifier is not defined..
         /// </summary>
-        internal static string UserIdNotDefined {
+        public static string UserIdNotDefined {
             get {
                 return ResourceManager.GetString("UserIdNotDefined", resourceCulture);
             }

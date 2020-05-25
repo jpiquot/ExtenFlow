@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageManagement Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8" />
+		<PackageManagement Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0" />
 		<PackageManagement Include="System.Text.Json" Version="4.7.1" />
 		<PackageManagement Include="FluentValidation" Version="9.0.0-preview4" />
 		<PackageManagement Include="Paramore.Brighter" Version="8.1.1036" />

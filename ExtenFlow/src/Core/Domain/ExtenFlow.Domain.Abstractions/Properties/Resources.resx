@@ -150,4 +150,13 @@
   <data name="EntityStateNotInitialized" xml:space="preserve">
     <value>The '%1' entity state is not initialized.</value>
   </data>
+  <data name="EntityNotFound" xml:space="preserve">
+    <value>The '%1' entity with key '%2'='%3' was not found.</value>
+  </data>
+  <data name="EntityConcurrencyCheckFailed" xml:space="preserve">
+    <value>Update of '%1' with '%2'='%3' failed. It has been modified by another user. </value>
+  </data>
+  <data name="AggregateTypeMismatch" xml:space="preserve">
+    <value>The expected value for the aggregate type is '%1'. The actual type is '%2'.</value>
+  </data>
 </root>

@@ -15,12 +15,12 @@ namespace ExtenFlow.Infrastructure
         /// <summary>
         /// The warning
         /// </summary>
-        Warning = 0,
+        Warning = 1,
 
         /// <summary>
         /// The error
         /// </summary>
-        Error = 0
+        Error = 2
     }
 
     /// <summary>
@@ -42,7 +42,14 @@ namespace ExtenFlow.Infrastructure
             }
             Level = level;
             Message = message;
+            DateTime = DateTimeOffset.Now;
         }
+
+        /// <summary>
+        /// Gets the message.
+        /// </summary>
+        /// <value>The message.</value>
+        public DateTimeOffset DateTime { get; }
 
         /// <summary>
         /// Gets the level.
@@ -60,6 +67,6 @@ namespace ExtenFlow.Infrastructure
         /// Returns a <see cref="System.String"/> that represents this instance.
         /// </summary>
         /// <returns>A <see cref="System.String"/> that represents this instance.</returns>
-        public override string ToString() => $"{Level} : {Message}";
+        public override string ToString() => $"[{Level}]\t({DateTime:O}) : \n{Message}";
     }
 }
