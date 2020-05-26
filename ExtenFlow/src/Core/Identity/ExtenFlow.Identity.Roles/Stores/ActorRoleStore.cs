@@ -27,7 +27,6 @@ namespace ExtenFlow.Identity.Roles.Stores
         private readonly ICollectionActor _collection;
         private readonly IdentityErrorDescriber _describer;
         private readonly Func<string, IRoleActor> _getRoleActor;
-        private readonly Func<string, IRoleClaimsActor> _getRoleClaimsActor;
         private readonly ILogger<ActorRoleStore> _log;
         private readonly IUniqueIndexActor _normaliedNameIndex;
         private readonly IUser _user;
@@ -39,7 +38,6 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// <param name="getRoleActor"></param>
         /// <param name="collection"></param>
         /// <param name="normalizedNameIndex"></param>
-        /// <param name="getRoleClaimsActor"></param>
         /// <param name="logger"></param>
         /// <param name="describer">The describer.</param>
         public ActorRoleStore(
@@ -47,7 +45,6 @@ namespace ExtenFlow.Identity.Roles.Stores
             Func<string, IRoleActor> getRoleActor,
             ICollectionActor collection,
             IUniqueIndexActor normalizedNameIndex,
-            Func<string, IRoleClaimsActor> getRoleClaimsActor,
             ILogger<ActorRoleStore> logger,
             IdentityErrorDescriber? describer = null
             ) : base(describer ?? new IdentityErrorDescriber())
@@ -56,7 +53,6 @@ namespace ExtenFlow.Identity.Roles.Stores
             _getRoleActor = getRoleActor;
             _collection = collection;
             _normaliedNameIndex = normalizedNameIndex;
-            _getRoleClaimsActor = getRoleClaimsActor;
             _log = logger;
             _describer = describer ?? new IdentityErrorDescriber();
         }

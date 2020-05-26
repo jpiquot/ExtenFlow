@@ -137,7 +137,7 @@ namespace ExtenFlow.Identity.Roles.Domain
                 (bool succeded, string roleId) = await Repository.TryGetData<string>(EntityName);
                 if (succeded)
                 {
-                    _roleId = new Identifier(roleId);
+                    _roleId = new RoleId(roleId);
                 }
                 else
                 {
@@ -159,7 +159,7 @@ namespace ExtenFlow.Identity.Roles.Domain
                 (bool succeded, string roleId) = await Repository.TryGetData<string>(EntityName);
                 if (succeded)
                 {
-                    _roleId = new Identifier(roleId);
+                    _roleId = new RoleId(roleId);
                 }
                 else
                 {
@@ -176,7 +176,7 @@ namespace ExtenFlow.Identity.Roles.Domain
                 (bool succeded, string roleId) = await Repository.TryGetData<string>(EntityName);
                 if (succeded)
                 {
-                    _roleId = new Identifier(roleId);
+                    _roleId = new RoleId(roleId);
                 }
                 else
                 {

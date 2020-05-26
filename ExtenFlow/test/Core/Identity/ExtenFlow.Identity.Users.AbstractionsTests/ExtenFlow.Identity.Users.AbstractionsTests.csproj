@@ -18,7 +18,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\src\Core\Identity\ExtenFlow.Identity.Roles.Abstractions\ExtenFlow.Identity.Roles.Abstractions.csproj" />
-		<ProjectReference Include="..\..\..\..\src\Core\Identity\ExtenFlow.Identity.Users.Abstractions\ExtenFlow.Identity.Users.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Domain\ExtenFlow.Domain.AbstractionsTests\ExtenFlow.Domain.AbstractionsTests.csproj" />
 	</ItemGroup>
 </Project>

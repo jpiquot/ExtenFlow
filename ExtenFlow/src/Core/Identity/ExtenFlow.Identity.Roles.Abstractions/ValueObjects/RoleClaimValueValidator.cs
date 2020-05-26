@@ -11,8 +11,10 @@ namespace ExtenFlow.Identity.Roles.ValueObjects
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleClaimValueValidator"/> class.
         /// </summary>
+        /// <param name="parentName">Name of the parent.</param>
+        /// <param name="propertyName">Name of the property.</param>
         public RoleClaimValueValidator(string? parentName = null, string? propertyName = null)
-            : base(propertyName, propertyName, true, 0, int.MaxValue, true)
+            : base(parentName, propertyName, true, 0, int.MaxValue, true)
         {
         }
     }

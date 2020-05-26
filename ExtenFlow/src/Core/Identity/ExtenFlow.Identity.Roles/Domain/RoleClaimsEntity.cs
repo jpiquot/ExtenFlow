@@ -41,30 +41,31 @@ namespace ExtenFlow.Identity.Roles.Domain
         /// <param name="claimValue">Value of the claim</param>
         /// <returns>True if the role has the Claim</returns>
         /// <exception cref="ArgumentNullException">claimType</exception>
-        public Task<bool> Exist(string claimType, string claimValue)
+        public Task<bool> Exist(string claimType, string? claimValue)
         {
             if (string.IsNullOrWhiteSpace(claimType))
             {
                 return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
             }
-            return Task.FromResult(ClaimValues(claimType).Any(p => p == claimValue));
+            return Task.FromResult(ClaimValues(claimType)
+                .Any(p => (p == null && claimValue == null) || p?.Value == claimValue));
         }
 
         /// <summary>
         /// Gets the all the role's Claims.
         /// </summary>
         /// <returns>A list of all Claims</returns>
-        public Task<IList<Tuple<string, string>>> GetAll()
+        public Task<IList<Tuple<string, string?>>> GetAll()
         {
-            var list = new List<Tuple<string, string>>();
-            foreach (KeyValuePair<string, HashSet<string>> entry in State)
+            var list = new List<Tuple<string, string?>>();
+            foreach (KeyValuePair<RoleClaimType, HashSet<RoleClaimValue?>> entry in Claims)
             {
-                foreach (string value in entry.Value)
+                foreach (RoleClaimValue? value in entry.Value)
                 {
-                    list.Add(new Tuple<string, string>(entry.Key, value));
+                    list.Add(new Tuple<string, string?>(entry.Key.Value, value?.Value));
                 }
             }
-            return Task.FromResult<IList<Tuple<string, string>>>(list);
+            return Task.FromResult<IList<Tuple<string, string?>>>(list);
         }
 
         #region Events
@@ -157,5 +158,12 @@ namespace ExtenFlow.Identity.Roles.Domain
             }
             return values;
         }
+
+        private HashSet<RoleClaimValue?> ClaimValues(string claimType)
+            => ClaimValues(RoleClaimType(claimType));
+
+        private RoleClaimType RoleClaimType(string claimType) => new RoleClaimType(claimType, EntityName, nameof(Claims));
+
+        private RoleClaimType RoleClaimValue(string claimValue) => new RoleClaimType(claimValue, EntityName, nameof(Claims));
     }
 }

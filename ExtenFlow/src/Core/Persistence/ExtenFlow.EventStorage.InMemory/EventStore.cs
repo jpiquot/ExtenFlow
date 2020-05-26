@@ -26,6 +26,6 @@ namespace ExtenFlow.EventStorage.InMemory
             return stream;
         }
 
-        private string GetStreamId(string aggregateType, string aggregateId) => $"{aggregateType}-[{aggregateId}]";
+        private static string GetStreamId(string aggregateType, string aggregateId) => $"{aggregateType}-[{aggregateId}]";
     }
 }
