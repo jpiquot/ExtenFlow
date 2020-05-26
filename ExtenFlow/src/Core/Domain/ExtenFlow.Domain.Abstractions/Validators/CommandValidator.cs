@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 
 using ExtenFlow.Infrastructure;
+using ExtenFlow.Infrastructure.Validators;
 
 namespace ExtenFlow.Domain.Validators
 {
@@ -34,7 +35,12 @@ namespace ExtenFlow.Domain.Validators
         {
             if (value is ICommand command)
             {
-                return ValidateCommand(command);
+                var messages = new List<ValidatorMessage>();
+                messages
+                    .AddRange(new ConcurrencyStampValidator(InstanceName, nameof(ICommand.ConcurrencyCheckStamp))
+                    .Validate(command.ConcurrencyCheckStamp));
+                messages.AddRange(ValidateCommand(command));
+                return messages;
             }
             return new[] { TypeMismatchError<ICommand>(value) };
         }

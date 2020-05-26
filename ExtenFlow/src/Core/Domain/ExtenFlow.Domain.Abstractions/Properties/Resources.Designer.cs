@@ -106,6 +106,15 @@ namespace ExtenFlow.Domain.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The &apos;%1&apos; entity with key &apos;%2&apos;=&apos;%3&apos; already exist..
+        /// </summary>
+        public static string EntityDuplicate {
+            get {
+                return ResourceManager.GetString("EntityDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The &apos;%1&apos; entity with key &apos;%2&apos;=&apos;%3&apos; was not found..
         /// </summary>
         public static string EntityNotFound {

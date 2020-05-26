@@ -27,8 +27,8 @@ namespace ExtenFlow.Identity.Roles.Events
         /// </param>
         /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        public RoleRemoved(string aggregateId, string userId, Guid? correlationId = null, Guid? id = null, DateTimeOffset? dateTime = null)
-            : base(aggregateId, userId, correlationId ?? Guid.NewGuid(), id ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+        public RoleRemoved(string aggregateId, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
+            : base(aggregateId, userId, correlationId, id, dateTime)
         {
         }
     }

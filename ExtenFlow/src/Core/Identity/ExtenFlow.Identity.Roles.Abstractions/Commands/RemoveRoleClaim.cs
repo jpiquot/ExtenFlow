@@ -25,13 +25,16 @@ namespace ExtenFlow.Identity.Roles.Commands
         /// <param name="claimType"></param>
         /// <param name="claimValue"></param>
         /// <param name="userId">The user submitting the command.</param>
+        /// <param name="concurrencyCheckStamp">
+        /// Concurrency stamp used for optimistic concurrency check.
+        /// </param>
         /// <param name="correlationId">
         /// The correlation id used to chain messages, queries, commands and events.
         /// </param>
         /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        public RemoveRoleClaim(string aggregateId, string claimType, string? claimValue, string userId, Guid? correlationId = null, Guid? id = null, DateTimeOffset? dateTime = null)
-            : base(aggregateId, null, userId, correlationId ?? Guid.NewGuid(), id ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+        public RemoveRoleClaim(string aggregateId, string claimType, string? claimValue, string userId, string? concurrencyCheckStamp, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
+            : base(aggregateId, userId, concurrencyCheckStamp, correlationId, id, dateTime)
         {
             if (string.IsNullOrWhiteSpace(claimType))
             {

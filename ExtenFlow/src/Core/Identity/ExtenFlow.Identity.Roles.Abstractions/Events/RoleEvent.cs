@@ -1,7 +1,7 @@
 ﻿using System;
 
-using ExtenFlow.Identity.Roles.Models;
 using ExtenFlow.Domain;
+using ExtenFlow.Identity.Roles.Models;
 
 namespace ExtenFlow.Identity.Roles.Events
 {
@@ -31,7 +31,8 @@ namespace ExtenFlow.Identity.Roles.Events
         /// </param>
         /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        protected RoleEvent(string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime) : base(nameof(Role), aggregateId, userId, correlationId, id, dateTime)
+        protected RoleEvent(string aggregateId, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
+            : base(nameof(Role), aggregateId, userId, correlationId, id, dateTime)
         {
         }
     }

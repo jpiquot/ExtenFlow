@@ -66,11 +66,27 @@ namespace ExtenFlow.Domain.Aggregates
         /// <summary>
         /// Checks the concurrency stamp.
         /// </summary>
+        /// <exception cref="EntityConcurrencyCheckFailedException"></exception>
+        protected void CheckCanCreate()
+        {
+            if (HasData)
+            {
+                throw new EntityDuplicateException(this);
+            }
+            if (ConcurrencyCheckStamp != null)
+            {
+                throw new EntityConcurrencyCheckFailedException(this);
+            }
+        }
+
+        /// <summary>
+        /// Checks the concurrency stamp.
+        /// </summary>
         /// <param name="concurrencyStamp">The concurrency stamp.</param>
         /// <exception cref="EntityConcurrencyCheckFailedException"></exception>
-        protected async Task CheckConcurrencyStamp(string? concurrencyStamp)
+        protected void CheckConcurrencyStamp(string? concurrencyStamp)
         {
-            await CheckExists();
+            CheckExists();
             if (ConcurrencyCheckStamp.Value != concurrencyStamp)
             {
                 throw new EntityConcurrencyCheckFailedException(this);
@@ -81,5 +97,12 @@ namespace ExtenFlow.Domain.Aggregates
         /// Clears the concurrency check stamp.
         /// </summary>
         protected void ClearConcurrencyCheckStamp() => _concurrencyCheckStamp = null;
+
+        /// <summary>
+        /// Sets the concurrency check stamp.
+        /// </summary>
+        /// <param name="concurrencyStamp">The concurrency stamp.</param>
+        protected void SetConcurrencyCheckStamp(string concurrencyStamp)
+            => _concurrencyCheckStamp = new ConcurrencyCheckStamp(concurrencyStamp);
     }
 }

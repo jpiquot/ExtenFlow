@@ -1,4 +1,5 @@
 ﻿using System;
+
 using ExtenFlow.Domain;
 
 namespace ExtenFlow.Identity.Roles.Events
@@ -30,8 +31,8 @@ namespace ExtenFlow.Identity.Roles.Events
         /// </param>
         /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        public NormalizedRoleNameDeregistred(string aggregateId, string roleId, string userId, Guid? correlationId = null, Guid? id = null, DateTimeOffset? dateTime = null)
-            : base("NormalizedRoleName", aggregateId, userId, correlationId ?? Guid.NewGuid(), id ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+        public NormalizedRoleNameDeregistred(string aggregateId, string roleId, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
+            : base("NormalizedRoleName", aggregateId, userId, correlationId, id, dateTime)
         {
             RoleId = roleId;
         }

@@ -27,8 +27,8 @@ namespace ExtenFlow.Identity.Roles.Queries
         /// <param name="correlationId">The correlation identifier. Used to link messages together.</param>
         /// <param name="id">The message unique identifier.</param>
         /// <param name="dateTime">The date time, the message was created.</param>
-        public IsRoleNameRegistered(string normalizedName, string userId, Guid? correlationId = null, Guid? id = null, DateTimeOffset? dateTime = null)
-            : base("NormalizedRoleName", normalizedName, userId, correlationId ?? Guid.NewGuid(), id ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+        public IsRoleNameRegistered(string normalizedName, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
+            : base("NormalizedRoleName", normalizedName, userId, correlationId, id, dateTime)
         {
         }
     }

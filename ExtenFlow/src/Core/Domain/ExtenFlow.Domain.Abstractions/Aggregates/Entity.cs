@@ -108,9 +108,8 @@ namespace ExtenFlow.Domain.Aggregates
         /// Checks the exists.
         /// </summary>
         /// <exception cref="ExtenFlow.Domain.Exceptions.EntityNotFoundException"></exception>
-        protected async Task CheckExists()
+        protected void CheckExists()
         {
-            await InitializeState();
             if (!HasData)
             {
                 throw new EntityNotFoundException(this);

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading.Tasks;
 
 using ExtenFlow.Domain;
@@ -59,14 +58,29 @@ namespace ExtenFlow.Identity.Roles.Domain
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns></returns>
-        public override Task<IList<IEvent>> HandleCommand(ICommand command)
-            => command switch
+        public async override Task<IList<IEvent>> HandleCommand(ICommand command)
+        {
+            await InitializeState();
+            IList<IEvent> events;
+            switch (command)
             {
-                AddNewRole create => Handle(create),
-                RemoveRole delete => Handle(delete),
-                RenameRole rename => Handle(rename),
-                _ => base.HandleCommand(command)
+                case AddNewRole create:
+                    events = Handle(create);
+                    break;
+
+                case RemoveRole delete:
+                    events = Handle(delete);
+                    break;
+
+                case RenameRole rename:
+                    events = Handle(rename);
+                    break;
+
+                default:
+                    return await base.HandleCommand(command);
             };
+            return events;
+        }
 
         /// <summary>
         /// Delete the role.
@@ -75,9 +89,9 @@ namespace ExtenFlow.Identity.Roles.Domain
         /// <returns>IList&lt;IEvent&gt;.</returns>
         /// <exception cref="RoleNotFoundException">Id</exception>
         /// <exception cref="RoleConcurrencyFailureException"></exception>
-        private async Task<IList<IEvent>> Handle(RemoveRole command)
+        private IList<IEvent> Handle(RemoveRole command)
         {
-            await CheckConcurrencyStamp(command.ConcurrencyStamp);
+            CheckConcurrencyStamp(command.ConcurrencyCheckStamp);
             return new[] { new RoleRemoved(Id, command.UserId, command.CorrelationId) };
         }
 
@@ -86,9 +100,9 @@ namespace ExtenFlow.Identity.Roles.Domain
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>IList&lt;IEvent&gt;.</returns>
-        private async Task<IList<IEvent>> Handle(RenameRole command)
+        private IList<IEvent> Handle(RenameRole command)
         {
-            await CheckConcurrencyStamp(command.ConcurrencyStamp);
+            CheckConcurrencyStamp(command.ConcurrencyCheckStamp);
             return new[] { new RoleRenamed(Id, command.Name, command.NormalizedName, command.UserId, command.CorrelationId) };
         }
 
@@ -98,16 +112,9 @@ namespace ExtenFlow.Identity.Roles.Domain
         /// <param name="command">The command.</param>
         /// <returns>IList&lt;IEvent&gt;.</returns>
         /// <exception cref="DuplicateRoleException">Id</exception>
-        private async Task<IList<IEvent>> Handle(AddNewRole command)
+        private IList<IEvent> Handle(AddNewRole command)
         {
-            if (!_stateInitialized)
-            {
-                await ReadState();
-            }
-            if (_concurrencyStamp != null || _name != null || _normalizedName != null)
-            {
-                throw new DuplicateRoleException(CultureInfo.CurrentCulture, nameof(Id), Id);
-            }
+            CheckCanCreate();
             return
                 new[] { new NewRoleAdded(
                     Id,
@@ -127,36 +134,47 @@ namespace ExtenFlow.Identity.Roles.Domain
         /// </summary>
         /// <param name="event">The event.</param>
         /// <returns></returns>
-        public override Task HandleEvent(IEvent @event)
-        => @event switch
+        public override async Task HandleEvent(IEvent @event)
         {
-            NewRoleAdded create => Apply(create),
-            RoleRemoved delete => Apply(delete),
-            RoleRenamed rename => Apply(rename),
-            _ => Task.CompletedTask
-        };
+            await InitializeState();
+            switch (@event)
+            {
+                case NewRoleAdded create:
+                    Apply(create);
+                    break;
 
-        private async Task Apply(RoleRenamed rename)
-        {
-            _name = new RoleName(rename.Name);
-            _normalizedName = new RoleNormalizedName(rename.NormalizedName);
+                case RoleRemoved delete:
+                    Apply(delete);
+                    break;
+
+                case RoleRenamed rename:
+                    Apply(rename);
+                    break;
+
+                default:
+                    return;
+            };
             await Save();
         }
 
-        private Task Apply(RoleRemoved _)
+        private void Apply(RoleRenamed rename)
+        {
+            _name = new RoleName(rename.Name);
+            _normalizedName = new RoleNormalizedName(rename.NormalizedName);
+        }
+
+        private void Apply(RoleRemoved _)
         {
             _name = null;
             _normalizedName = null;
-            ConcurrencyStamp = null;
-            return Save();
+            ClearConcurrencyCheckStamp();
         }
 
-        private Task Apply(NewRoleAdded create)
+        private void Apply(NewRoleAdded create)
         {
             _name = new RoleName(create.Name);
             _normalizedName = new RoleNormalizedName(create.NormalizedName);
-            _concurrencyStamp = null;
-            return Save();
+            SetConcurrencyCheckStamp(create.ConcurrencyCheckStamp);
         }
 
         #endregion Events
@@ -169,17 +187,18 @@ namespace ExtenFlow.Identity.Roles.Domain
         /// <param name="query">The query.</param>
         /// <returns>The query result.</returns>
         public async override Task<object> HandleQuery(IQuery query)
-                    => query switch
-                    {
-                        GetRoleDetails getDetails => await Handle(getDetails),
-                        _ => await base.HandleQuery(query)
-                    };
-
-        private async Task<RoleDetailsModel> Handle(GetRoleDetails _)
         {
-            await CheckState();
-            return new RoleDetailsModel(Id, Name.Value, NormalizedName.Value, ConcurrencyCheckStamp.Value);
+            await InitializeState();
+            return query switch
+            {
+                GetRoleDetails getDetails => Handle(getDetails),
+                _ => await base.HandleQuery(query),
+            };
+            ;
         }
+
+        private RoleDetailsModel Handle(GetRoleDetails _)
+            => new RoleDetailsModel(Id, Name.Value, NormalizedName.Value, ConcurrencyCheckStamp.Value);
 
         #endregion Queries
 
@@ -210,7 +229,7 @@ namespace ExtenFlow.Identity.Roles.Domain
             _ = state ?? throw new ArgumentNullException(nameof(state));
             _name = new RoleName(state.Name);
             _normalizedName = new RoleNormalizedName(state.NormalizedName);
-            ConcurrencyStamp = new ConcurrencyCheckStamp(state.ConcurrencyCheckStamp);
+            SetConcurrencyCheckStamp(state.ConcurrencyCheckStamp);
         }
     }
 }

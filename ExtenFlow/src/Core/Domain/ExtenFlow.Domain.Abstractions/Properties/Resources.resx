@@ -159,4 +159,7 @@
   <data name="AggregateTypeMismatch" xml:space="preserve">
     <value>The expected value for the aggregate type is '%1'. The actual type is '%2'.</value>
   </data>
+  <data name="EntityDuplicate" xml:space="preserve">
+    <value>The '%1' entity with key '%2'='%3' already exist.</value>
+  </data>
 </root>

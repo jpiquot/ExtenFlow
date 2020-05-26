@@ -29,8 +29,8 @@ namespace ExtenFlow.Identity.Roles.Events
         /// </param>
         /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        public NormalizedRoleNameRegistred(string aggregateId, string roleId, string userId, Guid? correlationId = null, Guid? id = null, DateTimeOffset? dateTime = null)
-            : base(aggregateId, userId, correlationId ?? Guid.NewGuid(), id ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+        public NormalizedRoleNameRegistred(string aggregateId, string roleId, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
+            : base(aggregateId, userId, correlationId, id, dateTime)
         {
             RoleId = roleId;
         }

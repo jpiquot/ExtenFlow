@@ -31,8 +31,8 @@ namespace ExtenFlow.Identity.Roles.Events
         /// </param>
         /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        public RoleRenamed(string aggregateId, string name, string normalizedName, string userId, Guid? correlationId = null, Guid? id = null, DateTimeOffset? dateTime = null)
-            : base(aggregateId, userId, correlationId ?? Guid.NewGuid(), id ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+        public RoleRenamed(string aggregateId, string name, string normalizedName, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
+            : base(aggregateId, userId, correlationId, id, dateTime)
         {
             Name = name;
             NormalizedName = normalizedName;

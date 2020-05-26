@@ -1,4 +1,5 @@
 ﻿using System;
+
 using ExtenFlow.Domain;
 
 namespace ExtenFlow.Identity.Roles.Commands
@@ -25,13 +26,14 @@ namespace ExtenFlow.Identity.Roles.Commands
         /// <param name="aggregateId">Aggragate Id.</param>
         /// <param name="roleId"></param>
         /// <param name="userId">The user submitting the command.</param>
+        /// <param name="concurrencyCheckStamp">The optimistic concurrency check stamp.</param>
         /// <param name="correlationId">
         /// The correlation id used to chain messages, queries, commands and events.
         /// </param>
         /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        public DeregisterNormalizedRoleName(string aggregateId, string roleId, string userId, Guid? correlationId = null, Guid? id = null, DateTimeOffset? dateTime = null)
-            : base("NormalizedRoleName", aggregateId, null, userId, correlationId ?? Guid.NewGuid(), id ?? Guid.NewGuid(), dateTime ?? DateTimeOffset.Now)
+        public DeregisterNormalizedRoleName(string aggregateId, string roleId, string userId, string concurrencyCheckStamp, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
+            : base("NormalizedRoleName", aggregateId, userId, concurrencyCheckStamp, correlationId, id, dateTime)
         {
             RoleId = roleId;
         }

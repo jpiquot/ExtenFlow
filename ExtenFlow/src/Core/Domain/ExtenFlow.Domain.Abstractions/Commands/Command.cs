@@ -1,5 +1,7 @@
 ﻿using System;
 
+using ExtenFlow.Infrastructure;
+
 #pragma warning disable CA1041 // Provide ObsoleteAttribute message
 #pragma warning disable CS0612 // Type or member is obsolete
 
@@ -13,10 +15,11 @@ namespace ExtenFlow.Domain
         /// <summary>
         /// Command base class constructor.
         /// </summary>
-        /// <remarks>This constructor must not be used. It has been added for serializers</remarks>
+        /// <remarks>Do not use this constructor. It has been added for serializers</remarks>
         [Obsolete("Can only be used by serializers")]
         protected Command()
         {
+            ConcurrencyCheckStamp = string.Empty;
         }
 
         /// <summary>
@@ -24,22 +27,24 @@ namespace ExtenFlow.Domain
         /// </summary>
         /// <param name="aggregateType">Type of aggregate</param>
         /// <param name="aggregateId">Aggragate Id</param>
-        /// <param name="concurrencyStamp">Concurrency stamp used for optimistic concurrency check.</param>
         /// <param name="userId">The user submitting the command</param>
+        /// <param name="concurrencyCheckStamp">
+        /// Concurrency stamp used for optimistic concurrency check.
+        /// </param>
         /// <param name="correlationId">
         /// The correlation id used to chain messages, queries, commands and events
         /// </param>
         /// <param name="id">The Id of this command</param>
         /// <param name="dateTime">The date time of the command submission</param>
-        protected Command(string aggregateType, string? aggregateId, string? concurrencyStamp, string userId, string correlationId, string id, DateTimeOffset dateTime) : base(aggregateType, aggregateId, userId, correlationId, id, dateTime)
+        protected Command(string aggregateType, string? aggregateId, string userId, string? concurrencyCheckStamp, string? correlationId, string? id, DateTimeOffset? dateTime) : base(aggregateType, aggregateId, userId, correlationId, id, dateTime)
         {
-            ConcurrencyStamp = concurrencyStamp;
+            ConcurrencyCheckStamp = concurrencyCheckStamp ?? Guid.NewGuid().ToBase64String();
         }
 
         /// <summary>
         /// Gets the concurrency stamp used for optimistic concurrency check.
         /// </summary>
         /// <value>The concurrency stamp.</value>
-        public string? ConcurrencyStamp { get; }
+        public string ConcurrencyCheckStamp { get; }
     }
 }

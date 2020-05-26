@@ -164,9 +164,9 @@ namespace ExtenFlow.Identity.Users.Actors
             {
                 throw new UserNotFoundException(CultureInfo.CurrentCulture, nameof(Id), Id.GetId());
             }
-            if (State.ConcurrencyStamp != command.ConcurrencyStamp)
+            if (State.ConcurrencyStamp != command.ConcurrencyCheckStamp)
             {
-                throw new UserConcurrencyFailureException(CultureInfo.CurrentCulture, command.ConcurrencyStamp, State.ConcurrencyStamp);
+                throw new UserConcurrencyFailureException(CultureInfo.CurrentCulture, command.ConcurrencyCheckStamp, State.ConcurrencyStamp);
             }
             return Task.FromResult<IList<IEvent>>(new[] { new UserUnregistred(Id.GetId(), command.UserId, command.CorrelationId) });
         }
@@ -177,9 +177,9 @@ namespace ExtenFlow.Identity.Users.Actors
             {
                 throw new UserNotFoundException(CultureInfo.CurrentCulture, nameof(Id), Id.GetId());
             }
-            if (State.ConcurrencyStamp != command.ConcurrencyStamp)
+            if (State.ConcurrencyStamp != command.ConcurrencyCheckStamp)
             {
-                throw new UserConcurrencyFailureException(CultureInfo.CurrentCulture, command.ConcurrencyStamp, State.ConcurrencyStamp);
+                throw new UserConcurrencyFailureException(CultureInfo.CurrentCulture, command.ConcurrencyCheckStamp, State.ConcurrencyStamp);
             }
             return Task.FromResult<IList<IEvent>>(new[] { new UserRenamed(Id.GetId(), command.Name, command.NormalizedName, command.UserId, command.CorrelationId) });
         }
