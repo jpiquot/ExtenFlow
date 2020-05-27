@@ -1,32 +1,35 @@
 ﻿using System;
 
+using ExtenFlow.Domain;
+
 namespace ExtenFlow.Identity.Roles.Queries
 {
     /// <summary>
-    /// Class GetRoleDetails. Implements the <see cref="RoleQuery{RoleDetailsViewModel}"/>
+    /// Class RoleNameRegistryQuery. Implements the <see cref="ExtenFlow.Domain.Query{T}"/>
     /// </summary>
-    /// <seealso cref="RoleQuery{RoleDetailsViewModel}"/>
-    public class GetRoleDetails : RoleQuery<RoleDetails>
+    /// <typeparam name="T"></typeparam>
+    /// <seealso cref="ExtenFlow.Domain.Query{T}"/>
+    public class RoleNameRegistryQuery<T> : Query<T>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GetRoleDetails"/> class.
+        /// Initializes a new instance of the <see cref="RoleNameRegistryQuery{T}"/> class.
         /// </summary>
         /// <remarks>Do not use this constructor. It has been added for serializers</remarks>
         [Obsolete("Can only be used by serializers")]
-        public GetRoleDetails()
+        public RoleNameRegistryQuery()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GetRoleDetails"/> class.
+        /// Initializes a new instance of the <see cref="RoleNameRegistryQuery{T}"/> class.
         /// </summary>
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="userId">The identifier of the user that created the message.</param>
         /// <param name="correlationId">The correlation identifier. Used to link messages together.</param>
         /// <param name="id">The message unique identifier.</param>
         /// <param name="dateTime">The date time, the message was created.</param>
-        public GetRoleDetails(string aggregateId, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
-            : base(aggregateId, userId, correlationId, id, dateTime)
+        public RoleNameRegistryQuery(string aggregateId, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
+            : base(AggregateName.RoleNameRegistry, aggregateId, userId, correlationId, id, dateTime)
         {
         }
     }

@@ -3,7 +3,6 @@ using System.Globalization;
 
 using ExtenFlow.Domain;
 using ExtenFlow.Domain.Validators;
-using ExtenFlow.Identity.Roles.Commands;
 using ExtenFlow.Identity.Roles.ValueObjects;
 using ExtenFlow.Infrastructure;
 
@@ -14,13 +13,13 @@ namespace ExtenFlow.Identity.Roles.Commands
     /// <summary>
     /// Role command validation
     /// </summary>
-    public abstract class RoleCommandValidator : CommandValidator
+    public abstract class RoleNameRegistryCommandValidator : CommandValidator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleCommandValidator"/> class.
+        /// Initializes a new instance of the <see cref="RoleNameRegistryCommandValidator"/> class.
         /// </summary>
         /// <param name="instanceName">The instance.</param>
-        protected RoleCommandValidator(string? instanceName) : base(instanceName)
+        protected RoleNameRegistryCommandValidator(string? instanceName) : base(instanceName)
         {
         }
 
@@ -32,10 +31,10 @@ namespace ExtenFlow.Identity.Roles.Commands
         protected override IList<ValidatorMessage> ValidateCommand(ICommand value)
         {
             var messages = new List<ValidatorMessage>();
-            if (value is RoleCommand command)
+            if (value is RoleNameRegistryCommand command)
             {
-                messages.AddRange(new RoleIdValidator(InstanceName, nameof(IMessage.AggregateId)).Validate(command.AggregateId));
-                if (command.AggregateType != AggregateName.Role)
+                messages.AddRange(new RoleNormalizedNameValidator(InstanceName, nameof(IMessage.AggregateId)).Validate(command.AggregateId));
+                if (command.AggregateType != AggregateName.RoleNameRegistry)
                 {
                     messages.Add(new ValidatorMessage(
                         ValidatorMessageLevel.Error,
@@ -46,21 +45,21 @@ namespace ExtenFlow.Identity.Roles.Commands
                             command.AggregateType
                             )));
                 }
-                messages.AddRange(ValidateRoleCommand(command));
+                messages.AddRange(ValidateRoleNameRegistryCommand(command));
             }
             else
             {
-                messages.Add(TypeMismatchError<RoleCommand>(value));
+                messages.Add(TypeMismatchError<RoleNameRegistryCommand>(value));
             }
             return messages;
         }
 
         /// <summary>
-        /// Validates the role command.
+        /// Validates the role name registry command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>IList&lt;ValidatorMessage&gt;.</returns>
-        protected virtual IList<ValidatorMessage> ValidateRoleCommand(RoleCommand command)
+        protected virtual IList<ValidatorMessage> ValidateRoleNameRegistryCommand(RoleNameRegistryCommand command)
             => new List<ValidatorMessage>();
     }
 }

@@ -197,8 +197,8 @@ namespace ExtenFlow.Identity.Roles.Domain
             ;
         }
 
-        private RoleDetailsModel Handle(GetRoleDetails _)
-            => new RoleDetailsModel(Id, Name.Value, NormalizedName.Value, ConcurrencyCheckStamp.Value);
+        private RoleDetails Handle(GetRoleDetails _)
+            => new RoleDetails(Id, Name.Value, NormalizedName.Value, ConcurrencyCheckStamp.Value);
 
         #endregion Queries
 

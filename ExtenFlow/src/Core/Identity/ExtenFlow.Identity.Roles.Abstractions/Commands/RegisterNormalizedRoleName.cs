@@ -1,14 +1,12 @@
 ﻿using System;
 
-using ExtenFlow.Domain;
-
 namespace ExtenFlow.Identity.Roles.Commands
 {
     /// <summary>
     /// Class RegisterNormalizedRoleName. Implements the <see cref="ExtenFlow.Identity.Roles.Commands.RoleCommand"/>
     /// </summary>
     /// <seealso cref="ExtenFlow.Identity.Roles.Commands.RoleCommand"/>
-    public class RegisterNormalizedRoleName : Command
+    public class RegisterNormalizedRoleName : RoleNameRegistryCommand
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RegisterNormalizedRoleName"/> class.
@@ -35,7 +33,7 @@ namespace ExtenFlow.Identity.Roles.Commands
         /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
         public RegisterNormalizedRoleName(string aggregateId, string roleId, string userId, string concurrencyCheckStamp, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
-            : base("NormalizedRoleName", aggregateId, userId, concurrencyCheckStamp, correlationId, id, dateTime)
+            : base(aggregateId, userId, concurrencyCheckStamp, correlationId, id, dateTime)
         {
             RoleId = roleId;
         }

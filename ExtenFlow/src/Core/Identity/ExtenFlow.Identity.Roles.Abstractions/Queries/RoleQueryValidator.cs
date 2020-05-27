@@ -3,39 +3,38 @@ using System.Globalization;
 
 using ExtenFlow.Domain;
 using ExtenFlow.Domain.Validators;
-using ExtenFlow.Identity.Roles.Commands;
 using ExtenFlow.Identity.Roles.ValueObjects;
 using ExtenFlow.Infrastructure;
 
 #pragma warning disable CA1710 // Identifiers should have correct suffix
 
-namespace ExtenFlow.Identity.Roles.Commands
+namespace ExtenFlow.Identity.Roles.Queries
 {
     /// <summary>
-    /// Role command validation
+    /// Role query validation
     /// </summary>
-    public abstract class RoleCommandValidator : CommandValidator
+    public abstract class RoleQueryValidator<T> : QueryValidator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleCommandValidator"/> class.
+        /// Initializes a new instance of the <see cref="RoleQueryValidator{T}"/> class.
         /// </summary>
         /// <param name="instanceName">The instance.</param>
-        protected RoleCommandValidator(string? instanceName) : base(instanceName)
+        protected RoleQueryValidator(string? instanceName) : base(instanceName)
         {
         }
 
         /// <summary>
-        /// Validates the command.
+        /// Validates the query.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>IList&lt;ValidatorMessage&gt;.</returns>
-        protected override IList<ValidatorMessage> ValidateCommand(ICommand value)
+        protected override IList<ValidatorMessage> ValidateQuery(IQuery value)
         {
             var messages = new List<ValidatorMessage>();
-            if (value is RoleCommand command)
+            if (value is RoleQuery<T> query)
             {
-                messages.AddRange(new RoleIdValidator(InstanceName, nameof(IMessage.AggregateId)).Validate(command.AggregateId));
-                if (command.AggregateType != AggregateName.Role)
+                messages.AddRange(new RoleIdValidator(InstanceName, nameof(IMessage.AggregateId)).Validate(query.AggregateId));
+                if (query.AggregateType != AggregateName.Role)
                 {
                     messages.Add(new ValidatorMessage(
                         ValidatorMessageLevel.Error,
@@ -43,24 +42,24 @@ namespace ExtenFlow.Identity.Roles.Commands
                             CultureInfo.CurrentCulture,
                             Domain.Properties.Resources.AggregateTypeMismatch,
                             AggregateName.Role,
-                            command.AggregateType
+                            query.AggregateType
                             )));
                 }
-                messages.AddRange(ValidateRoleCommand(command));
+                messages.AddRange(ValidateRoleQuery(query));
             }
             else
             {
-                messages.Add(TypeMismatchError<RoleCommand>(value));
+                messages.Add(TypeMismatchError<RoleQuery<T>>(value));
             }
             return messages;
         }
 
         /// <summary>
-        /// Validates the role command.
+        /// Validates the role query.
         /// </summary>
-        /// <param name="command">The command.</param>
+        /// <param name="query">The query.</param>
         /// <returns>IList&lt;ValidatorMessage&gt;.</returns>
-        protected virtual IList<ValidatorMessage> ValidateRoleCommand(RoleCommand command)
+        protected virtual IList<ValidatorMessage> ValidateRoleQuery(RoleQuery<T> query)
             => new List<ValidatorMessage>();
     }
 }

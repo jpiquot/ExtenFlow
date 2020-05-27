@@ -6,7 +6,7 @@ namespace ExtenFlow.Identity.Roles.Queries
     /// Class GetRoleIdByName. Implements the <see cref="RoleQuery{RoleDetailsViewModel}"/>
     /// </summary>
     /// <seealso cref="RoleQuery{RoleDetailsViewModel}"/>
-    public class GetRoleIdByName : RoleQuery<string?>
+    public class GetRoleIdByName : RoleNameRegistryQuery<string>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GetRoleIdByName"/> class.

@@ -1,34 +1,24 @@
-﻿// *********************************************************************** Assembly :
-// ExtenFlow.Identity.Roles.Abstractions Author : jpiquot Created : 04-12-2020
-//
-// Last Modified By : jpiquot Last Modified On : 04-12-2020 ***********************************************************************
-// <copyright file="RoleDetailsViewModel.cs" company="Fiveforty">
-//     Copyright (c) Fiveforty Corporation. All rights reserved.
-// </copyright>
-// <summary>
-// </summary>
-// ***********************************************************************
-using System;
+﻿using System;
 
 namespace ExtenFlow.Identity.Roles.Queries
 {
     /// <summary>
     /// Role Details view model class.
     /// </summary>
-    public class RoleDetailsModel
+    public class RoleDetails
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleDetailsModel"/> class.
+        /// Initializes a new instance of the <see cref="RoleDetails"/> class.
         /// </summary>
         [Obsolete("Can only be used by serializers")]
-        public RoleDetailsModel()
+        public RoleDetails()
         {
             Name = NormalizedName = ConcurrencyStamp = string.Empty;
             Id = string.Empty;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleDetailsModel"/> class.
+        /// Initializes a new instance of the <see cref="RoleDetails"/> class.
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <param name="name">The name.</param>
@@ -37,7 +27,7 @@ namespace ExtenFlow.Identity.Roles.Queries
         /// <exception cref="ArgumentException">Id is not defined</exception>
         /// <exception cref="ArgumentNullException">name</exception>
         /// <exception cref="ArgumentNullException">normalizedName</exception>
-        public RoleDetailsModel(string id, string name, string normalizedName, string? concurrencyStamp)
+        public RoleDetails(string id, string name, string normalizedName, string? concurrencyStamp)
         {
             if (id == default)
             {

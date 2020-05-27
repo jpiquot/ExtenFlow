@@ -33,7 +33,7 @@ namespace ExtenFlow.Identity.Roles.Commands
         /// </param>
         /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        public RemoveRoleClaim(string aggregateId, string claimType, string? claimValue, string userId, string? concurrencyCheckStamp, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
+        public RemoveRoleClaim(string aggregateId, string claimType, string? claimValue, string userId, string concurrencyCheckStamp, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
             : base(aggregateId, userId, concurrencyCheckStamp, correlationId, id, dateTime)
         {
             if (string.IsNullOrWhiteSpace(claimType))

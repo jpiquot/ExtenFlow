@@ -12,14 +12,14 @@ using static FluentAssertions.FluentActions;
 
 namespace ExtenFlow.Domain.AbstractionsTests
 {
-    public class GetRoleTest : IClassFixture<RoleQueryFixture<RoleDetailsModel, GetRoleDetails>>
+    public class GetRoleTest : IClassFixture<RoleQueryFixture<RoleDetails, GetRoleDetails>>
     {
-        public GetRoleTest(RoleQueryFixture<RoleDetailsModel, GetRoleDetails> getRoleDetailsFixture)
+        public GetRoleTest(RoleQueryFixture<RoleDetails, GetRoleDetails> getRoleDetailsFixture)
         {
             GetRoleDetailsFixture = getRoleDetailsFixture;
         }
 
-        private RoleQueryFixture<RoleDetailsModel, GetRoleDetails> GetRoleDetailsFixture { get; }
+        private RoleQueryFixture<RoleDetails, GetRoleDetails> GetRoleDetailsFixture { get; }
 
         [Theory]
         [ClassData(typeof(RoleQueryTestData))]

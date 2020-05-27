@@ -202,7 +202,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.InvalidRoleNormalizedName, nameof(normalizedRoleName));
             }
-            string? id = await _normaliedNameIndex.GetIdentifier(normalizedRoleName);
+            string? id = await _roleQueryService.Ask(new FindRoleIdByName(normalizedRoleName, _user.Name));
             if (id == null)
             {
 #pragma warning disable CS8603 // Possible null reference return.
@@ -231,8 +231,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
-            IRoleClaimsActor actor = _getRoleClaimsActor(role.Id);
-            return actor.Ask(new GetRoleClaims(role.Id, _user.Name));
+            return _roleQueryService.Ask(new GetRoleClaims(role.Id, _user.Name));
         }
 
         /// <summary>
@@ -308,7 +307,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// <exception cref="ArgumentException">role</exception>
         /// <exception cref="ArgumentException">claim</exception>
         /// <exception cref="RoleNotFoundException">Id</exception>
-        public override async Task RemoveClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default)
+        public override Task RemoveClaimAsync(Role role, Claim claim, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -322,14 +321,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleClaimTypeNotDefined, nameof(claim));
             }
-            IRoleActor roleActor = _getRoleActor(role.Id);
-            if (!await roleActor.IsInitialized())
-            {
-                throw new RoleNotFoundException(CultureInfo.CurrentCulture, nameof(Role.Id), role.Id);
-            }
-            IRoleClaimsActor claimActor = _getRoleClaimsActor(role.Id);
-
-            await claimActor.Tell(new RemoveRoleClaim(role.Id, claim.Type, claim.Value, _user.Name));
+            return _roleCommandService.Tell(new RemoveRoleClaim(role.Id, claim.Type, claim.Value, _user.Name, role.ConcurrencyStamp));
         }
 
         /// <summary>
@@ -419,14 +411,14 @@ namespace ExtenFlow.Identity.Roles.Stores
             return IdentityResult.Success;
         }
 
-        private static void SetRoleValues(Role role, RoleDetailsModel details)
+        private static void SetRoleValues(Role role, RoleDetails details)
         {
             role.Name = details.Name;
             role.NormalizedName = details.NormalizedName;
             role.ConcurrencyStamp = details.ConcurrencyStamp;
         }
 
-        private static Role ToRole(RoleDetailsModel details)
+        private static Role ToRole(RoleDetails details)
         {
             var role = new Role();
             SetRoleValues(role, details);

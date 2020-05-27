@@ -1,7 +1,6 @@
 ﻿using System;
 
 using ExtenFlow.Domain;
-using ExtenFlow.Identity.Roles.Models;
 
 namespace ExtenFlow.Identity.Roles.Queries
 {
@@ -30,7 +29,7 @@ namespace ExtenFlow.Identity.Roles.Queries
         /// <param name="id">The message unique identifier.</param>
         /// <param name="dateTime">The date time, the message was created.</param>
         public RoleQuery(string aggregateId, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
-            : base(nameof(Role), aggregateId, userId, correlationId, id, dateTime)
+            : base(nameof(AggregateName.Role), aggregateId, userId, correlationId, id, dateTime)
         {
         }
     }

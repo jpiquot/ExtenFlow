@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 
+using ExtenFlow.Identity.Roles.ValueObjects;
 using ExtenFlow.Infrastructure;
 
 #pragma warning disable CA1710 // Identifiers should have correct suffix
@@ -7,14 +8,14 @@ using ExtenFlow.Infrastructure;
 namespace ExtenFlow.Identity.Roles.Commands
 {
     /// <summary>
-    /// Remove role command validation
+    /// Add new role claim command validation
     /// </summary>
-    public class RemoveRoleValidator : RoleCommandValidator
+    public class AddUserToRoleValidator : RoleCommandValidator
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the <see cref="AddUserToRoleValidator"/> class.
         /// </summary>
-        public RemoveRoleValidator() : base(nameof(RemoveRole))
+        public AddUserToRoleValidator() : base(nameof(AddRoleClaim))
         {
         }
 
@@ -26,9 +27,13 @@ namespace ExtenFlow.Identity.Roles.Commands
         protected override IList<ValidatorMessage> ValidateRoleCommand(RoleCommand value)
         {
             var messages = new List<ValidatorMessage>();
-            if (!(value is RemoveRole))
+            if (value is AddUserToRole command)
             {
-                messages.Add(TypeMismatchError<RemoveRole>(value));
+                messages.AddRange(new RoleUserIdValidator(InstanceName, nameof(AddUserToRole.RoleUserId)).Validate(command.RoleUserId));
+            }
+            else
+            {
+                messages.Add(TypeMismatchError<AddUserToRole>(value));
             }
             return messages;
         }

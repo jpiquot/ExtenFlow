@@ -8,14 +8,14 @@ namespace ExtenFlow.Identity.Roles.Commands
     /// Base Role command class
     /// </summary>
     /// <seealso cref="ExtenFlow.Domain.Command"/>
-    public abstract class RoleCommand : Command
+    public abstract class RoleNameRegistryCommand : Command
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoleCommand"/> class.
+        /// Initializes a new instance of the <see cref="RoleNameRegistryCommand"/> class.
         /// </summary>
         /// <remarks>Do not use this constructor. It has been added for serializers</remarks>
         [Obsolete("Can only be used by serializers")]
-        protected RoleCommand()
+        protected RoleNameRegistryCommand()
         {
             AggregateType = string.Empty;
         }
@@ -33,13 +33,13 @@ namespace ExtenFlow.Identity.Roles.Commands
         /// </param>
         /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
-        protected RoleCommand(string aggregateId,
+        protected RoleNameRegistryCommand(string aggregateId,
                               string userId,
                               string? concurrencyCheckStamp = null,
                               string? correlationId = null,
                               string? id = null,
                               DateTimeOffset? dateTime = null)
-            : base(AggregateName.Role, aggregateId, userId, concurrencyCheckStamp, correlationId, id, dateTime)
+            : base(AggregateName.RoleNameRegistry, aggregateId, userId, concurrencyCheckStamp, correlationId, id, dateTime)
         {
         }
     }
