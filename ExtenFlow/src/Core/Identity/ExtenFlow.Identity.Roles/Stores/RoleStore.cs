@@ -7,7 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using ExtenFlow.Actors;
+using ExtenFlow.Domain.Exceptions;
 using ExtenFlow.Identity.Roles.Actors;
+using ExtenFlow.Identity.Roles.Application;
 using ExtenFlow.Identity.Roles.Commands;
 using ExtenFlow.Identity.Roles.Exceptions;
 using ExtenFlow.Identity.Roles.Models;
@@ -22,37 +24,33 @@ namespace ExtenFlow.Identity.Roles.Stores
     /// <summary>
     /// The Dapr role store
     /// </summary>
-    public sealed class ActorRoleStore : RoleStoreBase<Role, string, UserRole, RoleClaim>, IRoleStore
+    public sealed class RoleStore : RoleStoreBase<Role, string, UserRole, RoleClaim>, IRoleStore
     {
-        private readonly ICollectionActor _collection;
         private readonly IdentityErrorDescriber _describer;
-        private readonly Func<string, IRoleActor> _getRoleActor;
-        private readonly ILogger<ActorRoleStore> _log;
-        private readonly IUniqueIndexActor _normaliedNameIndex;
+        private readonly ILogger<RoleStore> _log;
+        private readonly IRoleCommandService _roleCommandService;
+        private readonly IRoleQueryService _roleQueryService;
         private readonly IUser _user;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ActorRoleStore"/> class.
+        /// Initializes a new instance of the <see cref="RoleStore"/> class.
         /// </summary>
+        /// <param name="roleCommandService"></param>
+        /// <param name="roleQueryService"></param>
         /// <param name="user"></param>
-        /// <param name="getRoleActor"></param>
-        /// <param name="collection"></param>
-        /// <param name="normalizedNameIndex"></param>
         /// <param name="logger"></param>
         /// <param name="describer">The describer.</param>
-        public ActorRoleStore(
+        public RoleStore(
+            IRoleCommandService roleCommandService,
+            IRoleQueryService roleQueryService,
             IUser user,
-            Func<string, IRoleActor> getRoleActor,
-            ICollectionActor collection,
-            IUniqueIndexActor normalizedNameIndex,
-            ILogger<ActorRoleStore> logger,
+            ILogger<RoleStore> logger,
             IdentityErrorDescriber? describer = null
             ) : base(describer ?? new IdentityErrorDescriber())
         {
-            _user = user ?? throw new ArgumentNullException(nameof(user));
-            _getRoleActor = getRoleActor;
-            _collection = collection;
-            _normaliedNameIndex = normalizedNameIndex;
+            _roleCommandService = roleCommandService;
+            _roleQueryService = roleQueryService;
+            _user = user;
             _log = logger;
             _describer = describer ?? new IdentityErrorDescriber();
         }
@@ -90,14 +88,14 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleClaimTypeNotDefined, nameof(claim));
             }
-            IRoleActor roleActor = _getRoleActor(role.Id);
-            if (!await roleActor.IsInitialized())
+            try
             {
-                throw new RoleNotFoundException(CultureInfo.CurrentCulture, nameof(Role.Id), role.Id);
+                await _roleCommandService.Tell(new AddRoleClaim(role.Id, claim.Type, claim.Value, role.ConcurrencyStamp, _user.Name));
             }
-            IRoleClaimsActor claimActor = _getRoleClaimsActor(role.Id);
-
-            await claimActor.Tell(new AddRoleClaim(role.Id, claim.Type, claim.Value, _user.Name));
+            catch (EntityNotFoundException e)
+            {
+                throw new RoleNotFoundException(CultureInfo.CurrentCulture, nameof(Role.Id), role.Id, e);
+            }
         }
 
         /// <summary>
@@ -117,17 +115,16 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
-            IRoleActor actor = _getRoleActor(role.Id);
             try
             {
-                await actor.Tell(new AddNewRole(role, _user.Name));
+                await _roleCommandService.Tell(new AddNewRole(role, _user.Name));
             }
-            catch (RoleConcurrencyFailureException e)
+            catch (EntityConcurrencyCheckFailedException e)
             {
                 _log.LogWarning(e.Message);
                 return IdentityResult.Failed(_describer.ConcurrencyFailure());
             }
-            catch (DuplicateRoleException e)
+            catch (EntityDuplicateException e)
             {
                 _log.LogWarning(e.Message);
                 return IdentityResult.Failed(_describer.DuplicateRoleName(e.Message));
@@ -137,8 +134,7 @@ namespace ExtenFlow.Identity.Roles.Stores
                 _log.LogWarning(e.Message);
                 return IdentityResult.Failed(_describer.InvalidRoleName(e.Message));
             }
-            var details = (RoleDetailsModel)await actor.Ask(new GetRoleDetails(role.Id, _user.Name));
-            SetRoleValues(role, details);
+            SetRoleValues(role, await _roleQueryService.Ask(new GetRoleDetails(role.Id, _user.Name)));
             return IdentityResult.Success;
         }
 
@@ -159,12 +155,11 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
-            IRoleActor actor = _getRoleActor(role.Id);
             try
             {
-                await actor.Tell(new RemoveRole(role.Id, role.ConcurrencyStamp, _user.Name));
+                await _roleCommandService.Tell(new RemoveRole(role.Id, role.ConcurrencyStamp, _user.Name));
             }
-            catch (RoleConcurrencyFailureException e)
+            catch (EntityConcurrencyCheckFailedException e)
             {
                 _log.LogWarning(e.Message);
                 return IdentityResult.Failed(_describer.ConcurrencyFailure());
@@ -188,8 +183,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(roleId));
             }
-            IRoleActor actor = _getRoleActor(roleId);
-            return ToRole(await actor.Ask(new GetRoleDetails(roleId, _user.Name)));
+            return ToRole(await _roleQueryService.Ask(new GetRoleDetails(roleId, _user.Name)));
         }
 
         /// <summary>

@@ -8,10 +8,14 @@ namespace ExtenFlow.Identity.Roles.Application
     /// </summary>
     public interface IRoleCommandService :
         ICommandHandler<AddNewRole>,
-        ICommandHandler<RemoveRole>,
-        ICommandHandler<RenameRole>,
         ICommandHandler<AddRoleClaim>,
-        ICommandHandler<RemoveRoleClaim>
+        ICommandHandler<AddUserToRole>,
+        ICommandHandler<RegisterNormalizedRoleName>,
+        ICommandHandler<DeregisterNormalizedRoleName>,
+        ICommandHandler<RemoveRole>,
+        ICommandHandler<RemoveRoleClaim>,
+        ICommandHandler<RemoveUserFromRole>,
+        ICommandHandler<RenameRole>
     {
     }
 }

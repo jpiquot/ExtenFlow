@@ -10,8 +10,10 @@ namespace ExtenFlow.Identity.Roles.Application
     /// Interface IRoleService
     /// </summary>
     public interface IRoleQueryService :
+        IQueryHandler<GetRoleClaims, IList<Claim>>,
         IQueryHandler<GetRoleDetails, RoleDetailsModel>,
-        IQueryHandler<GetRoleClaims, IList<Claim>>
+        IQueryHandler<GetRoleIdByName, string?>,
+        IQueryHandler<IsRoleNameRegistered, bool>
     {
     }
 }
