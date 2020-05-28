@@ -10,22 +10,22 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageManagement Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0" />
-		<PackageManagement Include="System.Text.Json" Version="4.7.1" />
-		<PackageManagement Include="FluentValidation" Version="9.0.0-preview4" />
+		<PackageManagement Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8" />
+		<PackageManagement Include="System.Text.Json" Version="4.7.2" />
+		<PackageManagement Include="FluentValidation" Version="9.0.0-preview5" />
+		<PackageManagement Include="FluentAssertions" Version="5.10.3" />
 		<PackageManagement Include="Paramore.Brighter" Version="8.1.1036" />
 		<PackageManagement Include="Dapr.Actors" Version="0.7.0-preview01" />
 		<PackageManagement Include="Dapr.Actors.AspNetCore" Version="0.7.0-preview01" />
 		<PackageManagement Include="Lucene.Net" Version="4.8.0-beta00007" />
 		<PackageManagement Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00007" />
 		<PackageManagement Include="Lucene.Net.QueryParser" Version="4.8.0-beta00007" />
-		<PackageManagement Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
-		<PackageManagement Include="Moq" Version="4.13.1" />
+		<PackageManagement Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+		<PackageManagement Include="Moq" Version="4.14.1" />
 		<PackageManagement Include="ncrontab" Version="3.3.1" />
 		<PackageManagement Include="Newtonsoft.Json" Version="12.0.3" />
 		<PackageManagement Include="NLog.Web.AspNetCore" Version="4.9.0" />
 		<PackageManagement Include="NodaTime" Version="2.4.7" />
-		<PackageManagement Include="FluentAssertions" Version="5.10.2" />
 		<PackageManagement Include="xunit" Version="2.4.1" />
 		<PackageManagement Include="xunit.assert" Version="2.4.1" />
 		<PackageManagement Include="xunit.extensions" Version="2.4.1" />

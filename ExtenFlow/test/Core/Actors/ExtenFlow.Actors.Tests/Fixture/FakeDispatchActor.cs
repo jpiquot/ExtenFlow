@@ -21,7 +21,7 @@ namespace ExtenFlow.Actors.Tests
         {
         }
 
-        public ChangeFakeIntDispatch(Guid fakeGuid, int fakeInt) : base("FakeDispatch", fakeGuid.ToString(), null, "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        public ChangeFakeIntDispatch(Guid fakeGuid, int fakeInt) : base("FakeDispatch", fakeGuid.ToString(), "test-user")
         {
             FakeInt = fakeInt;
         }
@@ -36,7 +36,7 @@ namespace ExtenFlow.Actors.Tests
         {
         }
 
-        public CreateFakeDispatch(Guid fakeGuid, int fakeInt, string fakeString) : base("FakeDispatch", fakeGuid.ToString(), null, "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        public CreateFakeDispatch(Guid fakeGuid, int fakeInt, string fakeString) : base("FakeDispatch", fakeGuid.ToString(), "test-user")
         {
             FakeGuid = fakeGuid;
             FakeInt = fakeInt;
@@ -55,7 +55,7 @@ namespace ExtenFlow.Actors.Tests
         {
         }
 
-        public FakeDispatchCreated(Guid fakeGuid, int fakeInt, string fakeString) : base("FakeDispatch", fakeGuid.ToString(), "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        public FakeDispatchCreated(Guid fakeGuid, int fakeInt, string fakeString) : base("FakeDispatch", fakeGuid.ToString(), "test-user")
         {
             FakeGuid = fakeGuid;
             FakeInt = fakeInt;
@@ -69,51 +69,59 @@ namespace ExtenFlow.Actors.Tests
 
     public class FakeDispatchUnknownCommand : Command
     {
-        public FakeDispatchUnknownCommand() : base("FakeDispatch", null, null, "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        public FakeDispatchUnknownCommand() : base("FakeDispatch", string.Empty, "test-user")
         {
         }
     }
 
     public class FakeDispatchUnknownEvent : Event
     {
-        public FakeDispatchUnknownEvent() : base("FakeDispatch", null, "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        public FakeDispatchUnknownEvent() : base("FakeDispatch", string.Empty, "test-user")
         {
         }
     }
 
     public class FakeDispatchUnknownMessage : Message
     {
-        public FakeDispatchUnknownMessage() : base("FakeDispatch", null, "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        public FakeDispatchUnknownMessage() : base("FakeDispatch", string.Empty, "test-user")
         {
         }
     }
 
     public class FakeDispatchUnknownQuery : Query<int>
     {
-        public FakeDispatchUnknownQuery() : base("FakeDispatch", null, "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        public FakeDispatchUnknownQuery() : base("FakeDispatch", string.Empty, "test-user")
         {
         }
+    }
+
+    public class FakeNotify : Message
+    {
+        [Obsolete]
+        public FakeNotify()
+        {
+        }
+
+        public FakeNotify(Guid fakeGuid, int fakeInt) : base("FakeDispatch", fakeGuid.ToString(), "test-user")
+        {
+            FakeInt = fakeInt;
+        }
+
+        public int FakeInt { get; set; }
     }
 
     public class GetFakeDispatchInt : Query<int>
     {
-        [Obsolete]
-        public GetFakeDispatchInt()
-        {
-        }
-
-        public GetFakeDispatchInt(Guid fakeGuid) : base("FakeDispatch", fakeGuid.ToString(), "test-user", Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now)
+        public GetFakeDispatchInt(Guid fakeGuid) : base("FakeDispatch", fakeGuid.ToString(), "test-user")
         {
         }
     }
 
-    internal class FakeDispatchActor : DispatchActorBase<FakeState>, IFakeDispatchActor
+    internal class FakeDispatchActor : DispatchActorBase, IFakeDispatchActor
     {
         public FakeDispatchActor(ActorService actorService, ActorId actorId, IEventBus messageQueue, IActorStateManager actorStateManager = null) : base(actorService, actorId, messageQueue, actorStateManager)
         {
         }
-
-        protected override FakeState NewState() => new FakeState();
 
         protected override async Task<IList<IEvent>> ReceiveCommand(ICommand command)
                      => command switch
@@ -127,6 +135,13 @@ namespace ExtenFlow.Actors.Tests
             {
                 FakeDispatchCreated created => On(created, batchSave),
                 _ => base.ReceiveEvent(eventMessage, batchSave)
+            };
+
+        protected override Task ReceiveNotification(IMessage message, bool batchSave = false)
+            => message switch
+            {
+                FakeDispatchCreated created => On(created, batchSave),
+                _ => Task.CompletedTask;
             };
 
         protected override async Task<object> ReceiveQuery(IQuery query)
@@ -146,13 +161,9 @@ namespace ExtenFlow.Actors.Tests
 
         private Task On(FakeDispatchCreated create, bool batchSave)
         {
-            State.FakeGuid = create.FakeGuid;
-            State.FakeInt = create.FakeInt;
-            State.FakeString = create.FakeString;
-            if (!batchSave)
-            {
-                return SetStateData();
-            }
+            FakeGuid = create.FakeGuid;
+            FakeInt = create.FakeInt;
+            FakeString = create.FakeString;
             return Task.CompletedTask;
         }
     }

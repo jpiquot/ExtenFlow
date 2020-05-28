@@ -34,40 +34,6 @@ namespace ExtenFlow.Identity.Roles.Domain
         private Dictionary<RoleClaimType, HashSet<RoleClaimValue?>> Claims
             => _claims ?? throw new EntityStateNotInitializedException(this, nameof(Claims));
 
-        /// <summary>
-        /// Determines whether the role has the specified Claim.
-        /// </summary>
-        /// <param name="claimType">Type of the claim</param>
-        /// <param name="claimValue">Value of the claim</param>
-        /// <returns>True if the role has the Claim</returns>
-        /// <exception cref="ArgumentNullException">claimType</exception>
-        public Task<bool> Exist(string claimType, string? claimValue)
-        {
-            if (string.IsNullOrWhiteSpace(claimType))
-            {
-                return Task.FromException<bool>(new ArgumentNullException(nameof(claimType)));
-            }
-            return Task.FromResult(ClaimValues(claimType)
-                .Any(p => (p == null && claimValue == null) || p?.Value == claimValue));
-        }
-
-        /// <summary>
-        /// Gets the all the role's Claims.
-        /// </summary>
-        /// <returns>A list of all Claims</returns>
-        public Task<IList<Tuple<string, string?>>> GetAll()
-        {
-            var list = new List<Tuple<string, string?>>();
-            foreach (KeyValuePair<RoleClaimType, HashSet<RoleClaimValue?>> entry in Claims)
-            {
-                foreach (RoleClaimValue? value in entry.Value)
-                {
-                    list.Add(new Tuple<string, string?>(entry.Key.Value, value?.Value));
-                }
-            }
-            return Task.FromResult<IList<Tuple<string, string?>>>(list);
-        }
-
         #region Events
 
         /// <summary>
@@ -96,12 +62,12 @@ namespace ExtenFlow.Identity.Roles.Domain
         }
 
         private void Apply(RoleClaimRemoved @event)
-            => ClaimValues(new RoleClaimType(@event.ClaimType))
-                .Remove((@event.ClaimValue == null) ? null : new RoleClaimValue(@event.ClaimValue));
+            => ClaimValues(RoleClaimType(@event.ClaimType))
+                .Remove((@event.ClaimValue == null) ? null : RoleClaimValue(@event.ClaimValue));
 
         private void Apply(RoleClaimAdded @event)
-            => ClaimValues(new RoleClaimType(@event.ClaimType))
-                .Add((@event.ClaimValue == null) ? null : new RoleClaimValue(@event.ClaimValue));
+            => ClaimValues(RoleClaimType(@event.ClaimType))
+                .Add((@event.ClaimValue == null) ? null : RoleClaimValue(@event.ClaimValue));
 
         #endregion Events
 
@@ -139,10 +105,10 @@ namespace ExtenFlow.Identity.Roles.Domain
                 if (claimType.Value != null)
                 {
                     _claims.Add(
-                        new RoleClaimType(claimType.Key),
+                        RoleClaimType(claimType.Key),
                         claimType
                             .Value
-                            .Select(p => (p == null) ? null : new RoleClaimValue(p))
+                            .Select(p => (p == null) ? null : RoleClaimValue(p))
                             .ToHashSet()
                         );
                 }
@@ -162,8 +128,10 @@ namespace ExtenFlow.Identity.Roles.Domain
         private HashSet<RoleClaimValue?> ClaimValues(string claimType)
             => ClaimValues(RoleClaimType(claimType));
 
-        private RoleClaimType RoleClaimType(string claimType) => new RoleClaimType(claimType, EntityName, nameof(Claims));
+        private RoleClaimType RoleClaimType(string claimType)
+            => new RoleClaimType(claimType, EntityName, nameof(Claims));
 
-        private RoleClaimType RoleClaimValue(string claimValue) => new RoleClaimType(claimValue, EntityName, nameof(Claims));
+        private RoleClaimValue RoleClaimValue(string claimValue)
+            => new RoleClaimValue(claimValue, EntityName, nameof(Claims));
     }
 }

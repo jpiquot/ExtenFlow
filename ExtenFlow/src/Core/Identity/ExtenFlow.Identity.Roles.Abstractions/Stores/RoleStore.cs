@@ -6,9 +6,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
-using ExtenFlow.Actors;
 using ExtenFlow.Domain.Exceptions;
-using ExtenFlow.Identity.Roles.Actors;
 using ExtenFlow.Identity.Roles.Application;
 using ExtenFlow.Identity.Roles.Commands;
 using ExtenFlow.Identity.Roles.Exceptions;
@@ -29,6 +27,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         private readonly IdentityErrorDescriber _describer;
         private readonly ILogger<RoleStore> _log;
         private readonly IRoleCommandService _roleCommandService;
+        private readonly IRoleConsistentQueryService _roleConsistentQueryService;
         private readonly IRoleQueryService _roleQueryService;
         private readonly IUser _user;
 
@@ -36,12 +35,14 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// Initializes a new instance of the <see cref="RoleStore"/> class.
         /// </summary>
         /// <param name="roleCommandService"></param>
+        /// <param name="roleConsistentQueryService"></param>
         /// <param name="roleQueryService"></param>
         /// <param name="user"></param>
         /// <param name="logger"></param>
         /// <param name="describer">The describer.</param>
         public RoleStore(
             IRoleCommandService roleCommandService,
+            IRoleConsistentQueryService roleConsistentQueryService,
             IRoleQueryService roleQueryService,
             IUser user,
             ILogger<RoleStore> logger,
@@ -49,6 +50,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             ) : base(describer ?? new IdentityErrorDescriber())
         {
             _roleCommandService = roleCommandService;
+            _roleConsistentQueryService = roleConsistentQueryService;
             _roleQueryService = roleQueryService;
             _user = user;
             _log = logger;
@@ -59,7 +61,7 @@ namespace ExtenFlow.Identity.Roles.Stores
         /// Gets the roles.
         /// </summary>
         /// <value>The roles.</value>
-        public override IQueryable<Role> Roles => GetAllRoles().GetAwaiter().GetResult().AsQueryable();
+        public override IQueryable<Role> Roles => _roleQueryService.Roles;
 
         /// <summary>
         /// add claim as an asynchronous operation.
@@ -134,7 +136,7 @@ namespace ExtenFlow.Identity.Roles.Stores
                 _log.LogWarning(e.Message);
                 return IdentityResult.Failed(_describer.InvalidRoleName(e.Message));
             }
-            SetRoleValues(role, await _roleQueryService.Ask(new GetRoleDetails(role.Id, _user.Name)));
+            SetRoleValues(role, await _roleConsistentQueryService.Ask(new GetRoleDetails(role.Id, _user.Name)));
             return IdentityResult.Success;
         }
 
@@ -183,7 +185,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(roleId));
             }
-            return ToRole(await _roleQueryService.Ask(new GetRoleDetails(roleId, _user.Name)));
+            return ToRole(await _roleConsistentQueryService.Ask(new GetRoleDetails(roleId, _user.Name)));
         }
 
         /// <summary>
@@ -202,7 +204,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.InvalidRoleNormalizedName, nameof(normalizedRoleName));
             }
-            string? id = await _roleQueryService.Ask(new FindRoleIdByName(normalizedRoleName, _user.Name));
+            string? id = await _roleConsistentQueryService.Ask(new FindRoleIdByName(normalizedRoleName, _user.Name));
             if (id == null)
             {
 #pragma warning disable CS8603 // Possible null reference return.
@@ -231,7 +233,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
-            return _roleQueryService.Ask(new GetRoleClaims(role.Id, _user.Name));
+            return _roleConsistentQueryService.Ask(new GetRoleClaims(role.Id, _user.Name));
         }
 
         /// <summary>
@@ -338,13 +340,12 @@ namespace ExtenFlow.Identity.Roles.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
             _ = role ?? throw new ArgumentNullException(nameof(role));
-            IRoleActor actor = _getRoleActor(role.Id);
             if (role.Id == default)
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
-            await actor.Tell(new RenameRole(role.Id, role.Name, normalizedName, role.ConcurrencyStamp, _user.Name));
-            SetRoleValues(role, await actor.Ask(new GetRoleDetails(role.Id, _user.Name)));
+            await _roleCommandService.Tell(new RenameRole(role.Id, role.Name, normalizedName, role.ConcurrencyStamp, _user.Name));
+            SetRoleValues(role, await _roleConsistentQueryService.Ask(new GetRoleDetails(role.Id, _user.Name)));
         }
 
         /// <summary>
@@ -361,13 +362,12 @@ namespace ExtenFlow.Identity.Roles.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
             _ = role ?? throw new ArgumentNullException(nameof(role));
-            IRoleActor actor = _getRoleActor(role.Id);
             if (role.Id == default)
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
-            await actor.Tell(new RenameRole(role.Id, roleName, role.NormalizedName, role.ConcurrencyStamp, _user.Name));
-            SetRoleValues(role, await actor.Ask(new GetRoleDetails(role.Id, _user.Name)));
+            await _roleCommandService.Tell(new RenameRole(role.Id, roleName, role.NormalizedName, role.ConcurrencyStamp, _user.Name));
+            SetRoleValues(role, await _roleConsistentQueryService.Ask(new GetRoleDetails(role.Id, _user.Name)));
         }
 
         /// <summary>
@@ -423,15 +423,6 @@ namespace ExtenFlow.Identity.Roles.Stores
             var role = new Role();
             SetRoleValues(role, details);
             return role;
-        }
-
-        private async Task<IList<Role>> GetAllRoles()
-        {
-            ThrowIfDisposed();
-            return await Task.WhenAll((await _collection.All())
-                    .Select(p => FindByIdAsync(p, default))
-                    .ToList()
-               );
         }
     }
 }

@@ -10,10 +10,10 @@ using ExtenFlow.Identity.Roles.Queries;
 namespace ExtenFlow.Identity.Roles.Application
 {
     /// <summary>
-    /// Class RoleQueryService. Implements the <see cref="ExtenFlow.Identity.Roles.Application.IRoleQueryService"/>
+    /// Class RoleQueryService. Implements the <see cref="ExtenFlow.Identity.Roles.Application.IRoleConsistentQueryService"/>
     /// </summary>
-    /// <seealso cref="ExtenFlow.Identity.Roles.Application.IRoleQueryService"/>
-    public sealed class RoleQueryService : IRoleQueryService
+    /// <seealso cref="ExtenFlow.Identity.Roles.Application.IRoleConsistentQueryService"/>
+    public sealed class RoleQueryService : IRoleConsistentQueryService
     {
         private readonly Func<string, IRoleActor> _getRoleActor;
         private readonly Func<string, IRoleNameRegistryEntryActor> _getRoleNameRegistryEntryActor;

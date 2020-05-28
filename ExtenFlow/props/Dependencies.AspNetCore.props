@@ -1,6 +1,6 @@
 <Project>
 	<PropertyGroup>
-		<AspNetCoreVersion>3.1.3</AspNetCoreVersion>
+		<AspNetCoreVersion>3.1.4</AspNetCoreVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageManagement Include="Microsoft.AspNetCore.Identity.Specification.Tests" Version="$(AspNetCoreVersion)" />
@@ -21,5 +21,6 @@
 		<PackageManagement Include="Microsoft.Extensions.Localization.Abstractions" Version="$(AspNetCoreVersion)" />
 		<PackageManagement Include="Microsoft.Extensions.Identity.Core" Version="$(AspNetCoreVersion)" />
 		<PackageManagement Include="Microsoft.Extensions.Identity.Stores" Version="$(AspNetCoreVersion)" />
+		<PackageManagement Include="Microsoft.EntityFrameworkCore.Relational" Version="$(AspNetCoreVersion)" />
 	</ItemGroup>
 </Project>

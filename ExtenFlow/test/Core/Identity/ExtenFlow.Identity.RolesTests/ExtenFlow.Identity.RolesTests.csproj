@@ -16,8 +16,4 @@
 		<PackageReference Include="xunit.assert" />
 		<PackageReference Include="xunit.core" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\src\Core\Identity\ExtenFlow.Identity.Roles\ExtenFlow.Identity.Roles.csproj" />
-	</ItemGroup>
 </Project>

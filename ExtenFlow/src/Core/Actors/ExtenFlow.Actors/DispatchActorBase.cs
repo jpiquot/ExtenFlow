@@ -151,7 +151,12 @@ namespace ExtenFlow.Actors
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns></returns>
-        protected abstract Task<IList<IEvent>> ReceiveCommand(ICommand command);
+        protected virtual Task<IList<IEvent>> ReceiveCommand(ICommand command)
+        {
+            _ = command ?? throw new ArgumentNullException(nameof(command));
+            // The command '{0}' is not supported by '{1}'.
+            throw new NotSupportedException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.CommandNotSupported, command.GetType().Name, GetType().Name));
+        }
 
         /// <summary>
         /// Receives the specified event.

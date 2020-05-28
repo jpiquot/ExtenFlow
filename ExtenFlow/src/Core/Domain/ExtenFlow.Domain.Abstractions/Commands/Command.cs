@@ -36,7 +36,7 @@ namespace ExtenFlow.Domain
         /// </param>
         /// <param name="id">The Id of this command</param>
         /// <param name="dateTime">The date time of the command submission</param>
-        protected Command(string aggregateType, string? aggregateId, string userId, string? concurrencyCheckStamp, string? correlationId, string? id, DateTimeOffset? dateTime) : base(aggregateType, aggregateId, userId, correlationId, id, dateTime)
+        protected Command(string aggregateType, string? aggregateId, string userId, string? concurrencyCheckStamp = null, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null) : base(aggregateType, aggregateId, userId, correlationId, id, dateTime)
         {
             ConcurrencyCheckStamp = concurrencyCheckStamp ?? Guid.NewGuid().ToBase64String();
         }

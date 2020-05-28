@@ -27,7 +27,7 @@ namespace ExtenFlow.Actors.Tests
         public int FakeInt { get; set; }
         public string FakeString { get; set; }
 
-        protected override IEnumerable<object> GetEqualityComponents()
+        protected override IEnumerable<object> GetAtomicValues()
         {
             yield return FakeGuid;
             yield return FakeInt;
