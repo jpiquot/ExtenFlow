@@ -1,13 +1,13 @@
 ﻿using System;
 
-using ExtenFlow.Domain;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Identity.Roles.Commands
 {
     /// <summary>
     /// Base Role command class
     /// </summary>
-    /// <seealso cref="ExtenFlow.Domain.Command"/>
+    /// <seealso cref="Command"/>
     public abstract class RoleNameRegistryCommand : Command
     {
         /// <summary>

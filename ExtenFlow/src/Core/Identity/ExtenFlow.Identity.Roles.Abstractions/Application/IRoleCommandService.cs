@@ -1,5 +1,5 @@
-﻿using ExtenFlow.Domain.Commands;
-using ExtenFlow.Identity.Roles.Commands;
+﻿using ExtenFlow.Identity.Roles.Commands;
+using ExtenFlow.Messages.Commands;
 
 namespace ExtenFlow.Identity.Roles.Application
 {

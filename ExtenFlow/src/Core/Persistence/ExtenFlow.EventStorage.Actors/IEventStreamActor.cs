@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dapr.Actors;
 using ExtenFlow.Domain;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.EventStorage.Actors
 {

@@ -1,14 +1,13 @@
 ﻿using System;
 
-using ExtenFlow.Domain;
-using ExtenFlow.Identity.Roles.Models;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Identity.Roles.Events
 {
     /// <summary>
     /// Base Role event class
     /// </summary>
-    /// <seealso cref="ExtenFlow.Domain.Event"/>
+    /// <seealso cref="Event"/>
     public abstract class RoleEvent : Event
     {
         /// <summary>
@@ -18,7 +17,7 @@ namespace ExtenFlow.Identity.Roles.Events
         [Obsolete("Can only be used by serializers")]
         protected RoleEvent()
         {
-            AggregateType = nameof(Role);
+            AggregateType = string.Empty;
         }
 
         /// <summary>
@@ -32,7 +31,7 @@ namespace ExtenFlow.Identity.Roles.Events
         /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
         protected RoleEvent(string aggregateId, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
-            : base(nameof(Role), aggregateId, userId, correlationId, id, dateTime)
+            : base(AggregateName.Role, aggregateId, userId, correlationId, id, dateTime)
         {
         }
     }

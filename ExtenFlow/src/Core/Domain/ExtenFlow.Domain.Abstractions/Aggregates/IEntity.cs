@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Domain.Aggregates
 {

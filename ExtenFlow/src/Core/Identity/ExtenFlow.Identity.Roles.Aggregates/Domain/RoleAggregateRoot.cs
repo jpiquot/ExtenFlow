@@ -11,6 +11,7 @@ using ExtenFlow.Identity.Roles.Exceptions;
 using ExtenFlow.Identity.Roles.Queries;
 using ExtenFlow.Identity.Roles.ValueObjects;
 using ExtenFlow.Infrastructure.ValueObjects;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Identity.Roles.Domain
 {

@@ -2,7 +2,7 @@
 
 using Dapr.Actors;
 
-using ExtenFlow.Domain;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Actors
 {

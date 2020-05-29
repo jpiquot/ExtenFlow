@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-using ExtenFlow.Domain;
 using ExtenFlow.Identity.Roles.Actors;
 using ExtenFlow.Identity.Roles.Queries;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Identity.Roles.Application
 {

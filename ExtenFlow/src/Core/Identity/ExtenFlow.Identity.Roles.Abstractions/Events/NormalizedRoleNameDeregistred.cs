@@ -8,7 +8,7 @@ namespace ExtenFlow.Identity.Roles.Events
     /// Class NormalizedRoleNameUnregistred. Implements the <see cref="ExtenFlow.Identity.Roles.Events.RoleEvent"/>
     /// </summary>
     /// <seealso cref="ExtenFlow.Identity.Roles.Events.RoleEvent"/>
-    public class NormalizedRoleNameDeregistred : Event
+    public class NormalizedRoleNameDeregistred : RoleNameRegistryEvent
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NormalizedRoleNameDeregistred"/> class.
@@ -32,7 +32,7 @@ namespace ExtenFlow.Identity.Roles.Events
         /// <param name="id">The Id of this command.</param>
         /// <param name="dateTime">The date time of the command submission.</param>
         public NormalizedRoleNameDeregistred(string aggregateId, string roleId, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
-            : base("NormalizedRoleName", aggregateId, userId, correlationId, id, dateTime)
+            : base(aggregateId, userId, correlationId, id, dateTime)
         {
             RoleId = roleId;
         }

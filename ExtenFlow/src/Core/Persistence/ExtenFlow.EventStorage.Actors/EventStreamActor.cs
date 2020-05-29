@@ -7,6 +7,7 @@ using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
 using ExtenFlow.Domain;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.EventStorage.Actors
 {

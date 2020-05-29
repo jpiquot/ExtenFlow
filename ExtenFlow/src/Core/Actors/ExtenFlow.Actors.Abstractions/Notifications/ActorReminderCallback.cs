@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.Domain;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Actors
 {
     /// <summary>
     /// Actor reminder callback notification.
     /// </summary>
-    /// <seealso cref="ExtenFlow.Domain.Message"/>
+    /// <seealso cref="Message"/>
     public class ActorReminderCallback : Message
     {
         /// <summary>

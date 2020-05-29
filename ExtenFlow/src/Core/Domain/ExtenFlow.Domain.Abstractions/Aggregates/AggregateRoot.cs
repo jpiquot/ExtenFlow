@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using ExtenFlow.Domain.Exceptions;
 using ExtenFlow.Infrastructure.ValueObjects;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Domain.Aggregates
 {

@@ -2,14 +2,14 @@
 
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.Domain;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Actors
 {
     /// <summary>
     /// Actor timer callback notification.
     /// </summary>
-    /// <seealso cref="ExtenFlow.Domain.Message"/>
+    /// <seealso cref="Message"/>
     public class ActorTimerCallback : Message
     {
         /// <summary>

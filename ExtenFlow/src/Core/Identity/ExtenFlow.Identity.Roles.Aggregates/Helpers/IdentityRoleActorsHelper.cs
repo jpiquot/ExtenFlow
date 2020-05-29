@@ -2,7 +2,7 @@
 
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.Domain.Dispatcher;
+using ExtenFlow.EventBus;
 using ExtenFlow.EventStorage;
 using ExtenFlow.Identity.Roles.Application;
 
@@ -19,7 +19,7 @@ namespace ExtenFlow.Identity.Roles.Helpers
         /// <param name="actorRuntime">The actor runtime.</param>
         /// <param name="eventBus"></param>
         /// <param name="eventStore"></param>
-        public static void RegisterIdentityRoleActors(this ActorRuntime actorRuntime, IEventBus eventBus, IEventStore eventStore)
+        public static void RegisterRoleActors(this ActorRuntime actorRuntime, IEventBus eventBus, IEventStore eventStore)
         {
             if (actorRuntime == null)
             {

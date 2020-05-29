@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.Domain;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Actors
 {

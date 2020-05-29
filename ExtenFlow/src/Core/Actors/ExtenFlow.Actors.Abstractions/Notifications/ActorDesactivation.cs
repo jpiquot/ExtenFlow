@@ -2,14 +2,14 @@
 
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.Domain;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Actors
 {
     /// <summary>
     /// Actor desactivation notification.
     /// </summary>
-    /// <seealso cref="ExtenFlow.Domain.Message"/>
+    /// <seealso cref="Message"/>
     public class ActorDesactivation : Message
     {
         /// <summary>

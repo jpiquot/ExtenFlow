@@ -6,7 +6,7 @@ namespace ExtenFlow.Identity.Roles.Events
     /// Class NormalizedRoleNameRegistred. Implements the <see cref="ExtenFlow.Identity.Roles.Events.RoleEvent"/>
     /// </summary>
     /// <seealso cref="ExtenFlow.Identity.Roles.Events.RoleEvent"/>
-    public class NormalizedRoleNameRegistred : RoleEvent
+    public class NormalizedRoleNameRegistred : RoleNameRegistryEvent
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NormalizedRoleNameRegistred"/> class.

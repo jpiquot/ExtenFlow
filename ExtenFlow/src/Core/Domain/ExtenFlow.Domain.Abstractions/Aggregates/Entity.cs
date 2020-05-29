@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 using ExtenFlow.Domain.Exceptions;
+using ExtenFlow.Messages;
 
 #pragma warning disable CA1716 // Identifiers should not match keywords
 

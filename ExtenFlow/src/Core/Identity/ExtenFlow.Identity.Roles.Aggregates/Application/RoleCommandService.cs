@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using ExtenFlow.Domain;
 using ExtenFlow.Identity.Roles.Actors;
 using ExtenFlow.Identity.Roles.Commands;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Identity.Roles.Application
 {

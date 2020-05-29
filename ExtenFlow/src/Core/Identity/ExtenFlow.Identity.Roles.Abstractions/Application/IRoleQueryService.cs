@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Security.Claims;
 
-using ExtenFlow.Domain.Commands;
 using ExtenFlow.Identity.Roles.Models;
 using ExtenFlow.Identity.Roles.Queries;
+using ExtenFlow.Messages.Commands;
 
 namespace ExtenFlow.Identity.Roles.Application
 {

@@ -1,14 +1,14 @@
 ﻿using System;
 
-using ExtenFlow.Domain;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Identity.Roles.Queries
 {
     /// <summary>
-    /// Class RoleQuery. Implements the <see cref="ExtenFlow.Domain.Query{T}"/>
+    /// Class RoleQuery. Implements the <see cref="Query{T}"/>
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <seealso cref="ExtenFlow.Domain.Query{T}"/>
+    /// <seealso cref="Query{T}"/>
     public class RoleQuery<T> : Query<T>
     {
         /// <summary>

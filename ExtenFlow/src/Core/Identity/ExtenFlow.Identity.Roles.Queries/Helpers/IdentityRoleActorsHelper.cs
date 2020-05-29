@@ -2,9 +2,8 @@
 
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.Domain.Dispatcher;
+using ExtenFlow.EventBus;
 using ExtenFlow.EventStorage;
-using ExtenFlow.Identity.Roles.Queries;
 
 namespace ExtenFlow.Identity.Roles.Queries
 {

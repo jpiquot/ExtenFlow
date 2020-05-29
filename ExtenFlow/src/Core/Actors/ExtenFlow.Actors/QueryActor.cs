@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.Domain;
-using ExtenFlow.Domain.Dispatcher;
+using ExtenFlow.EventBus;
 using ExtenFlow.EventStorage;
+using ExtenFlow.Messages;
 
 namespace ExtenFlow.Actors
 {
