@@ -156,6 +156,9 @@
   <data name="ResultValueIsNull" xml:space="preserve">
     <value>The result contains a null value.</value>
   </data>
+  <data name="StringInvalidGuid" xml:space="preserve">
+    <value>The string is not a valid Guid value.</value>
+  </data>
   <data name="StringLengthNotSupported" xml:space="preserve">
     <value>The string '%1' length is '%2'. String length must be in the range : [%3-%4].</value>
   </data>

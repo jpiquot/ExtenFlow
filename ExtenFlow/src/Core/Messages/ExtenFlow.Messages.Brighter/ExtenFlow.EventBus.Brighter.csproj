@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>$(NetCoreAppTargetFramework)</TargetFramework>
+	</PropertyGroup>
+	<PropertyGroup>
+		<Description>This package contains the reference assemblies for ExtenFlow paramore brighter based bus.</Description>
+		<PackageTags>$(PackageTags);Event Bus;Brighter</PackageTags>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Paramore.Brighter" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ExtenFlow.EventBus.Abstractions\ExtenFlow.EventBus.Abstractions.csproj" />
+		<ProjectReference Include="..\ExtenFlow.Messages.Abstractions\ExtenFlow.Messages.Abstractions.csproj" />
+	</ItemGroup>
+</Project>

@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using ExtenFlow.Messages;
-
-namespace ExtenFlow.EventBus
+namespace ExtenFlow.Messages
 {
     /// <summary>
     /// Message receiver

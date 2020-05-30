@@ -178,6 +178,15 @@ namespace ExtenFlow.Infrastructure.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The string is not a valid Guid value..
+        /// </summary>
+        internal static string StringInvalidGuid {
+            get {
+                return ResourceManager.GetString("StringInvalidGuid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The string &apos;%1&apos; length is &apos;%2&apos;. String length must be in the range : [%3-%4]..
         /// </summary>
         internal static string StringLengthNotSupported {

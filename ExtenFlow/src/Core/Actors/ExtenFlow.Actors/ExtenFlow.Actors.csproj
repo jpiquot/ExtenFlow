@@ -16,7 +16,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Infrastructure\ExtenFlow.Infrastructure.Abstractions\ExtenFlow.Infrastructure.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Persistence\ExtenFlow.EventStorage.Abstractions\ExtenFlow.EventStorage.Abstractions.csproj" />
-		<ProjectReference Include="..\..\PubSub\ExtenFlow.EventBus.Abstractions\ExtenFlow.EventBus.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Services\ExtenFlow.Services.Abstractions\ExtenFlow.Services.Abstractions.csproj" />
 		<ProjectReference Include="..\ExtenFlow.Actors.Abstractions\ExtenFlow.Actors.Abstractions.csproj" />
 	</ItemGroup>

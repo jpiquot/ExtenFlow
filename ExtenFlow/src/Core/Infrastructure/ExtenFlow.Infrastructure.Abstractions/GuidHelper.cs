@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Buffers.Text;
 using System.Runtime.InteropServices;
 
@@ -40,11 +41,59 @@ namespace ExtenFlow.Infrastructure
                 {
                     slash => '_',
                     plus => '-',
-                    _ => (char)encodedBytes[i],
+                    _ => (char)encodedBytes[i]
                 };
             }
 
             return new string(chars);
+        }
+
+        /// <summary>
+        /// Converts to guid.
+        /// </summary>
+        /// <param name="guidString">The unique identifier string.</param>
+        /// <returns>System.Nullable&lt;Guid&gt;.</returns>
+        /// <exception cref="System.ArgumentException">guidString</exception>
+        public static Guid ToGuid(this string guidString)
+            => ToGuidOrDefault(guidString) ?? throw new ArgumentException(Properties.Resources.StringInvalidGuid, nameof(guidString));
+
+        /// <summary>
+        /// Converts to guidordefault.
+        /// </summary>
+        /// <param name="guidString">The unique identifier string.</param>
+        /// <returns>System.Nullable&lt;Guid&gt;.</returns>
+        public static Guid? ToGuidOrDefault(this string guidString)
+        {
+            if (string.IsNullOrWhiteSpace(guidString))
+            {
+                return null;
+            }
+            if (guidString.Length == 22 || (guidString.Length == 24 && guidString[22] == '=' && guidString[23] == '=')) // base 64 string
+            {
+                Span<byte> base64Bytes = stackalloc byte[24];
+                const byte slash = (byte)'/';
+                const byte plus = (byte)'+';
+                for (int i = 0; i < 22; i++)
+                {
+                    base64Bytes[i] = (guidString[i]) switch
+                    {
+                        '_' => slash,
+                        '-' => plus,
+                        _ => (byte)guidString[i]
+                    };
+                }
+                base64Bytes[22] = base64Bytes[23] = (byte)'=';
+                Span<byte> guidBytes = stackalloc byte[16];
+                OperationStatus status = Base64.DecodeFromUtf8(base64Bytes, guidBytes, out _, out _);
+                if (status == OperationStatus.Done)
+                {
+                    return new Guid(guidBytes);
+                }
+                return null;
+            }
+            return Guid.TryParse(guidString, out Guid uniqueId) ?
+                (Guid?)uniqueId :
+                null;
         }
     }
 }
