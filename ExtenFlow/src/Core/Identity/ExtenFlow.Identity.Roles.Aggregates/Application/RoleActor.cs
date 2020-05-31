@@ -2,7 +2,6 @@
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
-using ExtenFlow.EventStorage;
 using ExtenFlow.Identity.Roles.Domain;
 using ExtenFlow.Messages.Events;
 

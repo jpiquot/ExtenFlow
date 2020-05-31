@@ -2,7 +2,7 @@
 
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.EventStorage;
+using ExtenFlow.Actors;
 using ExtenFlow.Identity.Roles.Application;
 using ExtenFlow.Messages.Events;
 
@@ -21,7 +21,7 @@ namespace ExtenFlow.Identity.Roles.Helpers
         /// The event publisher used to send events on the domain integration bus.
         /// </param>
         /// <param name="eventStore">The event store</param>
-        public static void RegisterRoleActors(this ActorRuntime actorRuntime, IEventPublisher eventPublisher, IEventStore eventStore)
+        public static void RegisterRoleActors(this ActorRuntime actorRuntime, IEventPublisherBuilder eventPublisher, IEventStoreBuilder eventStore)
         {
             if (actorRuntime == null)
             {
@@ -32,17 +32,17 @@ namespace ExtenFlow.Identity.Roles.Helpers
                     => new RoleActor(
                         service,
                         id,
-                        eventPublisher,
-                        eventStore
+                        eventPublisher.Build(),
+                        eventStore.Name<RoleActor>(id).Build()
                         )
                 ));
-            actorRuntime.RegisterActor<RoleNameActor>(information
+            actorRuntime.RegisterActor<RoleNameRegistryActor>(information
                 => new ActorService(information, (service, id)
-                    => new RoleNameActor(
+                    => new RoleNameRegistryActor(
                         service,
                         id,
-                        eventPublisher,
-                        eventStore
+                        eventPublisher.Build(),
+                        eventStore.Name<RoleNameRegistryActor>(id).Build()
                         )
                 ));
         }

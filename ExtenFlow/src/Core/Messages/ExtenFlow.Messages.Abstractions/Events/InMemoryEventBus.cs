@@ -9,6 +9,7 @@ namespace ExtenFlow.Messages.Events
     /// <summary>
     /// Class InMemoryEventBus. Implements the <see cref="ExtenFlow.Messages.Events.IEventPublisher"/>
     /// </summary>
+    /// <remarks>Only used for testing.</remarks>
     /// <seealso cref="ExtenFlow.Messages.Events.IEventPublisher"/>
     public class InMemoryEventBus : IEventPublisher
     {

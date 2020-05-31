@@ -6,7 +6,6 @@ using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Domain.Aggregates;
-using ExtenFlow.EventStorage;
 using ExtenFlow.Messages;
 using ExtenFlow.Messages.Events;
 

@@ -70,6 +70,15 @@ namespace ExtenFlow.Messages.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid event store transaction identifier : &apos;%1&apos;..
+        /// </summary>
+        public static string InvalidEventStoreTransactionId {
+            get {
+                return ResourceManager.GetString("InvalidEventStoreTransactionId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;%1&apos; is not a valid query for &apos;%2&apos;..
         /// </summary>
         public static string InvalidQuery {

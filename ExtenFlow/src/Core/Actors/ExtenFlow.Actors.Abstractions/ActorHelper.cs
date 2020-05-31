@@ -2,9 +2,11 @@
 using System.Globalization;
 using System.Threading.Tasks;
 
+using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Messages;
+using ExtenFlow.Messages.Events;
 
 namespace ExtenFlow.Actors
 {
@@ -30,7 +32,9 @@ namespace ExtenFlow.Actors
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns>System.String.</returns>
-        public static string ActorName<T>() => ActorName(typeof(T));
+        public static string ActorName<T>()
+            where T : Actor
+            => ActorName(typeof(T));
 
         /// <summary>
         /// The actors type name.
@@ -80,6 +84,23 @@ namespace ExtenFlow.Actors
         }
 
         /// <summary>
+        /// Names the specified actor identifier.
+        /// </summary>
+        /// <typeparam name="TActor">The type of the t actor.</typeparam>
+        /// <param name="builder">The builder.</param>
+        /// <param name="actorId">The actor identifier.</param>
+        /// <returns>IEventStoreBuilder.</returns>
+        /// <exception cref="System.ArgumentNullException">builder</exception>
+        /// <exception cref="System.ArgumentNullException">actorId</exception>
+        public static IEventStoreBuilder Name<TActor>(this IEventStoreBuilder builder, ActorId actorId)
+            where TActor : Actor
+        {
+            _ = builder ?? throw new ArgumentNullException(nameof(builder));
+            _ = actorId ?? throw new ArgumentNullException(nameof(actorId));
+            return builder.Name(StreamName<TActor>(actorId.GetId()));
+        }
+
+        /// <summary>
         /// Sends a notification message.
         /// </summary>
         /// <param name="actor">The actor.</param>
@@ -98,6 +119,15 @@ namespace ExtenFlow.Actors
             }
             return actor.Notify(new Envelope(message));
         }
+
+        /// <summary>
+        /// Actors the name.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns>System.String.</returns>
+        public static string StreamName<T>(string id)
+            where T : Actor
+            => $"{ActorName(typeof(T))}-[{id}]";
 
         /// <summary>
         /// Sends a command and wait for the execution ends.

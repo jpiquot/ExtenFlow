@@ -2,7 +2,6 @@
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
-using ExtenFlow.EventStorage;
 using ExtenFlow.Identity.Roles.Domain;
 using ExtenFlow.Messages.Events;
 
@@ -12,7 +11,7 @@ namespace ExtenFlow.Identity.Roles.Application
     /// Class RoleActor. Implements the <see cref="ExtenFlow.Actors.AggregateRootActor"/>
     /// </summary>
     /// <seealso cref="ExtenFlow.Actors.AggregateRootActor"/>
-    public class RoleNameActor : AggregateRootActor
+    public class RoleNameRegistryActor : AggregateRootActor
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleActor"/> class.
@@ -24,7 +23,7 @@ namespace ExtenFlow.Identity.Roles.Application
         /// </param>
         /// <param name="eventStore">The event store</param>
         /// <param name="actorStateManager">The actor state manager.</param>
-        public RoleNameActor(
+        public RoleNameRegistryActor(
              ActorService actorService,
              ActorId actorId,
              IEventPublisher eventPublisher,

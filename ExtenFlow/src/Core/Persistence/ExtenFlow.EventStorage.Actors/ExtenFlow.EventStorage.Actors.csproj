@@ -15,6 +15,5 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Actors\ExtenFlow.Actors.Abstractions\ExtenFlow.Actors.Abstractions.csproj" />
-		<ProjectReference Include="..\ExtenFlow.EventStorage.Abstractions\ExtenFlow.EventStorage.Abstractions.csproj" />
 	</ItemGroup>
 </Project>

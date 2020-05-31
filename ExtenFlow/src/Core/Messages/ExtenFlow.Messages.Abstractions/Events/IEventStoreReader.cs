@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using ExtenFlow.Messages;
-
-namespace ExtenFlow.EventStorage
+namespace ExtenFlow.Messages.Events
 {
     /// <summary>
     /// Event store reader

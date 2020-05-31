@@ -6,26 +6,27 @@ using System.Threading.Tasks;
 using ExtenFlow.Actors;
 using ExtenFlow.Domain;
 using ExtenFlow.Messages;
+using ExtenFlow.Messages.Events;
 
 namespace ExtenFlow.EventStorage.Actors
 {
     /// <summary>
-    /// Class EventStoreStream. Implements the <see cref="ExtenFlow.EventStorage.IEventStore"/>
+    /// Class EventStoreStream. Implements the <see cref="IEventStore"/>
     /// </summary>
-    /// <seealso cref="ExtenFlow.EventStorage.IEventStore"/>
-    public class EventStoreStream : IEventStore
+    /// <seealso cref="IEventStore"/>
+    public class EventStore : IEventStore
     {
         private readonly IActorSystem _actorSystem;
         private readonly string _streamId;
         private IEventStreamActor? _streamActor;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EventStoreStream"/> class.
+        /// Initializes a new instance of the <see cref="EventStore"/> class.
         /// </summary>
         /// <param name="aggregateType">Type of the aggregate.</param>
         /// <param name="aggregateId">The aggregate identifier.</param>
         /// <param name="actorSystem"></param>
-        public EventStoreStream(string aggregateType, string aggregateId, IActorSystem? actorSystem = null)
+        public EventStore(string aggregateType, string aggregateId, IActorSystem? actorSystem = null)
         {
             _streamId = $"{aggregateType}-[{aggregateId}]";
             _actorSystem = actorSystem ?? new ActorSystem();

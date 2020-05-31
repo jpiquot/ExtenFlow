@@ -4,17 +4,21 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-using ExtenFlow.Messages;
-
-namespace ExtenFlow.EventStorage.InMemory
+namespace ExtenFlow.Messages.Events
 {
     /// <summary>
-    /// Class EventStoreStream. Implements the <see cref="ExtenFlow.EventStorage.IEventStore"/>
+    /// Class InMemoryEventStore.
     /// </summary>
-    /// <seealso cref="ExtenFlow.EventStorage.IEventStore"/>
-    public class EventStore : IEventStore
+    /// <remarks>Only used for testing.</remarks>
+    public class InMemoryEventStore : IEventStore
     {
-        private readonly Dictionary<long, IList<IEvent>> _events = new Dictionary<long, IList<IEvent>>();
+        private Dictionary<long, IList<IEvent>>? _events;
+
+        /// <summary>
+        /// Gets the events.
+        /// </summary>
+        /// <value>The events.</value>
+        protected Dictionary<long, IList<IEvent>> Events => _events ?? (_events = new Dictionary<long, IList<IEvent>>());
 
         /// <summary>
         /// Appends the specified events to the store stream.
@@ -24,9 +28,9 @@ namespace ExtenFlow.EventStorage.InMemory
         /// <exception cref="System.NotImplementedException"></exception>
         public Task<string> Append(IList<IEvent> events)
         {
-            long version = _events.LastOrDefault().Key + 1;
+            long version = Events.LastOrDefault().Key + 1;
 
-            _events.Add(version, events);
+            Events.Add(version, events);
             return Task.FromResult(version.ToString(CultureInfo.InvariantCulture));
         }
 
@@ -44,13 +48,13 @@ namespace ExtenFlow.EventStorage.InMemory
             long fromVersion = 0;
             if (!string.IsNullOrWhiteSpace(afterVersion))
             {
-                if (!long.TryParse(afterVersion, out fromVersion))
+                if (!long.TryParse(afterVersion, out fromVersion) || !Events.ContainsKey(fromVersion))
                 {
-                    // Invalid stream version '%1'. It should be a long integer value.
-                    throw new ArgumentOutOfRangeException(nameof(afterVersion), string.Format(CultureInfo.CurrentCulture, Properties.Resources.InvalidStreamNumberNotLong, afterVersion));
+                    // Invalid event store transaction identifier : '%1'.
+                    throw new ArgumentOutOfRangeException(nameof(afterVersion), string.Format(CultureInfo.CurrentCulture, Properties.Resources.InvalidEventStoreTransactionId, afterVersion));
                 }
             }
-            IEnumerable<KeyValuePair<long, IList<IEvent>>> query = _events.Where(p => fromVersion == 0 || p.Key > fromVersion);
+            IEnumerable<KeyValuePair<long, IList<IEvent>>> query = Events.Where(p => fromVersion == 0 || p.Key > fromVersion);
             if (take != 0)
             {
                 query = query.Take(take);

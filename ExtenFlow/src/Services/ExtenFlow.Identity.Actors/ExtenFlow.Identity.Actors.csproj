@@ -11,12 +11,8 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Dapr.Actors.AspNetCore" />
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Kubernetes.Tools.Targets" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Core\Identity\ExtenFlow.Identity.Roles.Aggregates\ExtenFlow.Identity.Roles.Aggregates.csproj" />
-	  <ProjectReference Include="..\..\Core\Identity\ExtenFlow.Identity.Roles.Queries\ExtenFlow.Identity.Roles.Queries.csproj" />
-	  <ProjectReference Include="..\..\Core\Persistence\ExtenFlow.EventStorage.InMemory\ExtenFlow.EventStorage.InMemory.csproj" />
+		<ProjectReference Include="..\..\Core\Identity\ExtenFlow.Identity.Roles.Aggregates\ExtenFlow.Identity.Roles.Aggregates.csproj" />
 	</ItemGroup>
 </Project>

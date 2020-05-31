@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.EventStorage;
 using ExtenFlow.Messages;
 using ExtenFlow.Messages.Events;
 

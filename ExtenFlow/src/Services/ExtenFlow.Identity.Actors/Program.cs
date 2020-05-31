@@ -3,9 +3,6 @@ using System;
 using Dapr.Actors.AspNetCore;
 
 using ExtenFlow.EventStorage;
-using ExtenFlow.EventStorage.InMemory;
-using ExtenFlow.Identity.Roles.Helpers;
-using ExtenFlow.Identity.Roles.Queries;
 using ExtenFlow.Messages.Events;
 
 using Microsoft.AspNetCore;
