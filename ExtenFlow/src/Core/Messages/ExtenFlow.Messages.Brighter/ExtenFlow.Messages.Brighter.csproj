@@ -15,7 +15,7 @@
 		<PackageReference Include="Paramore.Brighter" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\ExtenFlow.EventBus.Abstractions\ExtenFlow.EventBus.Abstractions.csproj" />
+		<ProjectReference Include="..\..\Actors\ExtenFlow.Actors.Abstractions\ExtenFlow.Actors.Abstractions.csproj" />
 		<ProjectReference Include="..\ExtenFlow.Messages.Abstractions\ExtenFlow.Messages.Abstractions.csproj" />
 	</ItemGroup>
 </Project>

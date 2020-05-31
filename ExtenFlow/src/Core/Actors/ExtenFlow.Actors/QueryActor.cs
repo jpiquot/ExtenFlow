@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.EventBus;
 using ExtenFlow.EventStorage;
 using ExtenFlow.Messages;
+using ExtenFlow.Messages.Events;
 
 namespace ExtenFlow.Actors
 {
@@ -19,26 +19,32 @@ namespace ExtenFlow.Actors
     /// <seealso cref="ExtenFlow.Actors.IQueryActor"/>
     public class QueryActor : DispatchActorBase, IQueryActor
     {
-        private readonly IEventStore _eventStore;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="QueryActor"/> class.
         /// </summary>
         /// <param name="actorService">The actor service.</param>
         /// <param name="actorId">The actor identifier.</param>
-        /// <param name="eventBus">The event bus.</param>
-        /// <param name="eventStore"></param>
+        /// <param name="eventPublisher">
+        /// The event publisher used to send events on the domain integration bus.
+        /// </param>
+        /// <param name="eventStore">The event store reader.</param>
         /// <param name="actorStateManager">The actor state manager.</param>
         protected QueryActor(
             ActorService actorService,
             ActorId actorId,
-            IEventBus eventBus,
-            IEventStore eventStore,
+            IEventPublisher eventPublisher,
+            IEventStoreReader eventStore,
             IActorStateManager? actorStateManager)
-            : base(actorService, actorId, eventBus, actorStateManager)
+            : base(actorService, actorId, eventPublisher, actorStateManager)
         {
-            _eventStore = eventStore;
+            EventStore = eventStore;
         }
+
+        /// <summary>
+        /// Gets the event store reader.
+        /// </summary>
+        /// <value>The event store.</value>
+        protected IEventStoreReader EventStore { get; }
 
         /// <summary>
         /// Receives the event.

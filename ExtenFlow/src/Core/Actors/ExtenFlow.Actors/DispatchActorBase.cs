@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.EventBus;
 using ExtenFlow.Messages;
+using ExtenFlow.Messages.Events;
 
 namespace ExtenFlow.Actors
 {
@@ -24,23 +24,25 @@ namespace ExtenFlow.Actors
         /// The <see cref="ActorService"/> that will host this actor instance.
         /// </param>
         /// <param name="actorId">Id for the actor.</param>
-        /// <param name="messageQueue">The message queue used to publish events.</param>
+        /// <param name="eventPublisher">
+        /// The event publisher used to send events on the domain integration bus.
+        /// </param>
         /// <param name="actorStateManager">The custom implementation of the StateManager.</param>
         protected DispatchActorBase(
             ActorService actorService,
             ActorId actorId,
-            IEventBus messageQueue,
+            IEventPublisher eventPublisher,
             IActorStateManager? actorStateManager)
             : base(actorService, actorId, actorStateManager)
         {
-            MessageQueue = messageQueue;
+            EventPublisher = eventPublisher;
         }
 
         /// <summary>
-        /// Gets the message queue.
+        /// Gets the event publisher.
         /// </summary>
         /// <value>The message queue.</value>
-        public IEventBus MessageQueue { get; }
+        protected IEventPublisher EventPublisher { get; }
 
         /// <summary>
         /// Asks to execute a query.
@@ -62,7 +64,6 @@ namespace ExtenFlow.Actors
                 // Message aggregate identifier mismatch. Expected='{0}; Message='{1}'.
                 throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.MessageAggregateIdMismatch, Id.GetId(), query.AggregateId));
             }
-            await ReceiveAndProcessQueueMessages();
             return await ReceiveQuery(query);
         }
 
@@ -85,21 +86,7 @@ namespace ExtenFlow.Actors
                 // Message aggregate identifier mismatch. Expected='{0}; Message='{1}'.
                 throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.MessageAggregateIdMismatch, Id.GetId(), message.AggregateId));
             }
-            await ReceiveAndProcessQueueMessages();
             await ReceiveQueueMessage(message);
-        }
-
-        /// <summary>
-        /// Receives the and process messages.
-        /// </summary>
-        public async Task ReceiveAndProcessQueueMessages()
-        {
-            IMessage? message;
-            while ((message = await MessageQueue.ReadNext()) != null)
-            {
-                await ReceiveQueueMessage(message);
-                await MessageQueue.RemoveMessage(message.Id);
-            }
         }
 
         /// <summary>
@@ -121,7 +108,6 @@ namespace ExtenFlow.Actors
                 // Message aggregate identifier mismatch. Expected='{0}; Message='{1}'.
                 throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.MessageAggregateIdMismatch, Id.GetId(), command.AggregateId));
             }
-            await ReceiveAndProcessQueueMessages();
             await HandleCommand(command);
         }
 
@@ -184,13 +170,11 @@ namespace ExtenFlow.Actors
         private async Task HandleCommand(ICommand command)
         {
             var events = await ReceiveCommand(command);
-            Guid batchId = await MessageQueue.Send(events);
             foreach (IEvent anEvent in events)
             {
                 await ReceiveEvent(anEvent, true);
             }
-            await MessageQueue.ConfirmSend(batchId);
-            return;
+            await EventPublisher.Publish(events);
         }
 
         private Task ReceiveQueueMessage(IMessage message)

@@ -92,7 +92,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             }
             try
             {
-                await _roleCommandService.Tell(new AddRoleClaim(role.Id, claim.Type, claim.Value, role.ConcurrencyStamp, _user.Name));
+                await _roleCommandService.Handle(new AddRoleClaim(role.Id, claim.Type, claim.Value, role.ConcurrencyStamp, _user.Name));
             }
             catch (EntityNotFoundException e)
             {
@@ -119,7 +119,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             }
             try
             {
-                await _roleCommandService.Tell(new AddNewRole(role, _user.Name));
+                await _roleCommandService.Handle(new AddNewRole(role, _user.Name));
             }
             catch (EntityConcurrencyCheckFailedException e)
             {
@@ -159,7 +159,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             }
             try
             {
-                await _roleCommandService.Tell(new RemoveRole(role.Id, role.ConcurrencyStamp, _user.Name));
+                await _roleCommandService.Handle(new RemoveRole(role.Id, role.ConcurrencyStamp, _user.Name));
             }
             catch (EntityConcurrencyCheckFailedException e)
             {
@@ -323,7 +323,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleClaimTypeNotDefined, nameof(claim));
             }
-            return _roleCommandService.Tell(new RemoveRoleClaim(role.Id, claim.Type, claim.Value, _user.Name, role.ConcurrencyStamp));
+            return _roleCommandService.Handle(new RemoveRoleClaim(role.Id, claim.Type, claim.Value, _user.Name, role.ConcurrencyStamp));
         }
 
         /// <summary>
@@ -344,7 +344,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
-            await _roleCommandService.Tell(new RenameRole(role.Id, role.Name, normalizedName, role.ConcurrencyStamp, _user.Name));
+            await _roleCommandService.Handle(new RenameRole(role.Id, role.Name, normalizedName, role.ConcurrencyStamp, _user.Name));
             SetRoleValues(role, await _roleConsistentQueryService.Ask(new GetRoleDetails(role.Id, _user.Name)));
         }
 
@@ -366,7 +366,7 @@ namespace ExtenFlow.Identity.Roles.Stores
             {
                 throw new ArgumentException(Properties.Resources.RoleIdNotDefined, nameof(role));
             }
-            await _roleCommandService.Tell(new RenameRole(role.Id, roleName, role.NormalizedName, role.ConcurrencyStamp, _user.Name));
+            await _roleCommandService.Handle(new RenameRole(role.Id, roleName, role.NormalizedName, role.ConcurrencyStamp, _user.Name));
             SetRoleValues(role, await _roleConsistentQueryService.Ask(new GetRoleDetails(role.Id, _user.Name)));
         }
 

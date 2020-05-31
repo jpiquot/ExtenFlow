@@ -30,85 +30,85 @@ namespace ExtenFlow.Identity.Roles.Application
         }
 
         /// <summary>
-        /// Tells the specified command.
+        /// Handles the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>Task.</returns>
-        public Task Tell(AddNewRole command)
-            => TellRole<AddNewRoleValidator>(command);
+        public Task Handle(AddNewRole command)
+            => HandleRole<AddNewRoleValidator>(command);
 
         /// <summary>
-        /// Tells the specified command.
+        /// Handles the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>Task.</returns>
-        public Task Tell(AddRoleClaim command)
-            => TellRole<AddRoleClaimValidator>(command);
+        public Task Handle(AddRoleClaim command)
+            => HandleRole<AddRoleClaimValidator>(command);
 
         /// <summary>
-        /// Tells the specified command.
+        /// Handles the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>Task.</returns>
-        public Task Tell(AddUserToRole command)
-            => TellRole<AddUserToRoleValidator>(command);
+        public Task Handle(AddUserToRole command)
+            => HandleRole<AddUserToRoleValidator>(command);
 
         /// <summary>
-        /// Tells the specified command.
+        /// Handles the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>Task.</returns>
-        public Task Tell(RegisterNormalizedRoleName command)
-            => TellRoleNameRegistry<RegisterNormalizedRoleNameValidator>(command);
+        public Task Handle(RegisterNormalizedRoleName command)
+            => HandleRoleNameRegistry<RegisterNormalizedRoleNameValidator>(command);
 
         /// <summary>
-        /// Tells the specified command.
+        /// Handles the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>Task.</returns>
-        public Task Tell(DeregisterNormalizedRoleName command)
-            => TellRoleNameRegistry<DeregisterNormalizedRoleNameValidator>(command);
+        public Task Handle(DeregisterNormalizedRoleName command)
+            => HandleRoleNameRegistry<DeregisterNormalizedRoleNameValidator>(command);
 
         /// <summary>
-        /// Tells the specified command.
+        /// Handles the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>Task.</returns>
-        public Task Tell(RemoveRole command)
-            => TellRole<RemoveRoleValidator>(command);
+        public Task Handle(RemoveRole command)
+            => HandleRole<RemoveRoleValidator>(command);
 
         /// <summary>
-        /// Tells the specified command.
+        /// Handles the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>Task.</returns>
-        public Task Tell(RemoveRoleClaim command)
-            => TellRole<RemoveRoleClaimValidator>(command);
+        public Task Handle(RemoveRoleClaim command)
+            => HandleRole<RemoveRoleClaimValidator>(command);
 
         /// <summary>
-        /// Tells the specified command.
+        /// Handles the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>Task.</returns>
-        public Task Tell(RemoveUserFromRole command)
-            => TellRole<RenameRoleValidator>(command);
+        public Task Handle(RemoveUserFromRole command)
+            => HandleRole<RenameRoleValidator>(command);
 
         /// <summary>
-        /// Tells the specified command.
+        /// Handles the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>Task.</returns>
-        public Task Tell(RenameRole command)
-            => TellRole<RenameRoleValidator>(command);
+        public Task Handle(RenameRole command)
+            => HandleRole<RenameRoleValidator>(command);
 
         /// <summary>
-        /// Tells the role.
+        /// Handles the role.
         /// </summary>
         /// <typeparam name="TValidator">The type of the t validator.</typeparam>
         /// <param name="command">The command.</param>
         /// <returns>Task.</returns>
         /// <exception cref="ArgumentNullException">command</exception>
-        private Task TellRole<TValidator>(RoleCommand? command)
+        private Task HandleRole<TValidator>(RoleCommand? command)
             where TValidator : RoleCommandValidator, new()
         {
             _ = command ?? throw new ArgumentNullException(nameof(command));
@@ -117,13 +117,13 @@ namespace ExtenFlow.Identity.Roles.Application
         }
 
         /// <summary>
-        /// Tells the role name registry.
+        /// Handles the role name registry.
         /// </summary>
         /// <typeparam name="TValidator">The type of the t validator.</typeparam>
         /// <param name="command">The command.</param>
         /// <returns>Task.</returns>
         /// <exception cref="ArgumentNullException">command</exception>
-        private Task TellRoleNameRegistry<TValidator>(RoleNameRegistryCommand? command)
+        private Task HandleRoleNameRegistry<TValidator>(RoleNameRegistryCommand? command)
             where TValidator : RoleNameRegistryCommandValidator, new()
         {
             _ = command ?? throw new ArgumentNullException(nameof(command));

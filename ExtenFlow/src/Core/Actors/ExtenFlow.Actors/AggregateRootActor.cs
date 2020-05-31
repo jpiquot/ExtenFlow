@@ -6,9 +6,9 @@ using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Domain.Aggregates;
-using ExtenFlow.EventBus;
 using ExtenFlow.EventStorage;
 using ExtenFlow.Messages;
+using ExtenFlow.Messages.Events;
 
 namespace ExtenFlow.Actors
 {
@@ -20,7 +20,6 @@ namespace ExtenFlow.Actors
     /// <seealso cref="ExtenFlow.Actors.IAggregateRootActor"/>
     public class AggregateRootActor : DispatchActorBase, IAggregateRootActor
     {
-        private readonly IEventStore _eventStore;
         private readonly Func<string, IActorStateManager, IAggregateRoot> _getAggregateRoot;
 
         /// <summary>
@@ -29,20 +28,22 @@ namespace ExtenFlow.Actors
         /// <param name="actorService">The actor service.</param>
         /// <param name="actorId">The actor identifier.</param>
         /// <param name="getAggregateRoot">The get aggregate root.</param>
-        /// <param name="eventBus">The event bus.</param>
-        /// <param name="eventStore"></param>
+        /// <param name="eventPublisher">
+        /// The event publisher used to send events on the domain integration bus.
+        /// </param>
+        /// <param name="eventStore">The event store</param>
         /// <param name="actorStateManager">The actor state manager.</param>
         protected AggregateRootActor(
             ActorService actorService,
             ActorId actorId,
             Func<string, IActorStateManager, IAggregateRoot> getAggregateRoot,
-            IEventBus eventBus,
+            IEventPublisher eventPublisher,
             IEventStore eventStore,
             IActorStateManager? actorStateManager)
-            : base(actorService, actorId, eventBus, actorStateManager)
+            : base(actorService, actorId, eventPublisher, actorStateManager)
         {
             _getAggregateRoot = getAggregateRoot;
-            _eventStore = eventStore;
+            EventStore = eventStore;
         }
 
         /// <summary>
@@ -50,6 +51,12 @@ namespace ExtenFlow.Actors
         /// </summary>
         /// <value>The aggregate root.</value>
         protected IAggregateRoot AggregateRoot => _getAggregateRoot(Id.GetId(), StateManager);
+
+        /// <summary>
+        /// Gets the event store.
+        /// </summary>
+        /// <value>The event store.</value>
+        protected IEventStore EventStore { get; }
 
         /// <summary>
         /// Executes the specified command.

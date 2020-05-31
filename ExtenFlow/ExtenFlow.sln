@@ -119,9 +119,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messages", "Messages", "{66
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Messages.Abstractions", "src\Core\Messages\ExtenFlow.Messages.Abstractions\ExtenFlow.Messages.Abstractions.csproj", "{4E5279C5-A005-4877-8402-695FA211635A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.EventBus.Brighter", "src\Core\Messages\ExtenFlow.Messages.Brighter\ExtenFlow.EventBus.Brighter.csproj", "{61AF1056-07AC-44DC-834D-883E2A1E3433}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Messages.Brighter", "src\Core\Messages\ExtenFlow.Messages.Brighter\ExtenFlow.Messages.Brighter.csproj", "{73665268-FE9D-45DB-96D8-822CB6D02B4F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.EventBus.Darker", "src\Core\Messages\ExtenFlow.Messages.Darker\ExtenFlow.EventBus.Darker.csproj", "{9F92FD15-E057-4F3E-AD01-10BEE8D80F41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtenFlow.Messages.Darker", "src\Core\Messages\ExtenFlow.Messages.Darker\ExtenFlow.Messages.Darker.csproj", "{381B9542-E2BD-454E-9A02-239B76396B95}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -225,14 +225,14 @@ Global
 		{4E5279C5-A005-4877-8402-695FA211635A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E5279C5-A005-4877-8402-695FA211635A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E5279C5-A005-4877-8402-695FA211635A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{61AF1056-07AC-44DC-834D-883E2A1E3433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{61AF1056-07AC-44DC-834D-883E2A1E3433}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61AF1056-07AC-44DC-834D-883E2A1E3433}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{61AF1056-07AC-44DC-834D-883E2A1E3433}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9F92FD15-E057-4F3E-AD01-10BEE8D80F41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9F92FD15-E057-4F3E-AD01-10BEE8D80F41}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9F92FD15-E057-4F3E-AD01-10BEE8D80F41}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9F92FD15-E057-4F3E-AD01-10BEE8D80F41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73665268-FE9D-45DB-96D8-822CB6D02B4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73665268-FE9D-45DB-96D8-822CB6D02B4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73665268-FE9D-45DB-96D8-822CB6D02B4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73665268-FE9D-45DB-96D8-822CB6D02B4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{381B9542-E2BD-454E-9A02-239B76396B95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{381B9542-E2BD-454E-9A02-239B76396B95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{381B9542-E2BD-454E-9A02-239B76396B95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{381B9542-E2BD-454E-9A02-239B76396B95}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -278,8 +278,8 @@ Global
 		{C7D0DBEF-4577-4556-AFD3-7FEC1297DDBE} = {D9501120-8225-4C15-A2AB-D0C20F593B22}
 		{6673610A-23E3-4ABF-A8E3-79C5A854E794} = {6F124834-E622-4CD8-B4C5-A6C73F611F14}
 		{4E5279C5-A005-4877-8402-695FA211635A} = {6673610A-23E3-4ABF-A8E3-79C5A854E794}
-		{61AF1056-07AC-44DC-834D-883E2A1E3433} = {6673610A-23E3-4ABF-A8E3-79C5A854E794}
-		{9F92FD15-E057-4F3E-AD01-10BEE8D80F41} = {6673610A-23E3-4ABF-A8E3-79C5A854E794}
+		{73665268-FE9D-45DB-96D8-822CB6D02B4F} = {6673610A-23E3-4ABF-A8E3-79C5A854E794}
+		{381B9542-E2BD-454E-9A02-239B76396B95} = {6673610A-23E3-4ABF-A8E3-79C5A854E794}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B174E5CA-DE64-416A-B7A6-338036C49BF5}

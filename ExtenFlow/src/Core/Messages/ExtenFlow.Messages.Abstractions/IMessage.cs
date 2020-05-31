@@ -10,7 +10,7 @@ namespace ExtenFlow.Messages
         /// <summary>
         /// The aggregate id
         /// </summary>
-        string? AggregateId { get; }
+        string AggregateId { get; }
 
         /// <summary>
         /// The aggregate type

@@ -6,13 +6,14 @@ namespace ExtenFlow.Messages.Commands
     /// Interface ICommandHandler
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface ICommandHandler<T> where T : ICommand
+    public interface ICommandHandler<T>
+        where T : class, ICommand
     {
         /// <summary>
         /// Tells the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <returns>Task.</returns>
-        Task Tell(T command);
+        Task Handle(T command);
     }
 }

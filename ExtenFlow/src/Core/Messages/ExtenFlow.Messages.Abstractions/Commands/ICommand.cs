@@ -3,7 +3,7 @@
     /// <summary>
     /// The base interface for all commands
     /// </summary>
-    public interface ICommand : IRequest
+    public interface ICommand : ExtenFlow.Messages.IRequest
     {
         /// <summary>
         /// Gets the concurrency check stamp.

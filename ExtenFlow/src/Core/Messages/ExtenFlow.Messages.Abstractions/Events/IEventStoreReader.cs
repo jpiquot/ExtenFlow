@@ -6,17 +6,10 @@ using ExtenFlow.Messages;
 namespace ExtenFlow.EventStorage
 {
     /// <summary>
-    /// Message receiver
+    /// Event store reader
     /// </summary>
-    public interface IEventStoreStream
+    public interface IEventStoreReader
     {
-        /// <summary>
-        /// Appends the specified events to the store stream.
-        /// </summary>
-        /// <param name="events">The events to persist.</param>
-        /// <returns>The stored events version.</returns>
-        Task<string> Append(IList<IEvent> events);
-
         /// <summary>
         /// Reads the events from the store.
         /// </summary>

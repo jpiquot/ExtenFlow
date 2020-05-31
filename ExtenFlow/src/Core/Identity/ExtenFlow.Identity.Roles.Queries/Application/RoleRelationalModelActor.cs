@@ -2,8 +2,8 @@
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
-using ExtenFlow.EventBus;
 using ExtenFlow.EventStorage;
+using ExtenFlow.Messages.Events;
 
 namespace ExtenFlow.Identity.Roles.Queries
 {
@@ -20,16 +20,18 @@ namespace ExtenFlow.Identity.Roles.Queries
         /// </summary>
         /// <param name="actorService">The actor service.</param>
         /// <param name="actorId">The actor identifier.</param>
-        /// <param name="eventBus">The event bus.</param>
-        /// <param name="eventStore">The event store.</param>
+        /// <param name="eventPublisher">
+        /// The event publisher used to send events on the domain integration bus.
+        /// </param>
+        /// <param name="eventStore">The event store</param>
         /// <param name="actorStateManager">The actor state manager.</param>
         public RoleRelationalModelActor(
             ActorService actorService,
             ActorId actorId,
-            IEventBus eventBus,
-            IEventStore eventStore,
+            IEventPublisher eventPublisher,
+            IEventStoreReader eventStore,
             IActorStateManager? actorStateManager = null)
-            : base(actorService, actorId, eventBus, eventStore, actorStateManager)
+            : base(actorService, actorId, eventPublisher, eventStore, actorStateManager)
 
         {
         }

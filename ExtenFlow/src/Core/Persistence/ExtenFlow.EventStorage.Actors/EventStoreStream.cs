@@ -10,10 +10,10 @@ using ExtenFlow.Messages;
 namespace ExtenFlow.EventStorage.Actors
 {
     /// <summary>
-    /// Class EventStoreStream. Implements the <see cref="ExtenFlow.EventStorage.IEventStoreStream"/>
+    /// Class EventStoreStream. Implements the <see cref="ExtenFlow.EventStorage.IEventStore"/>
     /// </summary>
-    /// <seealso cref="ExtenFlow.EventStorage.IEventStoreStream"/>
-    public class EventStoreStream : IEventStoreStream
+    /// <seealso cref="ExtenFlow.EventStorage.IEventStore"/>
+    public class EventStoreStream : IEventStore
     {
         private readonly IActorSystem _actorSystem;
         private readonly string _streamId;

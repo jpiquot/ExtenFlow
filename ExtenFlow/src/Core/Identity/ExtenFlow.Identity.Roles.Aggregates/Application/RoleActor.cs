@@ -2,9 +2,9 @@
 using Dapr.Actors.Runtime;
 
 using ExtenFlow.Actors;
-using ExtenFlow.EventBus;
 using ExtenFlow.EventStorage;
 using ExtenFlow.Identity.Roles.Domain;
+using ExtenFlow.Messages.Events;
 
 namespace ExtenFlow.Identity.Roles.Application
 {
@@ -19,20 +19,22 @@ namespace ExtenFlow.Identity.Roles.Application
         /// </summary>
         /// <param name="actorService">The actor service.</param>
         /// <param name="actorId">The actor identifier.</param>
-        /// <param name="eventBus">The event bus.</param>
-        /// <param name="eventStore">The event store.</param>
+        /// <param name="eventPublisher">
+        /// The event publisher used to send events on the domain integration bus.
+        /// </param>
+        /// <param name="eventStore">The event store</param>
         /// <param name="actorStateManager">The actor state manager.</param>
         public RoleActor(
              ActorService actorService,
              ActorId actorId,
-             IEventBus eventBus,
+             IEventPublisher eventPublisher,
              IEventStore eventStore,
              IActorStateManager? actorStateManager = null)
             : base(
                   actorService,
                   actorId,
                   (id, stateManager) => new RoleAggregateRoot(id, new ActorRepository(stateManager)),
-                  eventBus,
+                  eventPublisher,
                   eventStore,
                   actorStateManager)
         {

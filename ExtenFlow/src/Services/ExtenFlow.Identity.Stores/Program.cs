@@ -1,10 +1,13 @@
 using System;
 
 using Dapr.Actors.AspNetCore;
-using ExtenFlow.EventBus;
+
 using ExtenFlow.EventStorage;
 using ExtenFlow.EventStorage.InMemory;
 using ExtenFlow.Identity.Roles.Helpers;
+using ExtenFlow.Identity.Roles.Queries;
+using ExtenFlow.Messages.Events;
+
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -38,10 +41,10 @@ namespace ExtenFlow.Identity.StoreActors
                     .UseStartup<Startup>()
                     .UseActors(actorRuntime =>
                     {
-                        IEventBus eventBus = new InMemoryBus();
+                        IEventPublisher eventPublisher = new InMemoryEventBus();
                         IEventStore eventStore = new EventStore();
-                        actorRuntime.RegisterRoleActors();
-                        actorRuntime.RegisterUserActors();
+                        actorRuntime.RegisterIdentityRoleActors(eventPublisher, eventStore);
+                        //actorRuntime.RegisterUserActors();
                     })
                     .UseUrls($"http://localhost:{_appChannelHttpPort}/");
         }

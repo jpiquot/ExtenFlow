@@ -26,7 +26,7 @@ namespace ExtenFlow.Messages
             Id = Guid.NewGuid().ToBase64String();
             CorrelationId = Id;
             AggregateType = string.Empty;
-            AggregateId = null;
+            AggregateId = string.Empty;
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace ExtenFlow.Messages
         /// <exception cref="ArgumentNullException">aggregateType</exception>
         /// <exception cref="ArgumentNullException">correlationId</exception>
         /// <exception cref="ArgumentNullException">id</exception>
-        protected Message(string aggregateType, string? aggregateId, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
+        protected Message(string aggregateType, string aggregateId, string userId, string? correlationId = null, string? id = null, DateTimeOffset? dateTime = null)
         {
             if (string.IsNullOrWhiteSpace(userId))
             {
@@ -71,7 +71,7 @@ namespace ExtenFlow.Messages
         /// <summary>
         /// The aggregate that will handle or has handled the message.
         /// </summary>
-        public string? AggregateId { get; [Obsolete]set; }
+        public string AggregateId { get; [Obsolete]set; }
 
         /// <summary>
         /// The type of the aggragate that will handle the message. Or the aggregate that created
