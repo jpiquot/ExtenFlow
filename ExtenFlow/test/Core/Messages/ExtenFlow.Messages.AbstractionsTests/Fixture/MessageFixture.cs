@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+using ExtenFlow.Messages;
+
 using FluentAssertions;
 
 using Newtonsoft.Json;
@@ -28,7 +30,7 @@ namespace ExtenFlow.Domain.AbstractionsTests
             return deserializedMessage;
         }
 
-        public virtual void CheckMessageState(T result, string aggregateType, string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+        public virtual void CheckMessageState(T result, string aggregateType, string aggregateId, string userId, string correlationId, string id, DateTimeOffset dateTime)
         {
             result.Id.Should().Be(id);
             result.UserId.Should().Be(userId);

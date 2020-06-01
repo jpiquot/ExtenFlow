@@ -141,6 +141,9 @@
   <data name="EntityStateNotInitialized" xml:space="preserve">
     <value>The entity state is not initialized.</value>
   </data>
+  <data name="EventNotSupported" xml:space="preserve">
+    <value>The event '{0}' is not supported by '{1}'.</value>
+  </data>
   <data name="IdIsNullEmptyOrWhiteSpace" xml:space="preserve">
     <value>Id is null, empty or white spaces.</value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="MessageNotQuery" xml:space="preserve">
     <value>The message is not a query.</value>
+  </data>
+  <data name="MessageNotSupported" xml:space="preserve">
+    <value>The message '{0}' is not supported by '{1}'.</value>
   </data>
   <data name="ObjectNotMessage" xml:space="preserve">
     <value>The object is not a message.</value>

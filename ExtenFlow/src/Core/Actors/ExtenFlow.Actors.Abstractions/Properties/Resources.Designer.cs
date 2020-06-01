@@ -133,6 +133,15 @@ namespace ExtenFlow.Actors.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The event &apos;{0}&apos; is not supported by &apos;{1}&apos;..
+        /// </summary>
+        public static string EventNotSupported {
+            get {
+                return ResourceManager.GetString("EventNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Id is null, empty or white spaces..
         /// </summary>
         public static string IdIsNullEmptyOrWhiteSpace {
@@ -174,6 +183,15 @@ namespace ExtenFlow.Actors.Properties {
         public static string MessageNotQuery {
             get {
                 return ResourceManager.GetString("MessageNotQuery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The message &apos;{0}&apos; is not supported by &apos;{1}&apos;..
+        /// </summary>
+        public static string MessageNotSupported {
+            get {
+                return ResourceManager.GetString("MessageNotSupported", resourceCulture);
             }
         }
         

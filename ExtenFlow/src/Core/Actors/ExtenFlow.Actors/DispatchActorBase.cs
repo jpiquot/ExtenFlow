@@ -151,25 +151,40 @@ namespace ExtenFlow.Actors
         /// <param name="batchSave">
         /// if set to <c>true</c> do not save data. It will be done at the end of the batch.
         /// </param>
-        protected abstract Task ReceiveEvent(IEvent eventMessage, bool batchSave = false);
+        protected virtual Task ReceiveEvent(IEvent eventMessage, bool batchSave = false)
+        {
+            _ = eventMessage ?? throw new ArgumentNullException(nameof(eventMessage));
+            // The event '{0}' is not supported by '{1}'.
+            throw new NotSupportedException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.EventNotSupported, eventMessage.GetType().Name, GetType().Name));
+        }
 
         /// <summary>
         /// Receive a notification message.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <returns>List of generated events.</returns>
-        protected abstract Task ReceiveNotification(IMessage message);
+        protected virtual Task ReceiveNotification(IMessage message)
+        {
+            _ = message ?? throw new ArgumentNullException(nameof(message));
+            // The message '{0}' is not supported by '{1}'.
+            throw new NotSupportedException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.MessageNotSupported, message.GetType().Name, GetType().Name));
+        }
 
         /// <summary>
         /// Receive a query.
         /// </summary>
         /// <param name="query">The query.</param>
         /// <returns>The query result.</returns>
-        protected abstract Task<object> ReceiveQuery(IQuery query);
+        protected virtual Task<object> ReceiveQuery(IQuery query)
+        {
+            _ = query ?? throw new ArgumentNullException(nameof(query));
+            // The query '{0}' is not supported by '{1}'.
+            throw new NotSupportedException(string.Format(CultureInfo.CurrentCulture, Properties.Resources.QueryNotSupported, query.GetType().Name, GetType().Name));
+        }
 
         private async Task HandleCommand(ICommand command)
         {
-            var events = await ReceiveCommand(command);
+            IList<IEvent> events = await ReceiveCommand(command);
             foreach (IEvent anEvent in events)
             {
                 await ReceiveEvent(anEvent, true);

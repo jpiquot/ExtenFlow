@@ -1,5 +1,5 @@
 using System;
-
+using ExtenFlow.Messages;
 using FluentAssertions;
 
 using Newtonsoft.Json;
@@ -20,7 +20,7 @@ namespace ExtenFlow.Domain.AbstractionsTests
         }
 
         [JsonConstructor]
-        public FakeQuery(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+        public FakeQuery(string aggregateType, string aggregateId, string userId, string correlationId = null, string id = null, DateTimeOffset? dateTime = null)
             : base(aggregateType, aggregateId, userId, correlationId, id, dateTime)
         {
         }
@@ -37,30 +37,30 @@ namespace ExtenFlow.Domain.AbstractionsTests
 
         [Theory]
         [ClassData(typeof(MessageTestData))]
-        public void CreateQuery_CheckState(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+        public void CreateQuery_CheckState(string aggregateType, string aggregateId, string userId, string correlationId, string id, DateTimeOffset dateTime)
             => QueryFixture.CheckMessageState(new FakeQuery(aggregateType, aggregateId, userId, correlationId, id, dateTime), aggregateType, aggregateId, userId, correlationId, id, dateTime);
 
         [Fact]
         public void CreateQuery_DefaultMessageShouldHaveACorrelationId()
             => new FakeQuery().CorrelationId
                 .Should()
-                .NotBe(Guid.Empty);
+                .NotBe(string.Empty);
 
         [Fact]
         public void CreateQuery_DefaultMessageShouldHaveAId()
             => new FakeQuery().Id
                 .Should()
-                .NotBe(Guid.Empty);
+                .NotBe(string.Empty);
 
         [Fact]
         public void CreateQuery_EmptyCorrelationIdShouldThrowException()
-            => Invoking(() => new FakeQuery("Aggr. Type", "Aggr. Id", "User Id", Guid.Empty, Guid.NewGuid(), DateTimeOffset.Now))
+            => Invoking(() => new FakeQuery("Aggr. Type", "Aggr. Id", "User Id"))
                 .Should()
                 .Throw<ArgumentNullException>();
 
         [Fact]
         public void CreateQuery_EmptyIdShouldThrowException()
-            => Invoking(() => new FakeQuery("Aggr. Type", "Aggr. Id", "User Id", Guid.NewGuid(), Guid.Empty, DateTimeOffset.Now))
+            => Invoking(() => new FakeQuery("Aggr. Type", "Aggr. Id", "User Id"))
                 .Should()
                 .Throw<ArgumentNullException>();
 
@@ -69,18 +69,18 @@ namespace ExtenFlow.Domain.AbstractionsTests
         [InlineData("")]
         [InlineData("                      ")]
         public void CreateQuery_UndefinedUserIdShouldThrowException(string userId)
-            => Invoking(() => new FakeQuery("Aggr. Type", "Aggr. Id", userId, Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now))
+            => Invoking(() => new FakeQuery("Aggr. Type", "Aggr. Id", userId))
                 .Should()
                 .Throw<ArgumentNullException>();
 
         [Theory]
         [ClassData(typeof(MessageTestData))]
-        public void DotNetJsonSerializeMessage_Check(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+        public void DotNetJsonSerializeMessage_Check(string aggregateType, string aggregateId, string userId, string correlationId, string id, DateTimeOffset dateTime)
             => QueryFixture.CheckMessageJsonSerialization(new FakeQuery(aggregateType, aggregateId, userId, correlationId, id, dateTime));
 
         [Theory]
         [ClassData(typeof(MessageTestData))]
-        public void NewtonsoftJsonSerializeMessage_Check(string aggregateType, string aggregateId, string userId, Guid correlationId, Guid id, DateTimeOffset dateTime)
+        public void NewtonsoftJsonSerializeMessage_Check(string aggregateType, string aggregateId, string userId, string correlationId, string id, DateTimeOffset dateTime)
             => QueryFixture.CheckMessageNewtonSoftSerialization(new FakeQuery(aggregateType, aggregateId, userId, correlationId, id, dateTime));
     }
 }

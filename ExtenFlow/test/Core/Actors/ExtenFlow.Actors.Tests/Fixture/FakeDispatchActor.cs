@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.Domain;
-using ExtenFlow.Domain.Dispatcher;
+using ExtenFlow.Messages;
+using ExtenFlow.Messages.Events;
 
 namespace ExtenFlow.Actors.Tests
 {
@@ -119,7 +119,11 @@ namespace ExtenFlow.Actors.Tests
 
     internal class FakeDispatchActor : DispatchActorBase, IFakeDispatchActor
     {
-        public FakeDispatchActor(ActorService actorService, ActorId actorId, IEventBus messageQueue, IActorStateManager actorStateManager = null) : base(actorService, actorId, messageQueue, actorStateManager)
+        private Guid? _fakeGuid;
+        private int? _fakeInt;
+        private string _fakeString;
+
+        public FakeDispatchActor(ActorService actorService, ActorId actorId, IEventPublisher eventPublisher, IActorStateManager actorStateManager = null) : base(actorService, actorId, eventPublisher, actorStateManager)
         {
         }
 
@@ -133,15 +137,15 @@ namespace ExtenFlow.Actors.Tests
         protected override Task ReceiveEvent(IEvent eventMessage, bool batchSave = false)
             => eventMessage switch
             {
-                FakeDispatchCreated created => On(created, batchSave),
+                FakeDispatchCreated created => On(created),
                 _ => base.ReceiveEvent(eventMessage, batchSave)
             };
 
-        protected override Task ReceiveNotification(IMessage message, bool batchSave = false)
+        protected override Task ReceiveNotification(IMessage message)
             => message switch
             {
-                FakeDispatchCreated created => On(created, batchSave),
-                _ => Task.CompletedTask;
+                FakeDispatchCreated created => On(created),
+                _ => base.ReceiveNotification(message)
             };
 
         protected override async Task<object> ReceiveQuery(IQuery query)
@@ -155,15 +159,15 @@ namespace ExtenFlow.Actors.Tests
             => Task.FromResult<IList<IEvent>>(new[] { new FakeDispatchCreated(create.FakeGuid, create.FakeInt, create.FakeString) });
 
         private Task<int> Handle(GetFakeDispatchInt _)
-            => (State == null) ?
+            => (_fakeInt == null) ?
                 Task.FromException<int>(new NotSupportedException("State not initialized.")) :
-                Task.FromResult(State.FakeInt);
+                Task.FromResult<int>(_fakeInt.Value);
 
-        private Task On(FakeDispatchCreated create, bool batchSave)
+        private Task On(FakeDispatchCreated create)
         {
-            FakeGuid = create.FakeGuid;
-            FakeInt = create.FakeInt;
-            FakeString = create.FakeString;
+            _fakeGuid = create.FakeGuid;
+            _fakeInt = create.FakeInt;
+            _fakeString = create.FakeString;
             return Task.CompletedTask;
         }
     }

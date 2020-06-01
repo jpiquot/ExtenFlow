@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Dapr.Actors;
 using Dapr.Actors.Runtime;
 
-using ExtenFlow.Domain;
-using ExtenFlow.Domain.Dispatcher;
+using ExtenFlow.Messages;
+using ExtenFlow.Messages.Events;
 
 using FluentAssertions;
 
@@ -28,7 +28,7 @@ namespace ExtenFlow.Actors.Tests
         public async Task CreateCommand_CheckValue()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var messageQueue = new Mock<IEventBus>();
+            var messageQueue = new Mock<IEventPublisher>();
             var state = new FakeState { FakeGuid = Guid.NewGuid(), FakeString = "hello world", FakeInt = 2000 };
             stateManager.Setup(manager => manager.SetStateAsync(_stateName, state, It.IsAny<CancellationToken>())).Verifiable();
             FakeDispatchActor testDemoActor = await CreateActor(stateManager.Object, messageQueue.Object, state.FakeGuid);
@@ -41,16 +41,13 @@ namespace ExtenFlow.Actors.Tests
         public async Task CreateCommand_ExpectCreatedEvent()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var messageQueue = new Mock<IEventBus>();
+            var messageQueue = new Mock<IEventPublisher>();
             var id = Guid.NewGuid();
             var state = new FakeState { FakeGuid = Guid.NewGuid(), FakeString = "hello world", FakeInt = 2000 };
             var events = new List<IEvent>(new[] { new FakeDispatchCreated(state.FakeGuid, state.FakeInt, state.FakeString) });
             messageQueue
-                .Setup(messageQueue => messageQueue.Send(events))
+                .Setup(messageQueue => messageQueue.Publish(events, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(id))
-                .Verifiable();
-            messageQueue
-                .Setup(messageQueue => messageQueue.ConfirmSend(id))
                 .Verifiable();
             FakeDispatchActor testDemoActor = await CreateActor(stateManager.Object, messageQueue.Object, state.FakeGuid);
 
@@ -62,7 +59,7 @@ namespace ExtenFlow.Actors.Tests
         public async Task GetFakeInt_CheckValue()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var messageQueue = new Mock<IEventBus>();
+            var messageQueue = new Mock<IEventPublisher>();
             var state = new FakeState { FakeGuid = Guid.NewGuid(), FakeString = "hello world", FakeInt = 2000 };
             stateManager.Setup(manager => manager.GetStateAsync<FakeState>(_stateName, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(state))
@@ -80,7 +77,7 @@ namespace ExtenFlow.Actors.Tests
         public async Task UnkownCommand_ExpectNotSupportedException()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var messageQueue = new Mock<IEventBus>();
+            var messageQueue = new Mock<IEventPublisher>();
             FakeDispatchActor testDemoActor = await CreateActor(stateManager.Object, messageQueue.Object, Guid.NewGuid());
 
             await Invoking(async () => await testDemoActor.Tell(new FakeDispatchUnknownCommand()))
@@ -92,7 +89,7 @@ namespace ExtenFlow.Actors.Tests
         public async Task UnkownEvent_ExpectIgnored()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var messageQueue = new Mock<IEventBus>();
+            var messageQueue = new Mock<IEventPublisher>();
             FakeDispatchActor testDemoActor = await CreateActor(stateManager.Object, messageQueue.Object, Guid.NewGuid());
 
             await testDemoActor.Notify(new FakeDispatchUnknownEvent());
@@ -102,7 +99,7 @@ namespace ExtenFlow.Actors.Tests
         public async Task UnkownMessage_ExpectIgnored()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var messageQueue = new Mock<IEventBus>();
+            var messageQueue = new Mock<IEventPublisher>();
             FakeDispatchActor testDemoActor = await CreateActor(stateManager.Object, messageQueue.Object, Guid.NewGuid());
 
             await testDemoActor.Notify(new FakeDispatchUnknownMessage());
@@ -112,7 +109,7 @@ namespace ExtenFlow.Actors.Tests
         public async Task UnkownQuery_ExpectNotSupportedException()
         {
             var stateManager = new Mock<IActorStateManager>();
-            var messageQueue = new Mock<IEventBus>();
+            var messageQueue = new Mock<IEventPublisher>();
             FakeDispatchActor testDemoActor = await CreateActor(stateManager.Object, messageQueue.Object, Guid.NewGuid());
 
             await Invoking(async () => await testDemoActor.Ask(new FakeDispatchUnknownQuery()))
@@ -120,7 +117,7 @@ namespace ExtenFlow.Actors.Tests
                             .ThrowAsync<NotSupportedException>();
         }
 
-        private async Task<FakeDispatchActor> CreateActor(IActorStateManager actorStateManager, IEventBus messageQueue, Guid id)
+        private async Task<FakeDispatchActor> CreateActor(IActorStateManager actorStateManager, IEventPublisher messageQueue, Guid id)
         {
             var actorTypeInformation = ActorTypeInformation.Get(typeof(FakeDispatchActor));
             FakeDispatchActor actorFactory(ActorService service, ActorId id) =>
