@@ -13,6 +13,6 @@
 		<PackageReference Include="Dapr.Actors.AspNetCore" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Core\Identity\ExtenFlow.Identity.Roles.Aggregates\ExtenFlow.Identity.Roles.Aggregates.csproj" />
+	  <ProjectReference Include="..\..\Core\Identity\ExtenFlow.Identity.Roles.Application\ExtenFlow.Identity.Roles.Application.csproj" />
 	</ItemGroup>
 </Project>

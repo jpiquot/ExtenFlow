@@ -12,12 +12,14 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Dapr.Actors" />
 		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Actors\ExtenFlow.Actors\ExtenFlow.Actors.csproj" />
 		<ProjectReference Include="..\..\Infrastructure\ExtenFlow.Infrastructure.Abstractions\ExtenFlow.Infrastructure.Abstractions.csproj" />
+		<ProjectReference Include="..\..\Messages\ExtenFlow.Messages.Brighter\ExtenFlow.Messages.Brighter.csproj" />
+		<ProjectReference Include="..\ExtenFlow.Identity.Roles.Application.Abstractions\ExtenFlow.Identity.Roles.Application.Abstractions.csproj" />
 		<ProjectReference Include="..\ExtenFlow.Identity.Roles.Domain.Abstractions\ExtenFlow.Identity.Roles.Domain.Abstractions.csproj" />
 	</ItemGroup>
 </Project>

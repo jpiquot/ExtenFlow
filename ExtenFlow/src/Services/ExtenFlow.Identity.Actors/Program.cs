@@ -2,7 +2,7 @@ using System;
 
 using Dapr.Actors.AspNetCore;
 
-using ExtenFlow.Identity.Roles.Helpers;
+using ExtenFlow.Identity.Roles.Application.Helpers;
 using ExtenFlow.Messages.Events;
 
 using Microsoft.AspNetCore;

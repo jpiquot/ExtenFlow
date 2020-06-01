@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>$(NetCoreAppTargetFramework)</TargetFramework>
+	</PropertyGroup>
+	<PropertyGroup>
+		<Description>This package contains the reference assemblies for ExtenFlow role management abstractions.</Description>
+		<PackageTags>$(PackageTags);Identity;Authorization;Autentication;Role;Claim;Login</PackageTags>
+		<RootNamespace>ExtenFlow.Identity.Roles</RootNamespace>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Dapr.Actors" />
+		<PackageReference Include="Microsoft.Extensions.Identity.Core" />
+		<PackageReference Include="Microsoft.Extensions.Identity.Stores" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Actors\ExtenFlow.Actors.Abstractions\ExtenFlow.Actors.Abstractions.csproj" />
+		<ProjectReference Include="..\..\Infrastructure\ExtenFlow.ApplicationDictionary.Abstractions\ExtenFlow.ApplicationDictionary.Abstractions.csproj" />
+		<ProjectReference Include="..\..\Domain\ExtenFlow.Domain.Abstractions\ExtenFlow.Domain.Abstractions.csproj" />
+		<ProjectReference Include="..\..\Infrastructure\ExtenFlow.Infrastructure.Abstractions\ExtenFlow.Infrastructure.Abstractions.csproj" />
+		<ProjectReference Include="..\ExtenFlow.Identity.Roles.Domain.Abstractions\ExtenFlow.Identity.Roles.Domain.Abstractions.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>ExtenFlow.Identity.Roles</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+</Project>

@@ -1,4 +1,4 @@
-﻿using ExtenFlow.Identity.Roles.Models;
+﻿using ExtenFlow.Identity.Roles.Domain.Models;
 
 using Microsoft.EntityFrameworkCore;
 
