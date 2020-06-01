@@ -70,7 +70,7 @@ namespace ExtenFlow.Domain.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The expected value for the aggregate type is &apos;%1&apos;. The actual type is &apos;%2&apos;..
+        ///   Looks up a localized string similar to The expected value for the aggregate type is &apos;{0}&apos;. The actual type is &apos;{1}&apos;..
         /// </summary>
         public static string AggregateTypeMismatch {
             get {
@@ -97,7 +97,7 @@ namespace ExtenFlow.Domain.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update of &apos;%1&apos; with &apos;%2&apos;=&apos;%3&apos; failed. It has been modified by another user. .
+        ///   Looks up a localized string similar to Update of &apos;{0}&apos; with &apos;{1}&apos;=&apos;{2}&apos; failed. It has been modified by another user. .
         /// </summary>
         public static string EntityConcurrencyCheckFailed {
             get {

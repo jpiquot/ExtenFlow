@@ -70,7 +70,7 @@ namespace ExtenFlow.Messages.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Duplicate event store transaction id : %1..
+        ///   Looks up a localized string similar to Duplicate event store transaction id :{0}..
         /// </summary>
         public static string DuplicateEventStoreTransactionId {
             get {
@@ -79,7 +79,7 @@ namespace ExtenFlow.Messages.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The event store transaction &apos;%1&apos; not found..
+        ///   Looks up a localized string similar to The event store transaction &apos;{0}&apos; not found..
         /// </summary>
         public static string EventStoreTransactionNotFound {
             get {
@@ -88,7 +88,7 @@ namespace ExtenFlow.Messages.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;%1&apos; is not a valid command for &apos;%2&apos;..
+        ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid command for &apos;{1}&apos;..
         /// </summary>
         public static string InvalidCommand {
             get {
@@ -97,7 +97,7 @@ namespace ExtenFlow.Messages.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid event store transaction identifier : &apos;%1&apos;..
+        ///   Looks up a localized string similar to Invalid event store transaction identifier : &apos;{0}&apos;..
         /// </summary>
         public static string InvalidEventStoreTransactionId {
             get {
@@ -106,7 +106,7 @@ namespace ExtenFlow.Messages.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;%1&apos; is not a valid query for &apos;%2&apos;..
+        ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid query for &apos;{1}&apos;..
         /// </summary>
         public static string InvalidQuery {
             get {

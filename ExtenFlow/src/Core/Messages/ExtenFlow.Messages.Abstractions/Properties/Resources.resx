@@ -124,22 +124,22 @@
     <value>Unknown object type.</value>
   </data>
   <data name="InvalidCommand" xml:space="preserve">
-    <value>'%1' is not a valid command for '%2'.</value>
+    <value>'{0}' is not a valid command for '{1}'.</value>
   </data>
   <data name="InvalidQuery" xml:space="preserve">
-    <value>'%1' is not a valid query for '%2'.</value>
+    <value>'{0}' is not a valid query for '{1}'.</value>
   </data>
   <data name="InvalidEventStoreTransactionId" xml:space="preserve">
-    <value>Invalid event store transaction identifier : '%1'.</value>
+    <value>Invalid event store transaction identifier : '{0}'.</value>
   </data>
   <data name="DuplicateEventStoreTransactionId" xml:space="preserve">
-    <value>Duplicate event store transaction id : %1.</value>
+    <value>Duplicate event store transaction id :{0}.</value>
   </data>
   <data name="UndefinedEventStoreName" xml:space="preserve">
     <value>The event store name has not been defined.</value>
   </data>
   <data name="EventStoreTransactionNotFound" xml:space="preserve">
-    <value>The event store transaction '%1' not found.</value>
+    <value>The event store transaction '{0}' not found.</value>
   </data>
   <data name="ConcurrentDictionaryUpdateFailure" xml:space="preserve">
     <value>Failed to update the concurrent dictionary.</value>
