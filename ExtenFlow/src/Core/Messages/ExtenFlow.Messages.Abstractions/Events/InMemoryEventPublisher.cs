@@ -11,7 +11,7 @@ namespace ExtenFlow.Messages.Events
     /// </summary>
     /// <remarks>Only used for testing.</remarks>
     /// <seealso cref="ExtenFlow.Messages.Events.IEventPublisher"/>
-    public class InMemoryEventBus : IEventPublisher
+    public class InMemoryEventPublisher : IEventPublisher
     {
         private Dictionary<int, IList<IEvent>>? _messages;
 

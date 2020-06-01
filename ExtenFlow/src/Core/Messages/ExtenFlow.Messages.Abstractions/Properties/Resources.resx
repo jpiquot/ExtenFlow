@@ -132,4 +132,16 @@
   <data name="InvalidEventStoreTransactionId" xml:space="preserve">
     <value>Invalid event store transaction identifier : '%1'.</value>
   </data>
+  <data name="DuplicateEventStoreTransactionId" xml:space="preserve">
+    <value>Duplicate event store transaction id : %1.</value>
+  </data>
+  <data name="UndefinedEventStoreName" xml:space="preserve">
+    <value>The event store name has not been defined.</value>
+  </data>
+  <data name="EventStoreTransactionNotFound" xml:space="preserve">
+    <value>The event store transaction '%1' not found.</value>
+  </data>
+  <data name="ConcurrentDictionaryUpdateFailure" xml:space="preserve">
+    <value>Failed to update the concurrent dictionary.</value>
+  </data>
 </root>

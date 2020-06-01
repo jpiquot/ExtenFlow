@@ -127,7 +127,14 @@ namespace ExtenFlow.Actors
         /// <returns>System.String.</returns>
         public static string StreamName<T>(string id)
             where T : Actor
-            => $"{ActorName(typeof(T))}-[{id}]";
+            => StreamName(typeof(T), id);
+
+        /// <summary>
+        /// Actors the name.
+        /// </summary>
+        /// <returns>System.String.</returns>
+        public static string StreamName(Type actorType, string id)
+            => $"{ActorName(actorType)}-[{id}]";
 
         /// <summary>
         /// Sends a command and wait for the execution ends.

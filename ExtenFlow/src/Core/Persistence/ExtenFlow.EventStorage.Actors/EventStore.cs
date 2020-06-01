@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Threading.Tasks;
 
 using ExtenFlow.Actors;
-using ExtenFlow.Domain;
 using ExtenFlow.Messages;
 using ExtenFlow.Messages.Events;
 
@@ -18,21 +17,20 @@ namespace ExtenFlow.EventStorage.Actors
     {
         private readonly IActorSystem _actorSystem;
         private readonly string _streamId;
-        private IEventStreamActor? _streamActor;
+        private IEventStoreActor? _storeActor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventStore"/> class.
         /// </summary>
-        /// <param name="aggregateType">Type of the aggregate.</param>
-        /// <param name="aggregateId">The aggregate identifier.</param>
+        /// <param name="streamId">The stream name.</param>
         /// <param name="actorSystem"></param>
-        public EventStore(string aggregateType, string aggregateId, IActorSystem? actorSystem = null)
+        public EventStore(string streamId, IActorSystem? actorSystem = null)
         {
-            _streamId = $"{aggregateType}-[{aggregateId}]";
+            _streamId = streamId;
             _actorSystem = actorSystem ?? new ActorSystem();
         }
 
-        private IEventStreamActor StreamActor => _streamActor ?? (_streamActor = _actorSystem.Create<IEventStreamActor>(_streamId));
+        private IEventStoreActor StoreActor => _storeActor ?? (_storeActor = _actorSystem.Create<IEventStoreActor>(_streamId));
 
         /// <summary>
         /// Appends the specified events to the store stream.
@@ -41,7 +39,7 @@ namespace ExtenFlow.EventStorage.Actors
         /// <returns>The stored events version.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
         public async Task<string> Append(IList<IEvent> events)
-            => (await StreamActor.AppendEvents(events)).ToString(CultureInfo.InvariantCulture);
+            => (await StoreActor.AppendEvents(events)).ToString(CultureInfo.InvariantCulture);
 
         /// <summary>
         /// Reads the events from the store.
@@ -55,15 +53,15 @@ namespace ExtenFlow.EventStorage.Actors
         public async Task<(IList<IEvent>? events, string? version)> Read(string? afterVersion = null, int take = 0)
         {
             long fromVersion = 0;
+            long latestVersion = await StoreActor.GetLastestVersion();
             if (!string.IsNullOrWhiteSpace(afterVersion))
             {
-                if (!long.TryParse(afterVersion, out fromVersion))
+                if (!long.TryParse(afterVersion, out fromVersion) || fromVersion == 0 || fromVersion > latestVersion)
                 {
-                    // Invalid stream version '%1'. It should be a long integer value.
-                    throw new ArgumentOutOfRangeException(nameof(afterVersion), string.Format(CultureInfo.CurrentCulture, Properties.Resources.InvalidStreamNumberNotLong, afterVersion));
+                    // Invalid event store transaction identifier : '%1'.
+                    throw new ArgumentOutOfRangeException(nameof(afterVersion), string.Format(CultureInfo.CurrentCulture, ExtenFlow.Messages.Properties.Resources.InvalidEventStoreTransactionId, afterVersion));
                 }
             }
-            long latestVersion = await StreamActor.GetLastestVersion();
             var events = new List<IEvent>();
             long i = 0L;
             while (fromVersion + i < latestVersion)
@@ -71,9 +69,8 @@ namespace ExtenFlow.EventStorage.Actors
                 i++;
                 events.AddRange(
                     await _actorSystem
-                        .Create<IEventStreamSessionActor>(
-                            EventStreamSessionHelper
-                                .GetSessionId(_streamId, fromVersion + i)
+                        .Create<IEventStoreTransactionActor>(
+                            EventStoreActor.GetTransactionId(_streamId, fromVersion + i)
                                 )
                             .GetEvents()
                         );

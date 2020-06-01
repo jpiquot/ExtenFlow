@@ -2,7 +2,7 @@ using System;
 
 using Dapr.Actors.AspNetCore;
 
-using ExtenFlow.EventStorage;
+using ExtenFlow.Identity.Roles.Helpers;
 using ExtenFlow.Messages.Events;
 
 using Microsoft.AspNetCore;
@@ -38,9 +38,9 @@ namespace ExtenFlow.Identity.StoreActors
                     .UseStartup<Startup>()
                     .UseActors(actorRuntime =>
                     {
-                        IEventPublisher eventPublisher = new InMemoryEventBus();
-                        IEventStore eventStore = new EventStore();
-                        actorRuntime.RegisterIdentityRoleActors(eventPublisher, eventStore);
+                        actorRuntime.RegisterRoleActors(
+                            () => (new InMemoryEventPublisherBuilder()).Build(),
+                            (name) => (new InMemoryEventStoreBuilder()).Name(name).Build());
                         //actorRuntime.RegisterUserActors();
                     })
                     .UseUrls($"http://localhost:{_appChannelHttpPort}/");

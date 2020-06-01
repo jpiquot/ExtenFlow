@@ -61,6 +61,33 @@ namespace ExtenFlow.Messages.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to update the concurrent dictionary..
+        /// </summary>
+        public static string ConcurrentDictionaryUpdateFailure {
+            get {
+                return ResourceManager.GetString("ConcurrentDictionaryUpdateFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate event store transaction id : %1..
+        /// </summary>
+        public static string DuplicateEventStoreTransactionId {
+            get {
+                return ResourceManager.GetString("DuplicateEventStoreTransactionId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The event store transaction &apos;%1&apos; not found..
+        /// </summary>
+        public static string EventStoreTransactionNotFound {
+            get {
+                return ResourceManager.GetString("EventStoreTransactionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;%1&apos; is not a valid command for &apos;%2&apos;..
         /// </summary>
         public static string InvalidCommand {
@@ -93,6 +120,15 @@ namespace ExtenFlow.Messages.Properties {
         public static string MessageDateTimeNotDefined {
             get {
                 return ResourceManager.GetString("MessageDateTimeNotDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The event store name has not been defined..
+        /// </summary>
+        public static string UndefinedEventStoreName {
+            get {
+                return ResourceManager.GetString("UndefinedEventStoreName", resourceCulture);
             }
         }
         

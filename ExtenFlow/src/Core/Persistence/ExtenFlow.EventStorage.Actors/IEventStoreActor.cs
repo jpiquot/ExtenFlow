@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Dapr.Actors;
-using ExtenFlow.Domain;
+
 using ExtenFlow.Messages;
 
 namespace ExtenFlow.EventStorage.Actors
@@ -10,7 +11,7 @@ namespace ExtenFlow.EventStorage.Actors
     /// Interface IEventStreamActor Implements the <see cref="Dapr.Actors.IActor"/>
     /// </summary>
     /// <seealso cref="Dapr.Actors.IActor"/>
-    public interface IEventStreamActor : IActor
+    public interface IEventStoreActor : IActor
     {
         /// <summary>
         /// Writes the events.

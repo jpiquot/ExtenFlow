@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -12,13 +13,40 @@ namespace ExtenFlow.Messages.Events
     /// <remarks>Only used for testing.</remarks>
     public class InMemoryEventStore : IEventStore
     {
-        private Dictionary<long, IList<IEvent>>? _events;
+        private static ConcurrentDictionary<string, ConcurrentDictionary<long, IList<IEvent>>> _events
+            = new ConcurrentDictionary<string, ConcurrentDictionary<long, IList<IEvent>>>();
+
+        private readonly string _name;
 
         /// <summary>
-        /// Gets the events.
+        /// Initializes a new instance of the <see cref="InMemoryEventStore"/> class.
         /// </summary>
-        /// <value>The events.</value>
-        protected Dictionary<long, IList<IEvent>> Events => _events ?? (_events = new Dictionary<long, IList<IEvent>>());
+        /// <param name="name">The name.</param>
+        public InMemoryEventStore(string name)
+        {
+            _name = name;
+        }
+
+        private ConcurrentDictionary<long, IList<IEvent>> Events
+        {
+            get
+            {
+                if (!_events.TryGetValue(_name, out ConcurrentDictionary<long, IList<IEvent>> events))
+                {
+                    events = new ConcurrentDictionary<long, IList<IEvent>>();
+                    int i = 0;
+                    while (!_events.TryAdd(_name, events))
+                    {
+                        Task.Delay(10 * i).GetAwaiter().GetResult();
+                        if (i++ > 10)
+                        {
+                            throw new Exception(Properties.Resources.ConcurrentDictionaryUpdateFailure);
+                        }
+                    }
+                }
+                return events;
+            }
+        }
 
         /// <summary>
         /// Appends the specified events to the store stream.
@@ -30,7 +58,15 @@ namespace ExtenFlow.Messages.Events
         {
             long version = Events.LastOrDefault().Key + 1;
 
-            Events.Add(version, events);
+            int i = 0;
+            while (!Events.TryAdd(version, events))
+            {
+                Task.Delay(10 * i).GetAwaiter().GetResult();
+                if (i++ > 10)
+                {
+                    throw new Exception(Properties.Resources.ConcurrentDictionaryUpdateFailure);
+                }
+            }
             return Task.FromResult(version.ToString(CultureInfo.InvariantCulture));
         }
 
