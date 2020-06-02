@@ -10,9 +10,12 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Dapr.Actors.AspNetCore" />
+		<PackageReference Include="Dapr.AspNetCore" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Core\Identity\ExtenFlow.Identity.Roles.Application\ExtenFlow.Identity.Roles.Application.csproj" />
+		<ProjectReference Include="..\..\..\Core\Identity\ExtenFlow.Identity.Roles.Application\ExtenFlow.Identity.Roles.Application.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Properties\" />
 	</ItemGroup>
 </Project>

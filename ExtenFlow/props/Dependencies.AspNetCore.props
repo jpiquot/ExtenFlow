@@ -1,7 +1,15 @@
 <Project>
 	<PropertyGroup>
 		<AspNetCoreVersion>3.1.4</AspNetCoreVersion>
+		<WebAssemblyVersion>3.2.0</WebAssemblyVersion>
 	</PropertyGroup>
+	<ItemGroup>
+		<PackageManagement Include="System.Net.Http.Json" Version="$(WebAssemblyVersion)" />
+		<PackageManagement Include="Microsoft.AspNetCore.Components.WebAssembly" Version="$(WebAssemblyVersion)" />
+		<PackageManagement Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="$(WebAssemblyVersion)"  PrivateAssets="all" />
+		<PackageManagement Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="$(WebAssemblyVersion)"  PrivateAssets="all" />
+		<PackageManagement Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="$(WebAssemblyVersion)" />
+	</ItemGroup>
 	<ItemGroup>
 		<PackageManagement Include="Microsoft.AspNetCore.Identity.Specification.Tests" Version="$(AspNetCoreVersion)" />
 		<PackageManagement Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="$(AspNetCoreVersion)" />

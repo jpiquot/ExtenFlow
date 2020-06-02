@@ -1,0 +1,42 @@
+@page "/fetchdata"
+@using ExtenFlow.Identity.Roles.Application.Queries
+@inject HttpClient Http
+
+<h1>Roles</h1>
+
+@if (roles == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Name</th>
+				<th>Normalized name</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var role in roles)
+			{
+				<tr>
+					<td>@role.Id</td>
+					<td>@role.Name</td>
+					<td>@role.NormalizedName</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+@code {
+	private RoleDetails[]? roles;
+
+	protected override async Task OnInitializedAsync()
+	{
+		roles = await Http.GetFromJsonAsync<RoleDetails[]>("Roles");
+	}
+
+}

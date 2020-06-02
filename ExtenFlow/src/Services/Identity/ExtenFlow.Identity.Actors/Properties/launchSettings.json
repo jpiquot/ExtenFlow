@@ -1,0 +1,27 @@
+{
+	"iisSettings": {
+		"windowsAuthentication": false,
+		"anonymousAuthentication": true,
+		"iisExpress": {
+			"applicationUrl": "http://127.0.0.1:1776/",
+			"sslPort": 44377
+		}
+	},
+	"profiles": {
+		"IIS Express": {
+			"commandName": "IISExpress",
+			"launchBrowser": true,
+			"environmentVariables": {
+				"ASPNETCORE_ENVIRONMENT": "Development"
+			}
+		},
+		"ExtenFlow.Identity.Actors": {
+			"commandName": "Project",
+			"launchBrowser": true,
+			"environmentVariables": {
+				"ASPNETCORE_ENVIRONMENT": "Development"
+			},
+			"applicationUrl": "http://127.0.0.1:5000"
+		}
+	}
+}

@@ -1,10 +1,5 @@
 using System;
 
-using Dapr.Actors.AspNetCore;
-
-using ExtenFlow.Identity.Roles.Application.Helpers;
-using ExtenFlow.Messages.Events;
-
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -17,8 +12,6 @@ namespace ExtenFlow.Identity.StoreActors
     /// </summary>
     public static class Program
     {
-        private const int _appChannelHttpPort = 3000;
-
         /// <summary>
         /// Creates a IWebHostBuilder.
         /// </summary>
@@ -35,21 +28,17 @@ namespace ExtenFlow.Identity.StoreActors
             return WebHost
                 .CreateDefaultBuilder(args)
                     .UseConfiguration(currentConfig)
-                    .UseStartup<Startup>()
-                    .UseActors(actorRuntime =>
-                    {
-                        actorRuntime.RegisterRoleActors(
-                            () => (new InMemoryEventPublisherBuilder()).Build(),
-                            (name) => (new InMemoryEventStoreBuilder()).Name(name).Build());
-                        //actorRuntime.RegisterUserActors();
-                    })
-                    .UseUrls($"http://localhost:{_appChannelHttpPort}/");
+                    .UseStartup<Startup>();
         }
 
         /// <summary>
         /// Defines the entry point of the application.
         /// </summary>
         /// <param name="args">The arguments.</param>
-        public static void Main(string[] args) => CreateWebHostBuilder(args).Build().Run();
+        public static void Main(string[] args)
+        {
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+            CreateWebHostBuilder(args).Build().Run();
+        }
     }
 }

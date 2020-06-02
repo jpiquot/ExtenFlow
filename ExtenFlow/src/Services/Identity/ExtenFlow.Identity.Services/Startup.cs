@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +15,12 @@ namespace ExtenFlow.Identity.StoreActors
     public class Startup
 #pragma warning restore CA1052 // Static holder types should be Static or NotInheritable
     {
+        private static readonly JsonSerializerOptions _options = new JsonSerializerOptions()
+        {
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        };
+
         /// <summary>
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
@@ -26,11 +34,21 @@ namespace ExtenFlow.Identity.StoreActors
             }
             else
             {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                // The default HSTS value is 30 days. You may want to change this for production
+                // scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             app.UseRouting();
+            app.UseCloudEvents();
 
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapSubscribeHandler();
+
+            //    endpoints.MapGet("{id}", Balance);
+            //    endpoints.MapPost("deposit", Deposit).WithTopic("deposit");
+            //    endpoints.MapPost("withdraw", Withdraw).WithTopic("withdraw");
+            //});
         }
 
         /// <summary>
@@ -46,6 +64,10 @@ namespace ExtenFlow.Identity.StoreActors
 #pragma warning restore IDE0060 // Remove unused parameter
         {
             services.AddRouting();
+            services.AddDaprClient(client =>
+            {
+                client.UseJsonSerializationOptions(_options);
+            });
         }
     }
 }
