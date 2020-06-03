@@ -16,6 +16,16 @@ namespace ExtenFlow.Messages.Queries
         Task<T> Ask<T>(IQuery<T> query, CancellationToken? cancellationToken = default);
 
         /// <summary>
+        /// Ask for a query result. The query execution is synchronous.
+        /// </summary>
+        /// <param name="query">Query to be executed by the application.</param>
+        /// <param name="cancellationToken">
+        /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
+        /// <returns>Task&lt;System.Object&gt;.</returns>
+        Task<object> Ask(IQuery query, CancellationToken? cancellationToken = default);
+
+        /// <summary>
         /// Ask for the result of an asynchronous query (submitted with the Send method).
         /// </summary>
         /// <param name="queryId">The query id of the sent query.</param>

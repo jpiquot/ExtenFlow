@@ -49,6 +49,8 @@ namespace ExtenFlow.Messages.Dapr
             return value;
         }
 
+        public Task<object> Ask(IQuery query, CancellationToken? cancellationToken = null) => throw new NotImplementedException();
+
         /// <summary>
         /// Ask for the result of an asynchronous query (submitted with the Send method).
         /// </summary>
