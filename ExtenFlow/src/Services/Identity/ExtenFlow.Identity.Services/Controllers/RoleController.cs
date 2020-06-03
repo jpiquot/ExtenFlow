@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using ExtenFlow.Identity.Roles.Application.Queries;
 
@@ -14,7 +13,6 @@ namespace ExtenFlow.Identity.Web.Controllers
     /// </summary>
     /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase"/>
     [ApiController]
-    [Route("[controller]")]
     public class RoleController : ControllerBase
     {
         private readonly ILogger<RoleController> _logger;

@@ -22,7 +22,7 @@ namespace ExtenFlow.Identity.StoreActors
         /// </summary>
         /// <param name="args">Arguments.</param>
         /// <returns>IWebHostBuilder instance.</returns>
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        public static IHostBuilder CreateWebBuilder(string[] args)
         {
             string? aspnetcoreEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             IConfigurationRoot currentConfig = new ConfigurationBuilder()
@@ -30,16 +30,19 @@ namespace ExtenFlow.Identity.StoreActors
                     .AddJsonFile($"appsettings.{aspnetcoreEnvironment}.json")
                     .Build();
 
-            return WebHost
-                .CreateDefaultBuilder(args)
-                    .UseConfiguration(currentConfig)
-                    .UseStartup<Startup>()
-                    .UseActors(actorRuntime =>
+            return Host
+                    .CreateDefaultBuilder(args)
+                    .ConfigureWebHostDefaults(webBuilder =>
                     {
-                        actorRuntime.RegisterRoleActors(
-                            () => (new InMemoryEventPublisherBuilder()).Build(),
-                            (name) => (new InMemoryEventStoreBuilder()).Name(name).Build());
-                        //actorRuntime.RegisterUserActors();
+                        webBuilder.UseConfiguration(currentConfig);
+                        webBuilder.UseStartup<Startup>();
+                        webBuilder.UseActors(actorRuntime =>
+                        {
+                            actorRuntime.RegisterRoleActors(
+                                () => (new InMemoryEventPublisherBuilder()).Build(),
+                                (name) => (new InMemoryEventStoreBuilder()).Name(name).Build());
+                            //actorRuntime.RegisterUserActors();
+                        });
                     });
         }
 
@@ -48,9 +51,6 @@ namespace ExtenFlow.Identity.StoreActors
         /// </summary>
         /// <param name="args">The arguments.</param>
         public static void Main(string[] args)
-        {
-            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-            CreateWebHostBuilder(args).Build().Run();
-        }
+            => CreateWebBuilder(args).Build().Run();
     }
 }

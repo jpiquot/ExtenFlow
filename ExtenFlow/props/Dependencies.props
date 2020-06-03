@@ -7,6 +7,7 @@
 		<NetCoreAppTargetFramework>netcoreapp3.1</NetCoreAppTargetFramework>
 		<!-- Special case - this property is used by a DotNetCliToolReference -->
 		<DotNetXunitVersion>2.3.0</DotNetXunitVersion>
+		<DaprVersion>0.7.0-preview01</DaprVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -16,9 +17,10 @@
 		<PackageManagement Include="FluentValidation" Version="9.0.0-preview5" />
 		<PackageManagement Include="FluentAssertions" Version="5.10.3" />
 		<PackageManagement Include="Paramore.Brighter" Version="8.1.1036" />
-		<PackageManagement Include="Dapr.Actors" Version="0.7.0-preview01" />
-		<PackageManagement Include="Dapr.Actors.AspNetCore" Version="0.7.0-preview01" />
-		<PackageManagement Include="Dapr.AspNetCore" Version="0.7.0-preview01" />
+		<PackageManagement Include="Dapr.Actors" Version="$(DaprVersion)" />
+		<PackageManagement Include="Dapr.Client" Version="$(DaprVersion)" />
+		<PackageManagement Include="Dapr.Actors.AspNetCore" Version="$(DaprVersion)" />
+		<PackageManagement Include="Dapr.AspNetCore" Version="$(DaprVersion)" />
 		<PackageManagement Include="Lucene.Net" Version="4.8.0-beta00007" />
 		<PackageManagement Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00007" />
 		<PackageManagement Include="Lucene.Net.QueryParser" Version="4.8.0-beta00007" />

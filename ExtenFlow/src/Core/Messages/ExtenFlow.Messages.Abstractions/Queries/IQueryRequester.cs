@@ -20,7 +20,7 @@ namespace ExtenFlow.Messages.Queries
         /// </summary>
         /// <param name="queryId">The query id of the sent query.</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        Task<T> Ask<T>(string queryId, CancellationToken? cancellationToken = default);
+        Task<T> AskForResult<T>(string queryId, CancellationToken? cancellationToken = default);
 
         /// <summary>
         /// Send a query. The query execution is asynchronous.

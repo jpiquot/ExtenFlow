@@ -18,7 +18,25 @@ services:
     - port: 6973
 - name: identity-actors
   project: ExtenFlow.Identity.Actors/ExtenFlow.Identity.Actors.csproj
+  env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Development
+  buildProperties:
+  - name: Configuration
+    value: Debug
 - name: identity-services
   project: ExtenFlow.Identity.Services/ExtenFlow.Identity.Services.csproj
+  env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Development
+  buildProperties:
+  - name: Configuration
+    value: Debug
 - name: identity-web
   project: ExtenFlow.Identity.Web/ExtenFlow.Identity.Web.csproj
+  env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Development
+  buildProperties:
+  - name: Configuration
+    value: Debug

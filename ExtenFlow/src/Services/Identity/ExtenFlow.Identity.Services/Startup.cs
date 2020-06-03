@@ -15,12 +15,6 @@ namespace ExtenFlow.Identity.StoreActors
     public class Startup
 #pragma warning restore CA1052 // Static holder types should be Static or NotInheritable
     {
-        private static readonly JsonSerializerOptions _options = new JsonSerializerOptions()
-        {
-            PropertyNameCaseInsensitive = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
-
         /// <summary>
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
@@ -41,14 +35,13 @@ namespace ExtenFlow.Identity.StoreActors
             app.UseRouting();
             app.UseCloudEvents();
 
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapSubscribeHandler();
+            app.UseAuthorization();
 
-            //    endpoints.MapGet("{id}", Balance);
-            //    endpoints.MapPost("deposit", Deposit).WithTopic("deposit");
-            //    endpoints.MapPost("withdraw", Withdraw).WithTopic("withdraw");
-            //});
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapSubscribeHandler();
+                endpoints.MapControllers();
+            });
         }
 
         /// <summary>
@@ -63,11 +56,13 @@ namespace ExtenFlow.Identity.StoreActors
 #pragma warning restore CA1801 // Review unused parameters
 #pragma warning restore IDE0060 // Remove unused parameter
         {
-            services.AddRouting();
-            services.AddDaprClient(client =>
+            services.AddControllers().AddDapr();
+            services.AddSingleton(new JsonSerializerOptions()
             {
-                client.UseJsonSerializationOptions(_options);
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNameCaseInsensitive = true,
             });
+            services.AddRouting();
         }
     }
 }

@@ -30,7 +30,6 @@ namespace ExtenFlow.Identity.StoreActors
                     {
                         webBuilder.UseStartup<Startup>();
                         webBuilder.UseConfiguration(currentConfig);
-                        webBuilder.UseStartup<Startup>();
                     });
         }
 
@@ -39,9 +38,6 @@ namespace ExtenFlow.Identity.StoreActors
         /// </summary>
         /// <param name="args">The arguments.</param>
         public static void Main(string[] args)
-        {
-            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-            CreateHostBuilder(args).Build().Run();
-        }
+            => CreateHostBuilder(args).Build().Run();
     }
 }
