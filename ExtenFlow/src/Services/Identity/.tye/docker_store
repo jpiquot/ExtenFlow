@@ -1,8 +1,0 @@
-{"container":"sqlserver_e252fef1-d"}
-{"container":"redis_b3112cb9-9"}
-{"container":"identity-actors-proxy_eebad783-2"}
-{"container":"identity-services-proxy_b0364e40-f"}
-{"container":"identity-web-proxy_28ca5ba0-6"}
-{"container":"identity-actors-dapr-proxy_6d26b0ec-7"}
-{"container":"identity-services-dapr-proxy_70f7df36-0"}
-{"container":"identity-web-dapr-proxy_8fabc414-7"}

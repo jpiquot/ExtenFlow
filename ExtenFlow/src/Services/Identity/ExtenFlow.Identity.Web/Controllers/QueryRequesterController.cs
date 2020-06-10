@@ -13,6 +13,7 @@ namespace ExtenFlow.Identity.Web.Controllers
     /// Class QueryRequesterController. Implements the <see cref="Microsoft.AspNetCore.Mvc.ControllerBase"/>
     /// </summary>
     /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase"/>
+    [Route("api/[controller]")]
     [ApiController]
     public class QueryRequesterController : ControllerBase
     {

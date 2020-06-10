@@ -49,6 +49,15 @@ namespace ExtenFlow.Messages.Dapr
             return value;
         }
 
+        /// <summary>
+        /// Ask for a query result. The query execution is synchronous.
+        /// </summary>
+        /// <param name="query">Query to be executed by the application.</param>
+        /// <param name="cancellationToken">
+        /// The cancellation token that can be used by other objects or threads to receive notice of cancellation.
+        /// </param>
+        /// <returns>Task&lt;System.Object&gt;.</returns>
+        /// <exception cref="NotImplementedException"></exception>
         public Task<object> Ask(IQuery query, CancellationToken? cancellationToken = null) => throw new NotImplementedException();
 
         /// <summary>

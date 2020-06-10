@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using ExtenFlow.Messages;
+
 using Microsoft.AspNetCore.SignalR;
 
 namespace ExtenFlow.Identity.Web

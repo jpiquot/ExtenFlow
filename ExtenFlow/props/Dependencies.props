@@ -7,7 +7,7 @@
 		<NetCoreAppTargetFramework>netcoreapp3.1</NetCoreAppTargetFramework>
 		<!-- Special case - this property is used by a DotNetCliToolReference -->
 		<DotNetXunitVersion>2.3.0</DotNetXunitVersion>
-		<DaprVersion>0.7.0-preview01</DaprVersion>
+		<DaprVersion>0.8.0-preview01</DaprVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
