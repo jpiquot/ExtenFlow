@@ -1,8 +1,11 @@
 using System.Linq;
 using System.Text.Json;
 
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -65,7 +68,8 @@ namespace ExtenFlow.Identity.StoreActors
             app.UseCloudEvents();
 
             app.UseRouting();
-
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
@@ -86,6 +90,7 @@ namespace ExtenFlow.Identity.StoreActors
 #pragma warning restore CA1801 // Review unused parameters
 #pragma warning restore IDE0060 // Remove unused parameter
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSignalR();
             services.AddControllersWithViews();
             services.AddResponseCompression(opts =>
@@ -98,6 +103,9 @@ namespace ExtenFlow.Identity.StoreActors
             {
                 client.UseJsonSerializationOptions(_options);
             });
+            services.AddAuthorization();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
             // services.AddSingleton<OrdersEventBroker>();
         }
     }

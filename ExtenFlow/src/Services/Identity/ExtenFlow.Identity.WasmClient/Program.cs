@@ -2,6 +2,9 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
+using Blazored.LocalStorage;
+
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,14 +19,17 @@ namespace ExtenFlow.Identity.WasmClient
         /// Defines the entry point of the application.
         /// </summary>
         /// <param name="args">The arguments.</param>
-        public static async Task Main(string[] args)
+        public static Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<ExtenFlow.Identity.WasmClient.App>("app");
+            builder.RootComponents.Add<App>("app");
 
+            builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
-            await builder.Build().RunAsync();
+            builder.Services.AddOptions();
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
+            return builder.Build().RunAsync();
         }
     }
 }

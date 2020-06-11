@@ -12,6 +12,7 @@
 		</PackageReference>
 		<PackageReference Include="Dapr.AspNetCore" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
+		<PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\Core\Identity\ExtenFlow.Identity.Roles.Application\ExtenFlow.Identity.Roles.Application.csproj" />

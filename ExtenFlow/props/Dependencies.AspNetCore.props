@@ -1,6 +1,6 @@
 <Project>
 	<PropertyGroup>
-		<AspNetCoreVersion>3.1.4</AspNetCoreVersion>
+		<AspNetCoreVersion>3.1.5</AspNetCoreVersion>
 		<WebAssemblyVersion>3.2.0</WebAssemblyVersion>
 	</PropertyGroup>
 	<ItemGroup>
@@ -11,6 +11,9 @@
 		<PackageManagement Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="$(WebAssemblyVersion)" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageManagement Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="$(AspNetCoreVersion)" />
+		<PackageManagement Include="Microsoft.AspNetCore.Components.Authorization" Version="$(AspNetCoreVersion)" />
+		<PackageManagement Include="Microsoft.AspNetCore.Authorization" Version="$(AspNetCoreVersion)" />
 		<PackageManagement Include="Microsoft.AspNetCore.Identity.Specification.Tests" Version="$(AspNetCoreVersion)" />
 		<PackageManagement Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="$(AspNetCoreVersion)" />
 		<PackageManagement Include="Microsoft.AspNetCore.Authentication.Facebook" Version="$(AspNetCoreVersion)" />

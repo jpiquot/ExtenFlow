@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ExtenFlow.Messages;
 using ExtenFlow.Messages.Queries;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExtenFlow.Identity.Web.Controllers
@@ -17,16 +18,19 @@ namespace ExtenFlow.Identity.Web.Controllers
     [ApiController]
     public class QueryRequesterController : ControllerBase
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IQueryRequester _queryRequester;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QueryRequesterController"/> class.
         /// </summary>
         /// <param name="queryRequester">The query requester.</param>
+        /// <param name="httpContextAccessor">The context</param>
         /// <exception cref="System.ArgumentNullException">queryRequester</exception>
-        public QueryRequesterController(IQueryRequester queryRequester)
+        public QueryRequesterController(IQueryRequester queryRequester, IHttpContextAccessor httpContextAccessor)
         {
             _queryRequester = queryRequester ?? throw new ArgumentNullException(nameof(queryRequester));
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
         /// <summary>
