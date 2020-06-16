@@ -11,6 +11,7 @@
 		<PackageManagement Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="$(WebAssemblyVersion)" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageManagement Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="$(AspNetCoreVersion)" />
 		<PackageManagement Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="$(AspNetCoreVersion)" />
 		<PackageManagement Include="Microsoft.AspNetCore.Components.Authorization" Version="$(AspNetCoreVersion)" />
 		<PackageManagement Include="Microsoft.AspNetCore.Authorization" Version="$(AspNetCoreVersion)" />

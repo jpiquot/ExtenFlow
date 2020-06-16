@@ -2,6 +2,7 @@ using System.Linq;
 using System.Text.Json;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -104,8 +105,17 @@ namespace ExtenFlow.Identity.StoreActors
                 client.UseJsonSerializationOptions(_options);
             });
             services.AddAuthorization();
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie();
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme,
+                                    options =>
+                                    {
+
+                                    });
             // services.AddSingleton<OrdersEventBroker>();
         }
     }

@@ -2,8 +2,6 @@
 	<PropertyGroup>
 		<TargetFramework>$(NetCoreAppTargetFramework)</TargetFramework>
 		<UserSecretsId>38bffe6b-af4c-4f51-aa6a-f5077c832cbf</UserSecretsId>
-		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-		<DockerfileContext>..\..\..</DockerfileContext>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">

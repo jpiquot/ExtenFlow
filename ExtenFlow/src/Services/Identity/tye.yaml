@@ -40,3 +40,10 @@ services:
   buildProperties:
   - name: Configuration
     value: Debug
+ project: ExtenFlow.Identity.IdentityServer/ExtenFlow.Identity.IdentityServer.csproj
+  env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Development
+  buildProperties:
+  - name: Configuration
+    value: Debug
