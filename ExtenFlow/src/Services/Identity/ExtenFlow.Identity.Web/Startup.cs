@@ -4,7 +4,6 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -69,7 +68,6 @@ namespace ExtenFlow.Identity.StoreActors
             app.UseCloudEvents();
 
             app.UseRouting();
-            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
@@ -114,7 +112,15 @@ namespace ExtenFlow.Identity.StoreActors
                 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme,
                                     options =>
                                     {
-
+                                        options.Authority = "https://localhost:5019";
+                                        options.RequireHttpsMetadata = false;
+                                        options.ClientId = "identity-web";
+                                        options.ResponseType = "id_token";
+                                        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                                        options.SaveTokens = true;
+                                        options.Scope.Add("openid");
+                                        options.Scope.Add("email");
+                                        options.Scope.Add("profile");
                                     });
             // services.AddSingleton<OrdersEventBroker>();
         }

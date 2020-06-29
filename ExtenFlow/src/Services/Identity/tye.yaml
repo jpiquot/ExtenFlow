@@ -48,3 +48,6 @@ services:
   buildProperties:
   - name: Configuration
     value: Debug
+  bindings:
+  - port: 5019
+    protocol: https

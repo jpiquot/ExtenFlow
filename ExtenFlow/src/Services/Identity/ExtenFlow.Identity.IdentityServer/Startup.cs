@@ -55,12 +55,13 @@ namespace ExtenFlow.Identity.IdentityServer
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseIdentityServer();
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            // app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -74,6 +75,13 @@ namespace ExtenFlow.Identity.IdentityServer
         /// <param name="services">The services.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddIdentityServer()
+                .AddDeveloperSigningCredential()
+                .AddTestUsers(TestUsers.Users)
+                .AddInMemoryClients(Config.Clients)
+                .AddInMemoryIdentityResources(Config.IdentityResources)
+                .AddInMemoryApiResources(Config.ApiResources);
+
             services.AddDaprClient(client =>
             {
                 client.UseJsonSerializationOptions(_options);
