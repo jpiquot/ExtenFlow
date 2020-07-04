@@ -23,7 +23,7 @@
 		<ProjectReference Include="..\..\Infrastructure\ExtenFlow.ApplicationDictionary.Abstractions\ExtenFlow.ApplicationDictionary.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Domain\ExtenFlow.Domain.Abstractions\ExtenFlow.Domain.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Infrastructure\ExtenFlow.Infrastructure.Abstractions\ExtenFlow.Infrastructure.Abstractions.csproj" />
-		<ProjectReference Include="..\ExtenFlow.Identity.Roles.Application.Abstractions\ExtenFlow.Identity.Roles.Application.Abstractions.csproj" />
-		<ProjectReference Include="..\ExtenFlow.Identity.Roles.Domain\ExtenFlow.Identity.Roles.Domain.csproj" />
+		<ProjectReference Include="..\ExtenFlow.IdentityServer.Application.Abstractions\ExtenFlow.IdentityServer.Application.Abstractions.csproj" />
+		<ProjectReference Include="..\ExtenFlow.IdentityServer.Domain\ExtenFlow.IdentityServer.Domain.csproj" />
 	</ItemGroup>
 </Project>

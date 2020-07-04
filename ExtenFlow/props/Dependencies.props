@@ -8,11 +8,12 @@
 		<!-- Special case - this property is used by a DotNetCliToolReference -->
 		<DotNetXunitVersion>2.3.0</DotNetXunitVersion>
 		<DaprVersion>0.8.0-preview01</DaprVersion>
-		<IdentityServerVersion>4.0.0-preview.6</IdentityServerVersion>
+		<IdentityServerVersion>4.0.2</IdentityServerVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageManagement Include="IdentityServer4" Version="$(IdentityServerVersion)" />
+		<PackageManagement Include="IdentityServer4.Storage" Version="$(IdentityServerVersion)" />
 		<PackageManagement Include="IdentityServer4.AspNetIdentity" Version="$(IdentityServerVersion)" />
 		<PackageManagement Include="Blazored.LocalStorage" Version="2.1.6" />
 		<PackageManagement Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8" />
